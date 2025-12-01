@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>برنامج ترتيب الدومينو - العشرة (151)</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f5f5f5;
+      direction: rtl;
+    }
+
+    header {
+      background: #222;
+      color: #fff;
+      padding: 16px 24px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.4rem;
+    }
+
+    main {
+      max-width: 980px;
+      margin: 16px auto 32px;
+      padding: 0 12px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 10px;
+      padding: 16px 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    .card h2 {
+      margin-top: 0;
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .field {
+      flex: 1 1 160px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    label {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    select {
+      padding: 6px 8px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 0.9rem;
+    }
+
+    button {
+      border: none;
+      border-radius: 6px;
+      padding: 8px 14px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    button.primary {
+      background: #2563eb;
+      color: #fff;
+    }
+
+    button.primary:hover {
+      background: #1d4ed8;
+    }
+
+    button.danger {
+      background: #b91c1c;
+      color: #fff;
+    }
+
+    button.danger:hover {
+      background: #991b1b;
+    }
+
+    button:active {
+      transform: scale(0.97);
+    }
+
+    .small-text {
+      font-size: 0.8rem;
+      color: #555;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      margin-top: 10px;
+    }
+
+    th, td {
+      padding: 8px 6px;
+      text-align: center;
+      border-bottom: 1px solid #eee;
+    }
+
+    th {
+      background: #f1f5f9;
+      font-weight: 700;
+    }
+
+    tr:nth-child(even) td {
+      background: #f9fafb;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #e5e7eb;
+      font-size: 0.75rem;
+      margin-right: 4px;
+      margin-left: 4px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .stat-box {
+      border-radius: 8px;
+      background: #f9fafb;
+      padding: 8px;
+      font-size: 0.8rem;
+      text-align: center;
+    }
+
+    .stat-box strong {
+      display: block;
+      font-size: 1rem;
+      margin-bottom: 4px;
+    }
+
+    @media (max-width: 600px) {
+      th, td {
+        font-size: 0.8rem;
+        padding: 6px 4px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>برنامج ترتيب الدومينو الزوجي - العشرة (151)</h1>
+    <div class="small-text">
+      كل ماتش (عشرة) = الفريق الكسبان +1 لكل لاعب / الخسران -1 لكل لاعب
+    </div>
+  </header>
+
+  <main>
+    <!-- إدارة اللاعبين -->
+    <section class="card">
+      <h2>👤 إدارة اللاعبين</h2>
+      <div class="row">
+        <div class="field">
+          <label for="playerName">اسم اللاعب الجديد</label>
+          <input type="text" id="playerName" placeholder="مثال: أحمد، علي، حسام..." />
+        </div>
+        <div class="field" style="align-self:flex-end;">
+          <button class="primary" id="addPlayerBtn">➕ إضافة لاعب</button>
+        </div>
+      </div>
+      <div class="small-text" id="playersListInfo"></div>
+    </section>
+
+    <!-- تسجيل نتيجة ماتش -->
+    <section class="card">
+      <h2>🧮 تسجيل نتيجة ماتش (عشرة كاملة)</h2>
+      <div class="row">
+        <div class="field">
+          <label for="matchDate">تاريخ الماتش</label>
+          <input type="date" id="matchDate" />
+          <span class="small-text">لو تركته فاضي، هيتسجل بتاريخ اليوم</span>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label>الفريق الكسبان - لاعب 1</label>
+          <select id="winnerP1"></select>
+        </div>
+        <div class="field">
+          <label>الفريق الكسبان - لاعب 2</label>
+          <select id="winnerP2"></select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label>الفريق الخسران - لاعب 1</label>
+          <select id="loserP1"></select>
+        </div>
+        <div class="field">
+          <label>الفريق الخسران - لاعب 2</label>
+          <select id="loserP2"></select>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:8px;">
+        <div class="field" style="align-self:flex-end;">
+          <button class="primary" id="addMatchBtn">✅ حفظ نتيجة الماتش</button>
+        </div>
+        <div class="field" style="align-self:flex-end;">
+          <button class="danger" id="undoLastMatchBtn">⏪ تراجع عن آخر ماتش</button>
+        </div>
+      </div>
+      <div class="small-text">
+        ملاحظة: نفس اللاعب ما ينفعش يكون في الفريقين في نفس الماتش.
+      </div>
+    </section>
+
+    <!-- الترتيب والإحصائيات العامة -->
+    <section class="card">
+      <h2>🏆 الترتيب والإحصائيات العامة</h2>
+      <div class="row">
+        <div class="field">
+          <label for="filterMode">نطاق الإحصائيات (للجدول فقط)</label>
+          <select id="filterMode">
+            <option value="all">كل الوقت</option>
+            <option value="year">هذه السنة</option>
+            <option value="month">هذا الشهر</option>
+          </select>
+        </div>
+        <div class="field" style="align-self:flex-end;">
+          <button class="danger" id="resetAllBtn">🧨 مسح كل البيانات</button>
+        </div>
+      </div>
+      <div class="small-text" id="currentFilterLabel"></div>
+
+      <table id="leaderboardTable">
+        <thead>
+          <tr>
+            <th>الترتيب</th>
+            <th>اللاعب</th>
+            <th>النقاط</th>
+            <th>فوز</th>
+            <th>خسارة</th>
+            <th>عدد الماتشات</th>
+            <th>% الفوز</th>
+          </tr>
+        </thead>
+        <tbody id="leaderboardBody">
+          <!-- سيتم الملء تلقائيًا -->
+        </tbody>
+      </table>
+    </section>
+
+    <!-- تحليل لاعب واحد -->
+    <section class="card">
+      <h2>📊 تحليل لاعب منفرد</h2>
+      <div class="row">
+        <div class="field">
+          <label for="playerDetailsSelect">اختر لاعب</label>
+          <select id="playerDetailsSelect"></select>
+        </div>
+      </div>
+      <div id="playerDetailsSummary" class="small-text">
+        اختر لاعب من القائمة لعرض تحليله.
+      </div>
+
+      <div id="playerDetailsStats" style="margin-top:10px; display:none;">
+        <div class="stats-grid">
+          <div class="stat-box">
+            <strong id="pTotalWins">0</strong>
+            إجمالي مرات الفوز (كل الوقت)
+          </div>
+          <div class="stat-box">
+            <strong id="pTotalLosses">0</strong>
+            إجمالي مرات الخسارة (كل الوقت)
+          </div>
+          <div class="stat-box">
+            <strong id="pTotalMatches">0</strong>
+            إجمالي الماتشات
+          </div>
+          <div class="stat-box">
+            <strong id="pWinRate">0%</strong>
+            نسبة الفوز
+          </div>
+        </div>
+
+        <h3 style="font-size:0.95rem; margin-top:14px;">📆 تحليل أيام الفوز والخسارة</h3>
+        <div class="stats-grid">
+          <div class="stat-box">
+            <strong id="pDaysWin2">0</strong>
+            أيام كسب فيها مرتين
+          </div>
+          <div class="stat-box">
+            <strong id="pDaysWin3">0</strong>
+            أيام كسب فيها 3 مرات
+          </div>
+          <div class="stat-box">
+            <strong id="pDaysWin4plus">0</strong>
+            أيام كسب فيها 4 مرات أو أكثر
+          </div>
+          <div class="stat-box">
+            <strong id="pDaysLose2">0</strong>
+            أيام خسر فيها مرتين
+          </div>
+          <div class="stat-box">
+            <strong id="pDaysLose3">0</strong>
+            أيام خسر فيها 3 مرات
+          </div>
+          <div class="stat-box">
+            <strong id="pDaysLose4plus">0</strong>
+            أيام خسر فيها 4 مرات أو أكثر
+          </div>
+        </div>
+
+        <h3 style="font-size:0.95rem; margin-top:14px;">🤝 الشريك المفضل</h3>
+        <div class="stats-grid">
+          <div class="stat-box">
+            <strong id="pBestMateWinName">-</strong>
+            أكتر واحد كسبت معاه
+            <div class="small-text">
+              عدد المرات: <span id="pBestMateWinCount">0</span>
+            </div>
+          </div>
+          <div class="stat-box">
+            <strong id="pBestMateLoseName">-</strong>
+            أكتر واحد خسرّت معاه
+            <div class="small-text">
+              عدد المرات: <span id="pBestMateLoseCount">0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- تحليل المواجهات المباشرة -->
+    <section class="card">
+      <h2>⚔️ تحليل المواجهات المباشرة بين لاعبين</h2>
+      <div class="row">
+        <div class="field">
+          <label for="h2hP1">اللاعب الأول</label>
+          <select id="h2hP1"></select>
+        </div>
+        <div class="field">
+          <label for="h2hP2">اللاعب الثاني</label>
+          <select id="h2hP2"></select>
+        </div>
+        <div class="field" style="align-self:flex-end;">
+          <button class="primary" id="h2hAnalyzeBtn">🔍 تحليل المواجهة</button>
+        </div>
+      </div>
+      <div id="h2hSummary" class="small-text">
+        اختر لاعبين ثم اضغط "تحليل المواجهة".
+      </div>
+    </section>
+
+    <!-- ملخص بسيط -->
+    <section class="card">
+      <h2>ℹ️ ملاحظات الاستخدام</h2>
+      <ul class="small-text">
+        <li>أضِف كل اللاعبين أولاً من قسم "إدارة اللاعبين".</li>
+        <li>بعد كل عشرة (ماتش 151)، اختر اللاعبين الكسبانين والخسرانين وسجّل النتيجة.</li>
+        <li>جدول الترتيب يتأثر بنطاق الإحصائيات (كل الوقت / السنة / الشهر).</li>
+        <li>تحليل اللاعب والمواجهات المباشرة يتم دائمًا على <strong>كل الوقت</strong> لكل البيانات الموجودة.</li>
+        <li>زر <strong>"⏪ تراجع عن آخر ماتش"</strong> يرجعك قبل آخر نتيجة لو غلطت.</li>
+        <li>زر <strong>"🧨 مسح كل البيانات"</strong> يحذف كل اللاعبين والنتائج نهائيًا (بحذر!).</li>
+      </ul>
+    </section>
+  </main>
+
+  <script>
+    const STORAGE_KEY = "domino151_tracker_v2";
+
+    let state = {
+      players: [],   // { id, name }
+      matches: []    // { id, date (YYYY-MM-DD), winners:[id,id], losers:[id,id] }
+    };
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && Array.isArray(parsed.players) && Array.isArray(parsed.matches)) {
+            state = parsed;
+            return;
+          }
+        }
+        // محاولة ترقية بيانات النسخة القديمة v1 لو موجودة
+        const oldRaw = localStorage.getItem("domino151_tracker_v1");
+        if (oldRaw) {
+          const oldParsed = JSON.parse(oldRaw);
+          if (oldParsed && Array.isArray(oldParsed.players) && Array.isArray(oldParsed.matches)) {
+            state = oldParsed;
+            saveState();
+          }
+        }
+      } catch (e) {
+        console.error("Error loading state:", e);
+      }
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (e) {
+        console.error("Error saving state:", e);
+      }
+    }
+
+    function $(id) {
+      return document.getElementById(id);
+    }
+
+    // تحديث كل القوائم التي تحتوي على لاعبين
+    function updatePlayersUI() {
+      const players = state.players;
+
+      const scoreSelectIds = ["winnerP1", "winnerP2", "loserP1", "loserP2"];
+      const singleSelectIds = ["playerDetailsSelect", "h2hP1", "h2hP2"];
+
+      // قوائم تسجيل الماتشات
+      scoreSelectIds.forEach(id => {
+        const sel = $(id);
+        if (!sel) return;
+        sel.innerHTML = "";
+        const opt = document.createElement("option");
+        opt.value = "";
+        opt.textContent = "اختر لاعب...";
+        sel.appendChild(opt);
+
+        players.forEach(p => {
+          const o = document.createElement("option");
+          o.value = p.id;
+          o.textContent = p.name;
+          sel.appendChild(o);
+        });
+      });
+
+      // قوائم التحليل الفردي / المواجهات
+      singleSelectIds.forEach(id => {
+        const sel = $(id);
+        if (!sel) return;
+        sel.innerHTML = "";
+        const opt = document.createElement("option");
+        opt.value = "";
+        opt.textContent = "اختر لاعب...";
+        sel.appendChild(opt);
+
+        players.forEach(p => {
+          const o = document.createElement("option");
+          o.value = p.id;
+          o.textContent = p.name;
+          sel.appendChild(o);
+        });
+      });
+
+      const info = $("playersListInfo");
+      if (players.length === 0) {
+        info.textContent = "لا يوجد لاعبين حتى الآن. أضِف بعض اللاعبين أولاً.";
+      } else {
+        const names = players.map(p => p.name).join("، ");
+        info.textContent = "اللاعبون المسجّلون: " + names;
+      }
+    }
+
+    function addPlayer() {
+      const input = $("playerName");
+      const name = input.value.trim();
+      if (!name) {
+        alert("اكتب اسم اللاعب أولاً.");
+        return;
+      }
+      const exists = state.players.some(p => p.name === name);
+      if (exists) {
+        if (!confirm("اللاعب موجود بالفعل. هل تريد إضافته مرة أخرى؟")) {
+          return;
+        }
+      }
+      const newPlayer = {
+        id: Date.now() + Math.floor(Math.random() * 1000),
+        name: name
+      };
+      state.players.push(newPlayer);
+      saveState();
+      input.value = "";
+      updatePlayersUI();
+      updateLeaderboard();
+      updatePlayerDetailsUI();
+    }
+
+    function addMatch() {
+      if (state.players.length < 4) {
+        alert("لازم يكون فيه على الأقل 4 لاعبين مسجّلين.");
+        return;
+      }
+
+      const w1 = $("winnerP1").value;
+      const w2 = $("winnerP2").value;
+      const l1 = $("loserP1").value;
+      const l2 = $("loserP2").value;
+
+      if (!w1 || !w2 || !l1 || !l2) {
+        alert("اختر كل اللاعبين في الفريقين.");
+        return;
+      }
+
+      const chosen = [w1, w2, l1, l2];
+      const unique = new Set(chosen);
+      if (unique.size < 4) {
+        alert("نفس اللاعب لا يمكن أن يكون في أكثر من مكان واحد في نفس الماتش.");
+        return;
+      }
+
+      let dateStr = $("matchDate").value;
+      if (!dateStr) {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, "0");
+        const day = String(now.getDate()).padStart(2, "0");
+        dateStr = `${year}-${month}-${day}`;
+      }
+
+      const match = {
+        id: Date.now(),
+        date: dateStr,
+        winners: [Number(w1), Number(w2)],
+        losers: [Number(l1), Number(l2)]
+      };
+
+      state.matches.push(match);
+      saveState();
+
+      $("matchDate").value = "";
+      ["winnerP1", "winnerP2", "loserP1", "loserP2"].forEach(id => {
+        $(id).value = "";
+      });
+
+      updateLeaderboard();
+      updatePlayerDetailsUI();
+      updateHeadToHeadUI(false);
+    }
+
+    function undoLastMatch() {
+      if (state.matches.length === 0) {
+        alert("لا يوجد أي ماتشات للتراجع عنها.");
+        return;
+      }
+      if (!confirm("هل أنت متأكد أنك تريد التراجع عن آخر ماتش مسجّل؟")) {
+        return;
+      }
+      state.matches.pop();
+      saveState();
+      updateLeaderboard();
+      updatePlayerDetailsUI();
+      updateHeadToHeadUI(false);
+    }
+
+    function resetAll() {
+      if (!confirm("تحذير: هذا سيحذف كل اللاعبين وكل النتائج نهائيًا. متأكد؟")) {
+        return;
+      }
+      state = { players: [], matches: [] };
+      saveState();
+      updatePlayersUI();
+      updateLeaderboard();
+      updatePlayerDetailsUI();
+      $("h2hSummary").textContent = "اختر لاعبين ثم اضغط \"تحليل المواجهة\".";
+    }
+
+    // ترشيح الماتشات للجدول (حسب الشهر/السنة)
+    function getFilteredMatches() {
+      const mode = $("filterMode").value;
+      const now = new Date();
+      const yearNow = now.getFullYear();
+      const monthNow = now.getMonth() + 1;
+
+      let labelText = "";
+      let filtered = [];
+
+      if (mode === "all") {
+        filtered = state.matches;
+        labelText = "الإحصائيات معروضة لكل الوقت.";
+      } else if (mode === "year") {
+        filtered = state.matches.filter(m => {
+          if (!m.date) return false;
+          const y = Number(m.date.slice(0, 4));
+          return y === yearNow;
+        });
+        labelText = "الإحصائيات لهذه السنة (" + yearNow + ").";
+      } else if (mode === "month") {
+        filtered = state.matches.filter(m => {
+          if (!m.date) return false;
+          const y = Number(m.date.slice(0, 4));
+          const mo = Number(m.date.slice(5, 7));
+          return y === yearNow && mo === monthNow;
+        });
+        const labelMonth = String(monthNow).padStart(2, "0");
+        labelText = "الإحصائيات لهذا الشهر (" + yearNow + "-" + labelMonth + ").";
+      }
+
+      $("currentFilterLabel").textContent = labelText;
+      return filtered;
+    }
+
+    function updateLeaderboard() {
+      const matches = getFilteredMatches();
+      const statsMap = new Map();
+
+      function initStats(playerId) {
+        if (!statsMap.has(playerId)) {
+          statsMap.set(playerId, {
+            id: playerId,
+            wins: 0,
+            losses: 0
+          });
+        }
+      }
+
+      matches.forEach(m => {
+        m.winners.forEach(pid => {
+          initStats(pid);
+          statsMap.get(pid).wins += 1;
+        });
+        m.losers.forEach(pid => {
+          initStats(pid);
+          statsMap.get(pid).losses += 1;
+        });
+      });
+
+      const rowsData = [];
+      statsMap.forEach(stat => {
+        const player = state.players.find(p => p.id === stat.id);
+        const name = player ? player.name : ("ID " + stat.id);
+        const totalMatches = stat.wins + stat.losses;
+        const points = stat.wins - stat.losses;
+        const winRate = totalMatches > 0 ? (stat.wins / totalMatches) * 100 : 0;
+        rowsData.push({
+          id: stat.id,
+          name,
+          wins: stat.wins,
+          losses: stat.losses,
+          matches: totalMatches,
+          points,
+          winRate
+        });
+      });
+
+      rowsData.sort((a, b) => {
+        if (b.points !== a.points) return b.points - a.points;
+        if (b.wins !== a.wins) return b.wins - a.wins;
+        return a.name.localeCompare(b.name, "ar");
+      });
+
+      const tbody = $("leaderboardBody");
+      tbody.innerHTML = "";
+
+      if (rowsData.length === 0) {
+        const tr = document.createElement("tr");
+        const td = document.createElement("td");
+        td.colSpan = 7;
+        td.textContent = "لا توجد نتائج بعد في هذا النطاق.";
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+        return;
+      }
+
+      rowsData.forEach((row, index) => {
+        const tr = document.createElement("tr");
+
+        const rankTd = document.createElement("td");
+        rankTd.textContent = index + 1;
+        tr.appendChild(rankTd);
+
+        const nameTd = document.createElement("td");
+        nameTd.textContent = row.name;
+        tr.appendChild(nameTd);
+
+        const pointsTd = document.createElement("td");
+        pointsTd.textContent = row.points;
+        tr.appendChild(pointsTd);
+
+        const winsTd = document.createElement("td");
+        winsTd.textContent = row.wins;
+        tr.appendChild(winsTd);
+
+        const lossesTd = document.createElement("td");
+        lossesTd.textContent = row.losses;
+        tr.appendChild(lossesTd);
+
+        const matchesTd = document.createElement("td");
+        matchesTd.textContent = row.matches;
+        tr.appendChild(matchesTd);
+
+        const winRateTd = document.createElement("td");
+        winRateTd.textContent = row.winRate.toFixed(1) + " ٪";
+        tr.appendChild(winRateTd);
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    // === تحليل لاعب واحد (كل الوقت) مع الشريك المفضل ===
+    function computePlayerFullStats(playerId) {
+      const matches = state.matches; // كل الوقت
+      let wins = 0;
+      let losses = 0;
+
+      const dayMap = new Map(); // date -> {w: , l: }
+
+      // خرائط لحساب الشريك المفضل
+      const teammateWinCount = new Map();   // playerId -> times won together
+      const teammateLoseCount = new Map();  // playerId -> times lost together
+
+      matches.forEach(m => {
+        const d = m.date || "بدون تاريخ";
+        if (!dayMap.has(d)) {
+          dayMap.set(d, { w: 0, l: 0 });
+        }
+        const dayStats = dayMap.get(d);
+
+        const isWinner = m.winners.includes(playerId);
+        const isLoser = m.losers.includes(playerId);
+
+        if (isWinner) {
+          wins += 1;
+          dayStats.w += 1;
+
+          // زيادة عدّاد الشريك في الفوز
+          m.winners.forEach(pid => {
+            if (pid !== playerId) {
+              teammateWinCount.set(pid, (teammateWinCount.get(pid) || 0) + 1);
+            }
+          });
+        }
+        if (isLoser) {
+          losses += 1;
+          dayStats.l += 1;
+
+          // زيادة عدّاد الشريك في الخسارة
+          m.losers.forEach(pid => {
+            if (pid !== playerId) {
+              teammateLoseCount.set(pid, (teammateLoseCount.get(pid) || 0) + 1);
+            }
+          });
+        }
+      });
+
+      const totalMatches = wins + losses;
+      const winRate = totalMatches > 0 ? (wins / totalMatches) * 100 : 0;
+
+      let daysWin2 = 0, daysWin3 = 0, daysWin4plus = 0;
+      let daysLose2 = 0, daysLose3 = 0, daysLose4plus = 0;
+
+      dayMap.forEach(ds => {
+        if (ds.w === 2) daysWin2++;
+        else if (ds.w === 3) daysWin3++;
+        else if (ds.w >= 4) daysWin4plus++;
+
+        if (ds.l === 2) daysLose2++;
+        else if (ds.l === 3) daysLose3++;
+        else if (ds.l >= 4) daysLose4plus++;
+      });
+
+      // دالة مساعدة لاختيار أفضل شريك من الخريطة
+      function getTopTeammate(map) {
+        let bestId = null;
+        let bestCount = 0;
+        map.forEach((cnt, pid) => {
+          if (cnt > bestCount) {
+            bestCount = cnt;
+            bestId = pid;
+          }
+        });
+        if (!bestId) return null;
+        const pObj = state.players.find(p => p.id === bestId);
+        const name = pObj ? pObj.name : ("ID " + bestId);
+        return { id: bestId, name, count: bestCount };
+      }
+
+      const bestTeammateWin = getTopTeammate(teammateWinCount);
+      const bestTeammateLose = getTopTeammate(teammateLoseCount);
+
+      return {
+        wins,
+        losses,
+        totalMatches,
+        winRate,
+        daysWin2,
+        daysWin3,
+        daysWin4plus,
+        daysLose2,
+        daysLose3,
+        daysLose4plus,
+        bestTeammateWin,
+        bestTeammateLose
+      };
+    }
+
+    function updatePlayerDetailsUI() {
+      const sel = $("playerDetailsSelect");
+      if (!sel) return;
+
+      const playerIdStr = sel.value;
+      const summaryEl = $("playerDetailsSummary");
+      const statsContainer = $("playerDetailsStats");
+
+      if (!playerIdStr) {
+        summaryEl.textContent = "اختر لاعب من القائمة لعرض تحليله.";
+        statsContainer.style.display = "none";
+        return;
+      }
+
+      const playerId = Number(playerIdStr);
+      const player = state.players.find(p => p.id === playerId);
+      if (!player) {
+        summaryEl.textContent = "لا يوجد لاعب بهذا المعرف.";
+        statsContainer.style.display = "none";
+        return;
+      }
+
+      const s = computePlayerFullStats(playerId);
+
+      summaryEl.innerHTML = `تحليل اللاعب <strong>${player.name}</strong> (كل الوقت)`;
+
+      $("pTotalWins").textContent = s.wins;
+      $("pTotalLosses").textContent = s.losses;
+      $("pTotalMatches").textContent = s.totalMatches;
+      $("pWinRate").textContent = s.winRate.toFixed(1) + "٪";
+
+      $("pDaysWin2").textContent = s.daysWin2;
+      $("pDaysWin3").textContent = s.daysWin3;
+      $("pDaysWin4plus").textContent = s.daysWin4plus;
+      $("pDaysLose2").textContent = s.daysLose2;
+      $("pDaysLose3").textContent = s.daysLose3;
+      $("pDaysLose4plus").textContent = s.daysLose4plus;
+
+      // الشريك المفضل في الفوز
+      if (s.bestTeammateWin) {
+        $("pBestMateWinName").textContent = s.bestTeammateWin.name;
+        $("pBestMateWinCount").textContent = s.bestTeammateWin.count;
+      } else {
+        $("pBestMateWinName").textContent = "-";
+        $("pBestMateWinCount").textContent = "0";
+      }
+
+      // الشريك المفضل في الخسارة
+      if (s.bestTeammateLose) {
+        $("pBestMateLoseName").textContent = s.bestTeammateLose.name;
+        $("pBestMateLoseCount").textContent = s.bestTeammateLose.count;
+      } else {
+        $("pBestMateLoseName").textContent = "-";
+        $("pBestMateLoseCount").textContent = "0";
+      }
+
+      statsContainer.style.display = "block";
+    }
+
+    // === تحليل المواجهات المباشرة ===
+    function analyzeHeadToHead() {
+      const p1Str = $("h2hP1").value;
+      const p2Str = $("h2hP2").value;
+      const out = $("h2hSummary");
+
+      if (!p1Str || !p2Str) {
+        out.textContent = "اختر لاعبين أولاً.";
+        return;
+      }
+      const p1 = Number(p1Str);
+      const p2 = Number(p2Str);
+      if (p1 === p2) {
+        out.textContent = "لا يمكن اختيار نفس اللاعب مرتين.";
+        return;
+      }
+
+      const player1 = state.players.find(p => p.id === p1);
+      const player2 = state.players.find(p => p.id === p2);
+      if (!player1 || !player2) {
+        out.textContent = "لم يتم العثور على أحد اللاعبين.";
+        return;
+      }
+
+      let vsMatches = 0;        // ضد بعض
+      let p1WinsVsP2 = 0;
+      let p2WinsVsP1 = 0;
+      let teammatesMatches = 0; // مع بعض في نفس الفريق
+
+      state.matches.forEach(m => {
+        const w = m.winners;
+        const l = m.losers;
+
+        const p1Win = w.includes(p1);
+        const p1Lose = l.includes(p1);
+        const p2Win = w.includes(p2);
+        const p2Lose = l.includes(p2);
+
+        // مع بعض في نفس الفريق
+        if ((p1Win && p2Win) || (p1Lose && p2Lose)) {
+          teammatesMatches++;
+          return;
+        }
+
+        // ضد بعض
+        if ((p1Win && p2Lose) || (p2Win && p1Lose)) {
+          vsMatches++;
+          if (p1Win && p2Lose) p1WinsVsP2++;
+          if (p2Win && p1Lose) p2WinsVsP1++;
+        }
+      });
+
+      let html = "";
+      html += `تحليل المواجهات بين <strong>${player1.name}</strong> و <strong>${player2.name}</strong> (كل الوقت):<br/><br/>`;
+      html += `• لعبوا ضد بعض في <strong>${vsMatches}</strong> ماتش(ات) عشرة.<br/>`;
+      html += `• مرات فاز فيها <strong>${player1.name}</strong> على ${player2.name}: <strong>${p1WinsVsP2}</strong> مرة.<br/>`;
+      html += `• مرات فاز فيها <strong>${player2.name}</strong> على ${player1.name}: <strong>${p2WinsVsP1}</strong> مرة.<br/>`;
+      html += `• لعبوا معًا في نفس الفريق في <strong>${teammatesMatches}</strong> ماتش(ات) عشرة.<br/>`;
+
+      if (vsMatches > 0) {
+        const rate1 = (p1WinsVsP2 / vsMatches) * 100;
+        const rate2 = (p2WinsVsP1 / vsMatches) * 100;
+        html += `<br/>نسبة الفوز عندما يتقابلان وجهًا لوجه:<br/>`;
+        html += `• ${player1.name}: <strong>${rate1.toFixed(1)}٪</strong><br/>`;
+        html += `• ${player2.name}: <strong>${rate2.toFixed(1)}٪</strong><br/>`;
+      }
+
+      out.innerHTML = html;
+    }
+
+    function updateHeadToHeadUI(resetText = true) {
+      if (resetText) {
+        $("h2hSummary").textContent = "اختر لاعبين ثم اضغط \"تحليل المواجهة\".";
+      }
+    }
+
+    function init() {
+      loadState();
+      updatePlayersUI();
+      updateLeaderboard();
+      updatePlayerDetailsUI();
+      updateHeadToHeadUI(true);
+
+      $("addPlayerBtn").addEventListener("click", addPlayer);
+      $("addMatchBtn").addEventListener("click", addMatch);
+      $("undoLastMatchBtn").addEventListener("click", undoLastMatch);
+      $("resetAllBtn").addEventListener("click", resetAll);
+      $("filterMode").addEventListener("change", updateLeaderboard);
+
+      $("playerDetailsSelect").addEventListener("change", updatePlayerDetailsUI);
+      $("h2hAnalyzeBtn").addEventListener("click", analyzeHeadToHead);
+    }
+
+    document.addEventListener("DOMContentLoaded", init);
+  </script>
+</body>
+</html>
