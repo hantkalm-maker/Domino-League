@@ -498,18 +498,17 @@
 
     // ===== Firebase init =====
     function initFirebase(){
-      // إعدادات Firebase الخاصة بتطبيقك
       const firebaseConfig = {
         apiKey: "AIzaSyDmNo5FIHlW6fcZmCh0TVYzjc9NIia_iM8",
         authDomain: "domino-league-c2d94.firebaseapp.com",
         projectId: "domino-league-c2d94",
         storageBucket: "domino-league-c2d94.firebasestorage.app",
         messagingSenderId: "928957805726",
-        appId: "1:928957805726:web:df67bc867cbfb6c824f78f",
-        measurementId: "G-J2TJQD7GQ0"
+        appId: "1:928957805726:web:d6f7bc867cbfb6c824f78f",
+        measurementId: "G-J2TJQD7QQ"
       };
 
-      // تشغيل Firebase باستخدام compat SDK (متوافق مع <script> اللي فوق)
+      // تشغيل Firebase بنسخة compat اللي حاطينها في <script> فوق
       firebase.initializeApp(firebaseConfig);
       db = firebase.firestore();
 
@@ -535,28 +534,6 @@
       db.collection("matches").onSnapshot(snapshot => {
         const matches = [];
         snapshot.forEach(doc => {
-          const data = doc.data();
-          matches.push({
-            id: doc.id,
-            date: data.date || null,
-            winners: data.winners || [],
-            losers: data.losers || [],
-            createdAt: data.createdAt || null
-          });
-        });
-        state.matches = matches;
-        updateFilterYearOptions();
-        updateLeaderboard();
-        updatePlayerDetailsUI();
-        updateHeadToHeadUI(false);
-        updateMatchesLog();
-      });
-    }
-
-      // استمع لأي تغييرات في الماتشات
-      db.collection("matches").onSnapshot(snapshot => {
-        const matches = [];
-        snapshot.forEach(doc=>{
           const data = doc.data();
           matches.push({
             id: doc.id,
@@ -1162,3 +1139,4 @@
   </script>
 </body>
 </html>
+
