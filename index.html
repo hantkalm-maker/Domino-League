@@ -1183,99 +1183,6 @@
       });
     }
 
-      function init(p){
-        if(!statsMap.has(p)) statsMap.set(p,{id:p,wins:0,losses:0});
-      }
-
-      matches.forEach(m=>{
-        m.winners.forEach(pid=>{init(pid); statsMap.get(pid).wins++;});
-        m.losers.forEach(pid=>{init(pid); statsMap.get(pid).losses++;});
-      });
-
-      const rows=[];
-      statsMap.forEach(s=>{
-        const player=getPlayerById(s.id);
-        const name=player?player.name:("ID "+s.id);
-        const total=s.wins+s.losses;
-        const points=s.wins-s.losses;
-        const rate=total>0?(s.wins/total)*100:0;
-        rows.push({id:s.id,name,wins:s.wins,losses:s.losses,matches:total,points,rate});
-      });
-
-      rows.sort((a,b)=>{
-        if(b.points!==a.points) return b.points-a.points;
-        if(b.wins!==a.wins) return b.wins-a.wins;
-        return a.name.localeCompare(b.name,"ar");
-      });
-
-      const tbody=$("leaderboardBody");
-      tbody.innerHTML="";
-      if(rows.length===0){
-        const tr=document.createElement("tr");
-        const td=document.createElement("td");
-        td.colSpan=7; td.textContent="لا توجد نتائج بعد في هذه الفترة.";
-        tr.appendChild(td); tbody.appendChild(tr); return;
-      }
-
-      rows.forEach((r,idx)=>{
-        const tr=document.createElement("tr");
-        tr.appendChild(createCell(idx+1));
-        tr.appendChild(createPlayerCellTd(r.id));
-        tr.appendChild(createCell(r.points));
-        tr.appendChild(createCell(r.wins));
-        tr.appendChild(createCell(r.losses));
-        tr.appendChild(createCell(r.matches));
-        tr.appendChild(createCell(r.rate.toFixed(1)+" ٪"));
-        tbody.appendChild(tr);
-      });
-    }
-
-    // ===== MATCHES LOG =====
-    function deleteMatchById(id){
-      if(!isAdmin || !db) return;
-      if(!confirm("هل تريد بالتأكيد حذف هذا الماتش؟")) return;
-      db.collection("matches").doc(id).delete().catch(err=>{
-        console.error(err);
-        alert("حصل خطأ أثناء حذف الماتش.");
-      });
-    }
-
-    function updateMatchesLog(){
-      const tbody=$("matchesLogBody");
-      tbody.innerHTML="";
-      if(state.matches.length===0){
-        const tr=document.createElement("tr");
-        const td=document.createElement("td");
-        td.colSpan=5; td.textContent="لا يوجد أي ماتشات مسجلة حتى الآن.";
-        tr.appendChild(td); tbody.appendChild(tr); return;
-      }
-      const sorted=[...state.matches].sort((a,b)=>{
-        const ta = a.createdAt && a.createdAt.seconds ? a.createdAt.seconds : 0;
-        const tb = b.createdAt && b.createdAt.seconds ? b.createdAt.seconds : 0;
-        if(tb!==ta) return tb-ta;
-        return (b.date||"").localeCompare(a.date||"");
-      });
-      sorted.forEach((m,idx)=>{
-        const tr=document.createElement("tr");
-        tr.appendChild(createCell(idx+1));
-        tr.appendChild(createCell(m.date||"-"));
-        tr.appendChild(createPlayersListCell(m.winners));
-        tr.appendChild(createPlayersListCell(m.losers));
-        const actionTd=document.createElement("td");
-        if(isAdmin){
-          const btn=document.createElement("button");
-          btn.textContent="🗑 حذف";
-          btn.className="danger btn-small";
-          btn.addEventListener("click",()=>deleteMatchById(m.id));
-          actionTd.appendChild(btn);
-        } else {
-          actionTd.textContent = "-";
-        }
-        tr.appendChild(actionTd);
-        tbody.appendChild(tr);
-      });
-    }
-
     // ===== PLAYER ANALYSIS (بفترة الفلتر) =====
     function computePlayerFullStats(playerId, matches){
       let wins=0,losses=0;
@@ -1470,3 +1377,4 @@
   </script>
 </body>
 </html>
+
