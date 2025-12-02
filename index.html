@@ -12,6 +12,17 @@
       direction: rtl;
     }
 
+    th.sortable {
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .sort-arrow {
+      font-size: 0.7rem;
+      opacity: 0.6;
+      margin-right: 4px;
+    }
+
     header {
       background: #222;
       color: #fff;
@@ -338,21 +349,15 @@
         <div class="field" style="align-self:flex-end;">
           <button class="danger" id="resetAllBtn">🧨 مسح كل البيانات</button>
         </div>
+        <div class="field" style="align-self:flex-end;">
+          <button id="leaderboardToggleViewBtn">📊 عرض تفصيلي</button>
+        </div>
       </div>
+
       <div class="small-text" id="currentFilterLabel"></div>
 
       <table id="leaderboardTable">
-        <thead>
-          <tr>
-            <th>الترتيب</th>
-            <th>اللاعب</th>
-            <th>النقاط</th>
-            <th>فوز</th>
-            <th>خسارة</th>
-            <th>عدد الماتشات</th>
-            <th>% الفوز</th>
-          </tr>
-        </thead>
+        <thead id="leaderboardHead"></thead>
         <tbody id="leaderboardBody"></tbody>
       </table>
     </section>
@@ -509,6 +514,54 @@
       players: [], // {id, name, avatar}
       matches: []  // {id, date, winners, losers, createdAt}
     };
+
+    function getLeaderboardColumns(){
+      if(leaderboardViewMode === "compact"){
+        return [
+          {key:"rank",   label:"الترتيب"},
+          {key:"name",   label:"اللاعب"},
+          {key:"points", label:"النقاط"},
+          {key:"wins",   label:"فوز"},
+          {key:"losses", label:"خسارة"},
+          {key:"matches",label:"عدد الماتشات"},
+          {key:"rate",   label:"% الفوز"}
+        ];
+      } else {
+        return [
+          {key:"rank",   label:"الترتيب"},
+          {key:"name",   label:"اللاعب"},
+          {key:"points", label:"النقاط"},
+          {key:"wins",   label:"فوز"},
+          {key:"losses", label:"خسارة"},
+          {key:"matches",label:"عدد الماتشات"},
+          {key:"rate",   label:"% الفوز"},
+          {key:"w2",     label:"ثنائيات فوز"},
+          {key:"w3",     label:"ثلاثيات فوز"},
+          {key:"w4",     label:"رباعيات فوز"},
+          {key:"l2",     label:"ثنائيات خسارة"},
+          {key:"l3",     label:"ثلاثيات خسارة"},
+          {key:"l4",     label:"رباعيات خسارة"}
+        ];
+      }
+    }
+
+    function applyLeaderboardSort(rows){
+      const col = leaderboardSort.column;
+      const dir = leaderboardSort.direction === "asc" ? 1 : -1;
+      const key = (col === "rank") ? "points" : col; // الترتيب حسب النقاط لو اخترنا "الترتيب"
+
+      rows.sort((a,b)=>{
+        if(key === "name"){
+          return dir * a.name.localeCompare(b.name,"ar");
+        } else {
+          const av = a[key] ?? 0;
+          const bv = b[key] ?? 0;
+          if(av < bv) return -1 * dir;
+          if(av > bv) return  1 * dir;
+          return a.name.localeCompare(b.name,"ar");
+        }
+      });
+    }
 
     function $(id){return document.getElementById(id);}
 
@@ -996,6 +1049,141 @@
       const statsMap = new Map();
 
       function init(p){
+        if(!statsMap.has(p)){
+          statsMap.set(p,{
+            id: p,
+            wins: 0,
+            losses: 0,
+            w2: 0, w3: 0, w4: 0,
+            l2: 0, l3: 0, l4: 0
+          });
+        }
+      }
+
+      // تجميع الإحصائيات من كل الماتشات
+      matches.forEach(m=>{
+        const wCount = (m.winners || []).length;
+        const lCount = (m.losers || []).length;
+
+        (m.winners || []).forEach(pid=>{
+          init(pid);
+          const s = statsMap.get(pid);
+          s.wins++;
+          if(wCount === 2) s.w2++;
+          else if(wCount === 3) s.w3++;
+          else if(wCount === 4) s.w4++;
+        });
+
+        (m.losers || []).forEach(pid=>{
+          init(pid);
+          const s = statsMap.get(pid);
+          s.losses++;
+          if(lCount === 2) s.l2++;
+          else if(lCount === 3) s.l3++;
+          else if(lCount === 4) s.l4++;
+        });
+      });
+
+      const rows = [];
+      statsMap.forEach(s=>{
+        const player = getPlayerById(s.id);
+        const name = player ? player.name : ("ID " + s.id);
+        const total = s.wins + s.losses;
+        const points = s.wins - s.losses;
+        const rate = total > 0 ? (s.wins / total) * 100 : 0;
+        rows.push({
+          id: s.id,
+          name,
+          wins: s.wins,
+          losses: s.losses,
+          matches: total,
+          points,
+          rate,
+          w2: s.w2, w3: s.w3, w4: s.w4,
+          l2: s.l2, l3: s.l3, l4: s.l4
+        });
+      });
+
+      const cols = getLeaderboardColumns();
+
+      // ترتيب بحسب الاختيار الحالي
+      applyLeaderboardSort(rows);
+
+      // رأس الجدول
+      const thead = $("leaderboardHead");
+      thead.innerHTML = "";
+      const headerTr = document.createElement("tr");
+      cols.forEach(col=>{
+        const th = document.createElement("th");
+        th.textContent = col.label;
+        th.classList.add("sortable");
+        th.dataset.col = col.key;
+
+        const arrow = document.createElement("span");
+        arrow.className = "sort-arrow";
+        if(leaderboardSort.column === col.key){
+          arrow.textContent = leaderboardSort.direction === "asc" ? "▲" : "▼";
+        } else {
+          arrow.textContent = "↕";
+        }
+
+        th.appendChild(document.createTextNode(" "));
+        th.appendChild(arrow);
+
+        th.addEventListener("click", ()=>{
+          if(leaderboardSort.column === col.key){
+            leaderboardSort.direction = leaderboardSort.direction === "asc" ? "desc" : "asc";
+          } else {
+            leaderboardSort.column = col.key;
+            leaderboardSort.direction = (col.key === "name") ? "asc" : "desc";
+          }
+          updateLeaderboard();
+        });
+
+        headerTr.appendChild(th);
+      });
+      thead.appendChild(headerTr);
+
+      // جسم الجدول
+      const tbody = $("leaderboardBody");
+      tbody.innerHTML = "";
+
+      if(rows.length === 0){
+        const tr = document.createElement("tr");
+        const td = document.createElement("td");
+        td.colSpan = cols.length;
+        td.textContent = "لا توجد نتائج بعد في هذه الفترة.";
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+        return;
+      }
+
+      rows.forEach((r, idx)=>{
+        const tr = document.createElement("tr");
+        r.rank = idx + 1; // رقم الترتيب حسب الترتيب الحالي
+
+        cols.forEach(col=>{
+          if(col.key === "name"){
+            // نستخدم نفس الخلية اللي فيها الصورة والاسم
+            tr.appendChild(createPlayerCellTd(r.id));
+          } else {
+            let value;
+            if(col.key === "rate"){
+              value = r.rate.toFixed(1) + " ٪";
+            } else if(col.key === "rank"){
+              value = r.rank;
+            } else {
+              value = r[col.key] ?? 0;
+            }
+            tr.appendChild(createCell(value));
+          }
+        });
+
+        tbody.appendChild(tr);
+      });
+    }
+
+      function init(p){
         if(!statsMap.has(p)) statsMap.set(p,{id:p,wins:0,losses:0});
       }
 
@@ -1262,6 +1450,19 @@
         if($("playerDetailsSelect").value) updatePlayerDetailsUI();
         if($("h2hP1").value && $("h2hP2").value) analyzeHeadToHead(); else updateHeadToHeadUI(true);
       });
+      const toggleViewBtn = $("leaderboardToggleViewBtn");
+      if(toggleViewBtn){
+        toggleViewBtn.addEventListener("click", ()=>{
+          leaderboardViewMode = (leaderboardViewMode === "compact") ? "detailed" : "compact";
+          toggleViewBtn.textContent = (leaderboardViewMode === "compact")
+            ? "📊 عرض تفصيلي"
+            : "📋 عرض مختصر";
+          updateLeaderboard();
+          if($("playerDetailsSelect").value) updatePlayerDetailsUI();
+          if($("h2hP1").value && $("h2hP2").value) analyzeHeadToHead(); else updateHeadToHeadUI(true);
+        });
+      }
+
       $("toggleMatchesLogBtn").addEventListener("click", toggleMatchesLog);
     }
 
