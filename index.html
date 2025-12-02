@@ -1105,78 +1105,49 @@
     // ===== LEADERBOARD =====
     function updateLeaderboard(){
       const matches = getFilteredMatches();
-      const yearVal = $("filterYear").value;
+      const yearVal  = $("filterYear").value;
       const monthVal = $("filterMonth").value;
       $("currentFilterLabel").textContent = getFilterLabel(yearVal, monthVal);
 
-      const statsMap = new Map();
-
-      function init(p){
-        if(!statsMap.has(p)){
-          statsMap.set(p,{
-            id: p,
-            wins: 0,
-            losses: 0,
-            w2: 0, w3: 0, w4: 0,
-            l2: 0, l3: 0, l4: 0
-          });
-        }
-      }
-
-      // تجميع الإحصائيات من كل الماتشات
-      matches.forEach(m=>{
-        const wCount = (m.winners || []).length;
-        const lCount = (m.losers || []).length;
-
-        (m.winners || []).forEach(pid=>{
-          init(pid);
-          const s = statsMap.get(pid);
-          s.wins++;
-          if(wCount === 2) s.w2++;
-          else if(wCount === 3) s.w3++;
-          else if(wCount === 4) s.w4++;
-        });
-
-        (m.losers || []).forEach(pid=>{
-          init(pid);
-          const s = statsMap.get(pid);
-          s.losses++;
-          if(lCount === 2) s.l2++;
-          else if(lCount === 3) s.l3++;
-          else if(lCount === 4) s.l4++;
-        });
-      });
-
       const rows = [];
-      statsMap.forEach(s=>{
-        const player = getPlayerById(s.id);
-        const name = player ? player.name : ("ID " + s.id);
-        const total = s.wins + s.losses;
-        const points = s.wins - s.losses;
-        const rate = total > 0 ? (s.wins / total) * 100 : 0;
+
+      // نستخدم نفس منطق تحليل اللاعب الواحد لكل لاعب
+      state.players.forEach(p => {
+        const s = computePlayerFullStats(p.id, matches);
+
+        // لو اللاعب ما لعبش ولا ماتش في الفترة دي، بنخفّيه من الجدول
+        if(s.totalMatches === 0) return;
+
         rows.push({
-          id: s.id,
-          name,
-          wins: s.wins,
-          losses: s.losses,
-          matches: total,
-          points,
-          rate,
-          w2: s.w2, w3: s.w3, w4: s.w4,
-          l2: s.l2, l3: s.l3, l4: s.l4
+          id:       p.id,
+          name:     p.name,
+          wins:     s.wins,
+          losses:   s.losses,
+          matches:  s.totalMatches,
+          points:   s.wins - s.losses,
+          rate:     s.winRate,
+          // الأيام اللي فيها 2 / 3 / 4+ فوز
+          w2:       s.daysWin2,
+          w3:       s.daysWin3,
+          w4:       s.daysWin4plus,
+          // الأيام اللي فيها 2 / 3 / 4+ خسارة
+          l2:       s.daysLose2,
+          l3:       s.daysLose3,
+          l4:       s.daysLose4plus
         });
       });
 
       const cols = getLeaderboardColumns();
 
-      // ترتيب بحسب الاختيار الحالي
+      // نطبّق إعدادات الفرز الحالية
       applyLeaderboardSort(rows);
 
       // رأس الجدول
       const thead = $("leaderboardHead");
       thead.innerHTML = "";
       const headerTr = document.createElement("tr");
-      cols.forEach(col=>{
+
+      cols.forEach(col => {
         const th = document.createElement("th");
         th.textContent = col.label;
         th.classList.add("sortable");
@@ -1184,7 +1155,7 @@
 
         const arrow = document.createElement("span");
         arrow.className = "sort-arrow";
-        if(leaderboardSort.column === col.key){
+        if (leaderboardSort.column === col.key) {
           arrow.textContent = leaderboardSort.direction === "asc" ? "▲" : "▼";
         } else {
           arrow.textContent = "↕";
@@ -1193,11 +1164,12 @@
         th.appendChild(document.createTextNode(" "));
         th.appendChild(arrow);
 
-        th.addEventListener("click", ()=>{
-          if(leaderboardSort.column === col.key){
-            leaderboardSort.direction = leaderboardSort.direction === "asc" ? "desc" : "asc";
+        th.addEventListener("click", () => {
+          if (leaderboardSort.column === col.key) {
+            leaderboardSort.direction =
+              leaderboardSort.direction === "asc" ? "desc" : "asc";
           } else {
-            leaderboardSort.column = col.key;
+            leaderboardSort.column   = col.key;
             leaderboardSort.direction = (col.key === "name") ? "asc" : "desc";
           }
           updateLeaderboard();
@@ -1205,13 +1177,14 @@
 
         headerTr.appendChild(th);
       });
+
       thead.appendChild(headerTr);
 
       // جسم الجدول
       const tbody = $("leaderboardBody");
       tbody.innerHTML = "";
 
-      if(rows.length === 0){
+      if (rows.length === 0) {
         const tr = document.createElement("tr");
         const td = document.createElement("td");
         td.colSpan = cols.length;
@@ -1221,19 +1194,19 @@
         return;
       }
 
-      rows.forEach((r, idx)=>{
+      rows.forEach((r, idx) => {
         const tr = document.createElement("tr");
-        r.rank = idx + 1; // رقم الترتيب حسب الترتيب الحالي
+        r.rank = idx + 1; // ترتيب اللاعب بعد الفرز
 
-        cols.forEach(col=>{
-          if(col.key === "name"){
-            // نستخدم نفس الخلية اللي فيها الصورة والاسم
+        cols.forEach(col => {
+          if (col.key === "name") {
+            // خلية اللاعب (صورة + اسم)
             tr.appendChild(createPlayerCellTd(r.id));
           } else {
             let value;
-            if(col.key === "rate"){
+            if (col.key === "rate") {
               value = r.rate.toFixed(1) + " ٪";
-            } else if(col.key === "rank"){
+            } else if (col.key === "rank") {
               value = r.rank;
             } else {
               value = r[col.key] ?? 0;
