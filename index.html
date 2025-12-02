@@ -515,6 +515,13 @@
       matches: []  // {id, date, winners, losers, createdAt}
     };
 
+    // وضع عرض الترتيب (مختصر / تفصيلي) + إعدادات الفرز
+    let leaderboardViewMode = "compact"; // "compact" أو "detailed"
+    let leaderboardSort = {
+      column: "points",   // العمود الافتراضي للفرز
+      direction: "desc"   // "asc" أو "desc"
+    };
+
     function getLeaderboardColumns(){
       if(leaderboardViewMode === "compact"){
         return [
@@ -937,6 +944,62 @@
       }).catch(err=>{
         console.error(err);
         alert("حصل خطأ أثناء مسح البيانات.");
+      });
+    }
+    // ===== MATCHES LOG (عرض + حذف) =====
+    function deleteMatchById(id){
+      if(!isAdmin || !db) return;
+      if(!confirm("هل تريد بالتأكيد حذف هذا الماتش؟")) return;
+      db.collection("matches").doc(id).delete().catch(err=>{
+        console.error(err);
+        alert("حصل خطأ أثناء حذف الماتش.");
+      });
+    }
+
+    function updateMatchesLog(){
+      const tbody = $("matchesLogBody");
+      if(!tbody) return;
+      tbody.innerHTML = "";
+
+      if(state.matches.length === 0){
+        const tr = document.createElement("tr");
+        const td = document.createElement("td");
+        td.colSpan = 5;
+        td.textContent = "لا يوجد أي ماتشات مسجلة حتى الآن.";
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+        return;
+      }
+
+      // أحدث ماتش في الأعلى
+      const sorted = [...state.matches].sort((a,b)=>{
+        const ta = a.createdAt && a.createdAt.seconds ? a.createdAt.seconds : 0;
+        const tb = b.createdAt && b.createdAt.seconds ? b.createdAt.seconds : 0;
+        if(tb !== ta) return tb - ta;
+        return (b.date || "").localeCompare(a.date || "");
+      });
+
+      sorted.forEach((m,idx)=>{
+        const tr = document.createElement("tr");
+
+        tr.appendChild(createCell(idx + 1));
+        tr.appendChild(createCell(m.date || "-"));
+        tr.appendChild(createPlayersListCell(m.winners || []));
+        tr.appendChild(createPlayersListCell(m.losers || []));
+
+        const actionTd = document.createElement("td");
+        if(isAdmin){
+          const btn = document.createElement("button");
+          btn.textContent = "🗑 حذف";
+          btn.className = "danger btn-small";
+          btn.addEventListener("click", ()=> deleteMatchById(m.id));
+          actionTd.appendChild(btn);
+        } else {
+          actionTd.textContent = "-";
+        }
+        tr.appendChild(actionTd);
+
+        tbody.appendChild(tr);
       });
     }
 
