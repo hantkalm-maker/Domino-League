@@ -469,6 +469,23 @@
             </div>
           </div>
         </div>
+        <h3 style="font-size:0.95rem; margin-top:14px;">👊 الخصم المفضل في نفس الفترة</h3>
+        <div class="stats-grid">
+          <div class="stat-box">
+            <strong id="pBestOppWinName">-</strong>
+            أكتر واحد كسبت ضده
+            <div class="small-text">
+              عدد المرات: <span id="pBestOppWinCount">0</span>
+            </div>
+          </div>
+          <div class="stat-box">
+            <strong id="pBestOppLoseName">-</strong>
+            أكتر واحد خسرت ضده
+            <div class="small-text">
+              عدد المرات: <span id="pBestOppLoseCount">0</span>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -1221,28 +1238,46 @@
 
     // ===== PLAYER ANALYSIS (بفترة الفلتر) =====
     function computePlayerFullStats(playerId, matches){
-      let wins=0,losses=0;
-      const dayMap=new Map();
-      const teammateWin=new Map(), teammateLose=new Map();
+      let wins = 0, losses = 0;
+      const dayMap = new Map();
+      const teammateWin  = new Map(), teammateLose  = new Map();
+      const opponentWin  = new Map(), opponentLose  = new Map();
 
       matches.forEach(m=>{
-        const d=m.date||"بدون تاريخ";
+        const d = m.date || "بدون تاريخ";
         if(!dayMap.has(d)) dayMap.set(d,{w:0,l:0});
-        const ds=dayMap.get(d);
-        const isW=m.winners.includes(playerId);
-        const isL=m.losers.includes(playerId);
+        const ds = dayMap.get(d);
+
+        const isW = m.winners.includes(playerId);
+        const isL = m.losers.includes(playerId);
+
         if(isW){
           wins++; ds.w++;
+
+          // زملاء الفوز
           m.winners.forEach(pid=>{
             if(pid!==playerId)
               teammateWin.set(pid,(teammateWin.get(pid)||0)+1);
           });
+
+          // الخصوم اللي خسروا مني
+          (m.losers || []).forEach(pid=>{
+            opponentWin.set(pid,(opponentWin.get(pid)||0)+1);
+          });
         }
+
         if(isL){
           losses++; ds.l++;
+
+          // زملاء الخسارة
           m.losers.forEach(pid=>{
             if(pid!==playerId)
               teammateLose.set(pid,(teammateLose.get(pid)||0)+1);
+          });
+
+          // الخصوم اللي كسبوا عليّ
+          (m.winners || []).forEach(pid=>{
+            opponentLose.set(pid,(opponentLose.get(pid)||0)+1);
           });
         }
       });
@@ -1264,13 +1299,21 @@
       }
 
       return {
-        wins,losses,totalMatches:total,winRate:rate,
-        daysWin2:dW2,daysWin3:dW3,daysWin4plus:dW4,
-        daysLose2:dL2,daysLose3:dL3,daysLose4plus:dL4,
-        bestTeammateWin:best(teammateWin),
-        bestTeammateLose:best(teammateLose)
+        wins,
+        losses,
+        totalMatches: total,
+        winRate: rate,
+        daysWin2: dW2,
+        daysWin3: dW3,
+        daysWin4plus: dW4,
+        daysLose2: dL2,
+        daysLose3: dL3,
+        daysLose4plus: dL4,
+        bestTeammateWin:  best(teammateWin),
+        bestTeammateLose: best(teammateLose),
+        bestOpponentWin:  best(opponentWin),
+        bestOpponentLose: best(opponentLose)
       };
-    }
 
     function updatePlayerDetailsUI(){
       const sel=$("playerDetailsSelect");
@@ -1318,6 +1361,22 @@
       }else{
         $("pBestMateLoseName").textContent="-";
         $("pBestMateLoseCount").textContent="0";
+      }
+      // الخصم المفضل (أكتر واحد كسبت ضده / خسرت ضده)
+      if(s.bestOpponentWin){
+        $("pBestOppWinName").textContent = s.bestOpponentWin.name;
+        $("pBestOppWinCount").textContent = s.bestOpponentWin.count;
+      } else {
+        $("pBestOppWinName").textContent = "-";
+        $("pBestOppWinCount").textContent = "0";
+      }
+
+      if(s.bestOpponentLose){
+        $("pBestOppLoseName").textContent = s.bestOpponentLose.name;
+        $("pBestOppLoseCount").textContent = s.bestOpponentLose.count;
+      } else {
+        $("pBestOppLoseName").textContent = "-";
+        $("pBestOppLoseCount").textContent = "0";
       }
 
       box.style.display="block";
