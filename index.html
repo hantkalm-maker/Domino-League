@@ -368,11 +368,11 @@
 
       <div class="row" style="margin-bottom:4px;">
         <div class="field" style="flex:0 0 auto;">
-          <button class="primary" id="toggleMatchesLogBtn">👁️ إخفاء السجل</button>
+          <button class="primary" id="toggleMatchesLogBtn">👁️ عرض السجل</button>
         </div>
       </div>
 
-      <div id="matchesLogWrapper">
+      <div id="matchesLogWrapper" style="display:none;">
         <div class="small-text">
           أحدث ماتش في الأعلى. يمكنك حذف أي ماتش غلط بدون التأثير على الباقي.
         </div>
@@ -524,7 +524,7 @@
     const ADMIN_PIN = "1510"; // غيره لو حابب
 
     let isAdmin = false;
-    let matchesLogVisible = true;
+    let matchesLogVisible = false;
     let db = null;
 
     let state = {
@@ -978,18 +978,21 @@
       if(!tbody) return;
       tbody.innerHTML = "";
 
-      if(state.matches.length === 0){
+      // نستخدم نفس الفلتر بتاع السنة/الشهر
+      const matches = getFilteredMatches();
+
+      if(matches.length === 0){
         const tr = document.createElement("tr");
         const td = document.createElement("td");
         td.colSpan = 5;
-        td.textContent = "لا يوجد أي ماتشات مسجلة حتى الآن.";
+        td.textContent = "لا يوجد أي ماتشات مسجلة في هذه الفترة.";
         tr.appendChild(td);
         tbody.appendChild(tr);
         return;
       }
 
-      // أحدث ماتش في الأعلى
-      const sorted = [...state.matches].sort((a,b)=>{
+      // أحدث ماتش في الأعلى داخل الفترة المحددة
+      const sorted = [...matches].sort((a,b)=>{
         const ta = a.createdAt && a.createdAt.seconds ? a.createdAt.seconds : 0;
         const tb = b.createdAt && b.createdAt.seconds ? b.createdAt.seconds : 0;
         if(tb !== ta) return tb - ta;
@@ -1291,11 +1294,24 @@
       });
 
       function best(map){
-        let bestId=null,bestCount=0;
-        map.forEach((c,id)=>{if(c>bestCount){bestCount=c;bestId=id;}});
-        if(!bestId) return null;
-        const p=getPlayerById(bestId);
-        return {id:bestId,name:p?p.name:"ID "+bestId,count:bestCount};
+        let bestCount = 0;
+        // نحدد أكبر عدد أولاً
+        map.forEach((c)=>{ if(c > bestCount) bestCount = c; });
+
+        if(bestCount === 0) return [];  // مفيش حد
+
+        const result = [];
+        map.forEach((c,id)=>{
+          if(c === bestCount){
+            const p = getPlayerById(id);
+            result.push({
+              id,
+              name: p ? p.name : ("ID " + id),
+              count: c
+            });
+          }
+        });
+        return result; // قائمة بأكتر من لاعب لو متعادلين
       }
 
       return {
@@ -1349,32 +1365,39 @@
       $("pDaysLose3").textContent=s.daysLose3;
       $("pDaysLose4plus").textContent=s.daysLose4plus;
 
-      if(s.bestTeammateWin){
-        $("pBestMateWinName").textContent=s.bestTeammateWin.name;
-        $("pBestMateWinCount").textContent=s.bestTeammateWin.count;
-      }else{
-        $("pBestMateWinName").textContent="-";
-        $("pBestMateWinCount").textContent="0";
+      // الشريك المفضل (ممكن يكون أكثر من واحد)
+      if(s.bestTeammateWin && s.bestTeammateWin.length > 0){
+        $("pBestMateWinName").textContent =
+          s.bestTeammateWin.map(x => x.name).join(" ، ");
+        $("pBestMateWinCount").textContent = s.bestTeammateWin[0].count;
+      } else {
+        $("pBestMateWinName").textContent = "-";
+        $("pBestMateWinCount").textContent = "0";
       }
-      if(s.bestTeammateLose){
-        $("pBestMateLoseName").textContent=s.bestTeammateLose.name;
-        $("pBestMateLoseCount").textContent=s.bestTeammateLose.count;
-      }else{
-        $("pBestMateLoseName").textContent="-";
-        $("pBestMateLoseCount").textContent="0";
+
+      if(s.bestTeammateLose && s.bestTeammateLose.length > 0){
+        $("pBestMateLoseName").textContent =
+          s.bestTeammateLose.map(x => x.name).join(" ، ");
+        $("pBestMateLoseCount").textContent = s.bestTeammateLose[0].count;
+      } else {
+        $("pBestMateLoseName").textContent = "-";
+        $("pBestMateLoseCount").textContent = "0";
       }
+
       // الخصم المفضل (أكتر واحد كسبت ضده / خسرت ضده)
-      if(s.bestOpponentWin){
-        $("pBestOppWinName").textContent = s.bestOpponentWin.name;
-        $("pBestOppWinCount").textContent = s.bestOpponentWin.count;
+      if(s.bestOpponentWin && s.bestOpponentWin.length > 0){
+        $("pBestOppWinName").textContent =
+          s.bestOpponentWin.map(x => x.name).join(" ، ");
+        $("pBestOppWinCount").textContent = s.bestOpponentWin[0].count;
       } else {
         $("pBestOppWinName").textContent = "-";
         $("pBestOppWinCount").textContent = "0";
       }
 
-      if(s.bestOpponentLose){
-        $("pBestOppLoseName").textContent = s.bestOpponentLose.name;
-        $("pBestOppLoseCount").textContent = s.bestOpponentLose.count;
+      if(s.bestOpponentLose && s.bestOpponentLose.length > 0){
+        $("pBestOppLoseName").textContent =
+          s.bestOpponentLose.map(x => x.name).join(" ، ");
+        $("pBestOppLoseCount").textContent = s.bestOpponentLose[0].count;
       } else {
         $("pBestOppLoseName").textContent = "-";
         $("pBestOppLoseCount").textContent = "0";
@@ -1435,6 +1458,37 @@
       initFirebase();
       updateAdminUI();
 
+      // ✅ ضبط الفلتر الافتراضي على "الشهر الحالي"
+      const now = new Date();
+      const currentYear  = String(now.getFullYear());
+      const currentMonth = String(now.getMonth() + 1); // من 1 إلى 12
+
+      const fy = $("filterYear");
+      const fm = $("filterMonth");
+
+      // نضمن إن سنة الحالية موجودة في القائمة، ولو مش موجودة نضيفها
+      if(fy){
+        let yearOpt = Array.from(fy.options).find(o => o.value === currentYear);
+        if(!yearOpt){
+          yearOpt = document.createElement("option");
+          yearOpt.value = currentYear;
+          yearOpt.textContent = currentYear;
+          fy.appendChild(yearOpt);
+        }
+        fy.value = currentYear;
+      }
+
+      if(fm){
+        fm.value = currentMonth; // لأن الشهور 1..12 موجودة بالفعل في الـ HTML
+      }
+
+      // نحدّث الترتيب والسجل بناءً على الفترة الافتراضية
+      updateLeaderboard();
+      updateMatchesLog();
+      updateHeadToHeadUI(true);
+      if($("playerDetailsSelect")) updatePlayerDetailsUI();
+
+      // باقي اللستينرز زي ما هي
       $("addPlayerBtn").addEventListener("click",addPlayer);
       $("addMatchBtn").addEventListener("click",addMatch);
       $("undoLastMatchBtn").addEventListener("click",undoLastMatch);
@@ -1447,12 +1501,15 @@
         updateLeaderboard();
         if($("playerDetailsSelect").value) updatePlayerDetailsUI();
         if($("h2hP1").value && $("h2hP2").value) analyzeHeadToHead(); else updateHeadToHeadUI(true);
+        updateMatchesLog();
       });
       $("filterMonth").addEventListener("change",()=>{
         updateLeaderboard();
         if($("playerDetailsSelect").value) updatePlayerDetailsUI();
         if($("h2hP1").value && $("h2hP2").value) analyzeHeadToHead(); else updateHeadToHeadUI(true);
+        updateMatchesLog();
       });
+
       const toggleViewBtn = $("leaderboardToggleViewBtn");
       if(toggleViewBtn){
         toggleViewBtn.addEventListener("click", ()=>{
