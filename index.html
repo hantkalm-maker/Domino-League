@@ -254,21 +254,31 @@
         </div>
       </div>
 
-      <div class="small-text" id="playersListInfo"></div>
+      <!-- زر عرض/إخفاء قائمة اللاعبين -->
+      <div class="row" style="margin-bottom:4px;">
+        <div class="field" style="flex:0 0 auto;">
+          <button class="primary" id="togglePlayersListBtn">👥 عرض قائمة اللاعبين</button>
+        </div>
+      </div>
 
-      <!-- جدول اللاعبين للتعديل -->
-      <table style="margin-top:8px;">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>اللاعب</th>
-            <th>إجراءات</th>
-          </tr>
-        </thead>
-        <tbody id="playersTableBody"></tbody>
-      </table>
-      <div class="small-text">
-        تقدر تعدّل اسم اللاعب أو تضيف/تغيّر صورة اللاعب من الجدول (التعديل متاح للمدير فقط).
+      <!-- غلاف قائمة اللاعبين (مخفي افتراضيًا) -->
+      <div id="playersListWrapper" style="display:none;">
+        <div class="small-text" id="playersListInfo"></div>
+
+        <!-- جدول اللاعبين للتعديل -->
+        <table style="margin-top:8px;">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>اللاعب</th>
+              <th>إجراءات</th>
+            </tr>
+          </thead>
+          <tbody id="playersTableBody"></tbody>
+        </table>
+        <div class="small-text">
+          تقدر تعدّل اسم اللاعب أو تضيف/تغيّر صورة اللاعب من الجدول (التعديل متاح للمدير فقط).
+        </div>
       </div>
     </section>
 
@@ -524,7 +534,8 @@
     const ADMIN_PIN = "1510"; // غيره لو حابب
 
     let isAdmin = false;
-    let matchesLogVisible = false;
+    let matchesLogVisible = false;  // قلنا نخليه مخفي افتراضيًا
+    let playersListVisible = false; // جديد: قائمة اللاعبين مخفية افتراضيًا
     let db = null;
 
     let state = {
@@ -696,6 +707,17 @@
       btn.textContent = matchesLogVisible ? "👁️ إخفاء السجل" : "👁️ عرض السجل";
     }
 
+    function togglePlayersList(){
+      const wrapper = $("playersListWrapper");
+      const btn = $("togglePlayersListBtn");
+      if(!wrapper || !btn) return;
+      playersListVisible = !playersListVisible;
+      wrapper.style.display = playersListVisible ? "" : "none";
+      btn.textContent = playersListVisible
+        ? "👥 إخفاء قائمة اللاعبين"
+        : "👥 عرض قائمة اللاعبين";
+      }
+
     // ===== PLAYERS =====
     function getPlayerById(id){
       return state.players.find(p=>p.id===id) || null;
@@ -707,7 +729,8 @@
     }
 
     function updatePlayersUI(){
-      const players = state.players;
+      // ترتيب اللاعبين أبجديًا بالاسم
+      const players = [...state.players].sort((a,b)=> a.name.localeCompare(b.name,"ar"));
       const scoreSelectIds = ["winnerP1","winnerP2","loserP1","loserP2"];
       const singleSelectIds = ["playerDetailsSelect","h2hP1","h2hP2"];
 
@@ -1523,6 +1546,7 @@
         });
       }
 
+      $("togglePlayersListBtn").addEventListener("click", togglePlayersList);
       $("toggleMatchesLogBtn").addEventListener("click", toggleMatchesLog);
     }
 
