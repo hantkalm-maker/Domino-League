@@ -1455,47 +1455,90 @@
       if(reset) $("h2hSummary").textContent='اختر لاعبين ثم اضغط "تحليل المواجهة".';
     }
 
-    function analyzeHeadToHead(){
-      const p1Str=$("h2hP1").value;
-      const p2Str=$("h2hP2").value;
-      const out=$("h2hSummary");
-      if(!p1Str||!p2Str){out.textContent="اختر لاعبين أولاً.";return;}
-      const p1=p1Str,p2=p2Str;
-      if(p1===p2){out.textContent="لا يمكن اختيار نفس اللاعب مرتين.";return;}
-      const pl1=getPlayerById(p1),pl2=getPlayerById(p2);
-      if(!pl1||!pl2){out.textContent="لم يتم العثور على أحد اللاعبين.";return;}
+function analyzeHeadToHead(){
+  const p1Str = $("h2hP1").value;
+  const p2Str = $("h2hP2").value;
+  const out   = $("h2hSummary");
 
-      const matches = getFilteredMatches();
-      let vs=0,p1W=0,p2W=0,team=0;
-      matches.forEach(m=>{
-        const w=m.winners,l=m.losers;
-        const p1Win=w.includes(p1),p1Lose=l.includes(p1);
-        const p2Win=w.includes(p2),p2Lose=l.includes(p2);
-        if((p1Win && p2Win)||(p1Lose && p2Lose)){team++;return;}
-        if((p1Win&&p2Lose)||(p2Win&&p1Lose)){
-          vs++;
-          if(p1Win&&p2Lose)p1W++;
-          if(p2Win&&p1Lose)p2W++;
-        }
-      });
+  if(!p1Str || !p2Str){
+    out.textContent = "اختر لاعبين أولاً.";
+    return;
+  }
 
-      const yearVal = $("filterYear").value;
-      const monthVal = $("filterMonth").value;
-      const label = getFilterLabel(yearVal, monthVal);
+  const p1 = p1Str, p2 = p2Str;
+  if(p1 === p2){
+    out.textContent = "لا يمكن اختيار نفس اللاعب مرتين.";
+    return;
+  }
 
-      let html=`تحليل المواجهات بين <strong>${pl1.name}</strong> و <strong>${pl2.name}</strong> (${label}):<br/><br/>`;
-      html+=`• لعبوا ضد بعض في <strong>${vs}</strong> ماتش(ات) عشرة.<br/>`;
-      html+=`• مرات فاز فيها <strong>${pl1.name}</strong> على ${pl2.name}: <strong>${p1W}</strong> مرة.<br/>`;
-      html+=`• مرات فاز فيها <strong>${pl2.name}</strong> على ${pl1.name}: <strong>${p2W}</strong> مرة.<br/>`;
-      html+=`• لعبوا معًا في نفس الفريق في <strong>${team}</strong> ماتش(ات) عشرة.<br/>`;
-      if(vs>0){
-        const r1=(p1W/vs)*100,r2=(p2W/vs)*100;
-        html+=`<br/>نسبة الفوز عندما يتقابلان في هذه الفترة:<br/>`;
-        html+=`• ${pl1.name}: <strong>${r1.toFixed(1)}٪</strong><br/>`;
-        html+=`• ${pl2.name}: <strong>${r2.toFixed(1)}٪</strong><br/>`;
-      }
-      out.innerHTML=html;
+  const pl1 = getPlayerById(p1),
+        pl2 = getPlayerById(p2);
+  if(!pl1 || !pl2){
+    out.textContent = "لم يتم العثور على أحد اللاعبين.";
+    return;
+  }
+
+  const matches = getFilteredMatches();
+
+  // vs: ضد بعض – p1W / p2W
+  // team: مع بعض – teamWins / teamLosses
+  let vs = 0, p1W = 0, p2W = 0;
+  let team = 0, teamWins = 0, teamLosses = 0;
+
+  matches.forEach(m=>{
+    const w = m.winners || [];
+    const l = m.losers  || [];
+
+    const p1Win  = w.includes(p1);
+    const p1Lose = l.includes(p1);
+    const p2Win  = w.includes(p2);
+    const p2Lose = l.includes(p2);
+
+    // مع بعض في نفس الفريق
+    if( (p1Win && p2Win) || (p1Lose && p2Lose) ){
+      team++;
+      if(p1Win && p2Win)  teamWins++;
+      if(p1Lose && p2Lose) teamLosses++;
+      return;
     }
+
+    // ضد بعض
+    if( (p1Win && p2Lose) || (p2Win && p1Lose) ){
+      vs++;
+      if(p1Win && p2Lose) p1W++;
+      if(p2Win && p1Lose) p2W++;
+    }
+  });
+
+  const yearVal  = $("filterYear").value;
+  const monthVal = $("filterMonth").value;
+  const label    = getFilterLabel(yearVal, monthVal);
+
+  let html = `تحليل المواجهات بين <strong>${pl1.name}</strong> و <strong>${pl2.name}</strong> (${label}):<br/><br/>`;
+  html += `• لعبوا ضد بعض في <strong>${vs}</strong> ماتش(ات) عشرة.<br/>`;
+  html += `• مرات فاز فيها <strong>${pl1.name}</strong> على ${pl2.name}: <strong>${p1W}</strong> مرة.<br/>`;
+  html += `• مرات فاز فيها <strong>${pl2.name}</strong> على ${pl1.name}: <strong>${p2W}</strong> مرة.<br/>`;
+  html += `• لعبوا معًا في نفس الفريق في <strong>${team}</strong> ماتش(ات) عشرة.<br/>`;
+
+  if(vs > 0){
+    const r1 = (p1W / vs) * 100;
+    const r2 = (p2W / vs) * 100;
+    html += `<br/>نسبة الفوز عندما يتقابلان ضد بعض في هذه الفترة:<br/>`;
+    html += `• ${pl1.name}: <strong>${r1.toFixed(1)}٪</strong><br/>`;
+    html += `• ${pl2.name}: <strong>${r2.toFixed(1)}٪</strong><br/>`;
+  }
+
+  // 🆕 نسبة النتائج وهم في نفس الفريق
+  if(team > 0){
+    const teamWinRate  = (teamWins   / team) * 100;
+    const teamLoseRate = (teamLosses / team) * 100;
+    html += `<br/>نسبة النتائج عندما يلعبان معًا في نفس الفريق في هذه الفترة:<br/>`;
+    html += `• فوز معًا: <strong>${teamWinRate.toFixed(1)}٪</strong> (${teamWins} من ${team} ماتشات)<br/>`;
+    html += `• خسارة معًا: <strong>${teamLoseRate.toFixed(1)}٪</strong> (${teamLosses} من ${team} ماتشات)<br/>`;
+  }
+
+  out.innerHTML = html;
+}
 
     // ===== INIT =====
     function init(){
