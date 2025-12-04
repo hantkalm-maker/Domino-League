@@ -505,6 +505,40 @@
       </div>
     </section>
 
+    <!-- تحليل المواجهات المباشرة بين فرق 2 ضد 2 -->
+    <section class="card">
+      <h2>🧩 تحليل المواجهات المباشرة بين فرق (2 ضد 2)</h2>
+
+      <div class="row">
+        <div class="field">
+          <label for="h2hT1P1">الفريق الأول - لاعب 1</label>
+          <select id="h2hT1P1"></select>
+        </div>
+        <div class="field">
+          <label for="h2hT1P2">الفريق الأول - لاعب 2</label>
+          <select id="h2hT1P2"></select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label for="h2hT2P1">الفريق الثاني - لاعب 1</label>
+          <select id="h2hT2P1"></select>
+        </div>
+        <div class="field">
+          <label for="h2hT2P2">الفريق الثاني - لاعب 2</label>
+          <select id="h2hT2P2"></select>
+        </div>
+        <div class="field" style="align-self:flex-end;">
+          <button class="primary" id="h2hTeamsAnalyzeBtn">🔍 تحليل المواجهة</button>
+        </div>
+      </div>
+
+      <div id="h2hTeamsSummary" class="small-text">
+        اختر لاعبي الفريقين ثم اضغط "تحليل المواجهة".
+      </div>
+    </section>
+
     <!-- قسم المدير والإدارة المتقدمة -->
     <section class="card">
       <h2>🔐 وضع المدير والإدارة المتقدمة</h2>
@@ -753,7 +787,15 @@
       // ترتيب اللاعبين أبجديًا بالاسم
       const players = [...state.players].sort((a,b)=> a.name.localeCompare(b.name,"ar"));
       const scoreSelectIds = ["winnerP1","winnerP2","loserP1","loserP2"];
-      const singleSelectIds = ["playerDetailsSelect","h2hP1","h2hP2"];
+      const singleSelectIds = [
+        "playerDetailsSelect",
+        "h2hP1",
+        "h2hP2",
+        "h2hT1P1",
+        "h2hT1P2",
+        "h2hT2P1",
+        "h2hT2P2"
+      ];
 
       // تحديث الـ select بتاعة تسجيل الماتشات
       scoreSelectIds.forEach(id=>{
@@ -1540,6 +1582,111 @@ function analyzeHeadToHead(){
   out.innerHTML = html;
 }
 
+    // ===== TEAMS H2H (2 ضد 2) =====
+    function normalizeTeamId(p1, p2){
+      if(!p1 || !p2) return null;
+      // نخلي الـ ID ثابت مهما كان ترتيب اللاعبين
+      return (p1 < p2) ? (p1 + "|" + p2) : (p2 + "|" + p1);
+    }
+
+    function resetTeamsH2HSummary(){
+      const el = $("h2hTeamsSummary");
+      if(el){
+        el.textContent = 'اختر لاعبي الفريقين ثم اضغط "تحليل المواجهة".';
+      }
+    }
+
+    function analyzeTeamsHeadToHead(){
+      const t1p1 = $("h2hT1P1").value;
+      const t1p2 = $("h2hT1P2").value;
+      const t2p1 = $("h2hT2P1").value;
+      const t2p2 = $("h2hT2P2").value;
+      const out  = $("h2hTeamsSummary");
+
+      if(!out) return;
+
+      // تحقق من الاختيار
+      if(!t1p1 || !t1p2 || !t2p1 || !t2p2){
+        out.textContent = "اختر لاعبين لكل فريق أولًا.";
+        return;
+      }
+
+      // ممنوع نفس اللاعب يتكرر في نفس الفريق
+      if(t1p1 === t1p2 || t2p1 === t2p2){
+        out.textContent = "لاعب واحد لا يمكن أن يكون مكان لاعب 1 و 2 في نفس الفريق.";
+        return;
+      }
+
+      // لو حابب تمنع تكرار لاعب بين الفريقين:
+      const all = [t1p1,t1p2,t2p1,t2p2];
+      if(new Set(all).size < 4){
+        out.textContent = "لاعب واحد لا يمكن أن يلعب في الفريقين في نفس المواجهة.";
+        return;
+      }
+
+      const team1Id = normalizeTeamId(t1p1, t1p2);
+      const team2Id = normalizeTeamId(t2p1, t2p2);
+
+      if(team1Id === team2Id){
+        out.textContent = "لا يمكن مقارنة نفس الفريق بنفسه.";
+        return;
+      }
+
+      const t1Name =
+        getPlayerNameById(t1p1) + " + " + getPlayerNameById(t1p2);
+      const t2Name =
+        getPlayerNameById(t2p1) + " + " + getPlayerNameById(t2p2);
+
+      const matches = getFilteredMatches();
+
+      let vs = 0;
+      let t1Wins = 0;
+      let t2Wins = 0;
+
+      matches.forEach(m=>{
+        if(!m.winners || !m.losers) return;
+        if(m.winners.length !== 2 || m.losers.length !== 2) return;
+
+        const wTeamId = normalizeTeamId(m.winners[0], m.winners[1]);
+        const lTeamId = normalizeTeamId(m.losers[0], m.losers[1]);
+
+        if(!wTeamId || !lTeamId) return;
+
+        // نفس الفريقين بالظبط؟
+        if(
+          (wTeamId === team1Id && lTeamId === team2Id) ||
+          (wTeamId === team2Id && lTeamId === team1Id)
+        ){
+          vs++;
+          if(wTeamId === team1Id) t1Wins++;
+          if(wTeamId === team2Id) t2Wins++;
+        }
+      });
+
+      const yearVal  = $("filterYear").value;
+      const monthVal = $("filterMonth").value;
+      const label    = getFilterLabel(yearVal, monthVal);
+
+      if(vs === 0){
+        out.innerHTML =
+          `لا توجد أي مواجهات مباشرة بين <strong>${t1Name}</strong> و <strong>${t2Name}</strong> في هذه الفترة (${label}).`;
+        return;
+      }
+
+      const t1Rate = (t1Wins / vs) * 100;
+      const t2Rate = (t2Wins / vs) * 100;
+
+      let html = `تحليل المواجهات بين الفريق <strong>${t1Name}</strong> والفريق <strong>${t2Name}</strong> (${label}):<br/><br/>`;
+      html += `• لعبوا ضد بعض في <strong>${vs}</strong> ماتش(ات) عشرة.<br/>`;
+      html += `• مرات فاز فيها <strong>${t1Name}</strong>: <strong>${t1Wins}</strong> مرة.<br/>`;
+      html += `• مرات فاز فيها <strong>${t2Name}</strong>: <strong>${t2Wins}</strong> مرة.<br/>`;
+      html += `<br/>نسبة الفوز عندما يتقابلان في هذه الفترة:<br/>`;
+      html += `• ${t1Name}: <strong>${t1Rate.toFixed(1)}٪</strong><br/>`;
+      html += `• ${t2Name}: <strong>${t2Rate.toFixed(1)}٪</strong><br/>`;
+
+      out.innerHTML = html;
+    }
+
     // ===== INIT =====
     function init(){
       initFirebase();
@@ -1569,8 +1716,7 @@ function analyzeHeadToHead(){
         fm.value = currentMonth; // لأن الشهور 1..12 موجودة بالفعل في الـ HTML
       }
 
-      // نحدّث الترتيب والسجل بناءً على الفترة الافتراضية
-      updateLeaderboard();
+      // نحدّث الترتيب والسجل بناءً على الفترة الافتراضية      updateLeaderboard();
       updateMatchesLog();
       updateHeadToHeadUI(true);
       if($("playerDetailsSelect")) updatePlayerDetailsUI();
@@ -1584,17 +1730,33 @@ function analyzeHeadToHead(){
       $("h2hAnalyzeBtn").addEventListener("click",analyzeHeadToHead);
       $("enableAdminBtn").addEventListener("click",enableAdminMode);
       $("disableAdminBtn").addEventListener("click",disableAdminMode);
+
+      // ⭐ زرار تحليل مواجهة الفرق 2 ضد 2
+      const h2hTeamsBtn = $("h2hTeamsAnalyzeBtn");
+      if (h2hTeamsBtn){
+        h2hTeamsBtn.addEventListener("click", analyzeTeamsHeadToHead);
+      }
+
       $("filterYear").addEventListener("change",()=>{
         updateLeaderboard();
         if($("playerDetailsSelect").value) updatePlayerDetailsUI();
-        if($("h2hP1").value && $("h2hP2").value) analyzeHeadToHead(); else updateHeadToHeadUI(true);
+        if($("h2hP1").value && $("h2hP2").value) analyzeHeadToHead(); 
+        else updateHeadToHeadUI(true);
+
         updateMatchesLog();
+        // ⭐ رجّع نص ملخص مواجهات الفرق للوضع الافتراضي
+        resetTeamsH2HSummary();
       });
+
       $("filterMonth").addEventListener("change",()=>{
         updateLeaderboard();
         if($("playerDetailsSelect").value) updatePlayerDetailsUI();
-        if($("h2hP1").value && $("h2hP2").value) analyzeHeadToHead(); else updateHeadToHeadUI(true);
+        if($("h2hP1").value && $("h2hP2").value) analyzeHeadToHead(); 
+        else updateHeadToHeadUI(true);
+
         updateMatchesLog();
+        // ⭐ برضه نرجّع ملخص الفرق
+        resetTeamsH2HSummary();
       });
 
       const toggleViewBtn = $("leaderboardToggleViewBtn");
@@ -1606,7 +1768,11 @@ function analyzeHeadToHead(){
             : "📋 عرض مختصر";
           updateLeaderboard();
           if($("playerDetailsSelect").value) updatePlayerDetailsUI();
-          if($("h2hP1").value && $("h2hP2").value) analyzeHeadToHead(); else updateHeadToHeadUI(true);
+          if($("h2hP1").value && $("h2hP2").value) analyzeHeadToHead(); 
+          else updateHeadToHeadUI(true);
+
+          // مش لازم هنا نحلل الفرق تاني، بس لو حابب:
+          // resetTeamsH2HSummary();
         });
       }
 
