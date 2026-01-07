@@ -204,6 +204,15 @@
       border: 1px solid #ddd;
     }
 
+    /* Bonus button highlight when available */
+    #bonusBtn.bonus-ready{
+      background: #f59e0b;
+      color: #111;
+    }
+    #bonusBtn:disabled{
+      opacity: 0.5;
+    }
+
     @media (max-width: 600px) {
       th, td {
         font-size: 0.8rem;
@@ -308,7 +317,7 @@
           <button class="primary" id="addMatchBtn">✅ حفظ نتيجة الماتش</button>
         </div>
         <div class="field" style="align-self:flex-end;">
-          <button class="danger" id="undoLastMatchBtn">⏪ تراجع عن آخر ماتش</button>
+          <button class="primary" id="bonusBtn" disabled>🎁 بونص (غير متاح)</button>
         </div>
       </div>
       <div class="small-text">
@@ -355,6 +364,25 @@
         <thead id="leaderboardHead"></thead>
         <tbody id="leaderboardBody"></tbody>
       </table>
+    </section>
+
+
+    <!-- سجل الأبطال -->
+    <section class="card" id="championsLogCard">
+      <h2>🏅 سجل الأبطال (شهري)</h2>
+      <div class="small-text" id="championsLogHint">
+        اختر سنة محددة لعرض سجل أبطال الشهور (مثل سجل الدوري الإنجليزي).
+      </div>
+
+      <div id="championsLogWrapper" style="display:none;">
+        <div class="small-text" id="championsLogTitle" style="margin-bottom:8px;"></div>
+        <table id="championsLogTable">
+          <thead id="championsLogHead"></thead>
+          <tbody id="championsLogBody"></tbody>
+        </table>
+
+        <div id="championsLogExtra" class="small-text" style="margin-top:10px; line-height:1.9;"></div>
+      </div>
     </section>
 
     <!-- سجل الماتشات -->
@@ -416,6 +444,18 @@
           <div class="stat-box">
             <strong id="pWinRate">0%</strong>
             نسبة الفوز في الفترة المحددة
+          </div>
+          <div class="stat-box">
+            <strong id="pBonusPlus">0</strong>
+            بونص + (مكسب)
+          </div>
+          <div class="stat-box">
+            <strong id="pBonusMinus">0</strong>
+            بونص − (خسارة)
+          </div>
+          <div class="stat-box">
+            <strong id="pBonusNet">0</strong>
+            صافي البونص
           </div>
         </div>
 
@@ -598,6 +638,134 @@
       matches: []  // {id, date, winners, losers, createdAt}
     };
 
+    // ===== BONUS (Streak Bonus) =====
+    // يظهر زر البونص فقط عندما يكون هناك احتمال "ستريك":
+    // آخر ماتش مسجل كان بنفس الأربع لاعبين + نفس تقسيمة الفريقين + نفس الفريق فاز.
+    let bonusEligible = false;
+    let bonusApplied  = false;
+    let bonusValue    = 0;
+    let bonusSuggested = 0;
+
+    function normTeam(arr){
+      return (arr || []).slice().sort();
+    }
+    function teamsEqual(a,b){
+      if(a.length !== b.length) return false;
+      for(let i=0;i<a.length;i++) if(a[i]!==b[i]) return false;
+      return true;
+    }
+
+    function getLatestMatch(){
+      if(!state.matches || state.matches.length===0) return null;
+      const sorted = [...state.matches].sort((a,b)=>{
+        const ta = a.createdAt && a.createdAt.seconds ? a.createdAt.seconds : 0;
+        const tb = b.createdAt && b.createdAt.seconds ? b.createdAt.seconds : 0;
+        if(tb !== ta) return tb - ta;
+        return (b.date || "").localeCompare(a.date || "");
+      });
+      return sorted[0] || null;
+    }
+
+    function updateBonusEligibility(){
+      const btn = $("bonusBtn");
+      if(!btn) return;
+
+      // افتراضيًا: غير متاح
+      bonusEligible = false;
+      bonusSuggested = 0;
+
+      // لو مش مدير -> مخفي/مقفول
+      if(!isAdmin){
+        bonusApplied = false;
+        bonusValue = 0;
+        btn.disabled = true;
+        btn.classList.remove("bonus-ready");
+        btn.textContent = "🎁 بونص (غير متاح)";
+        return;
+      }
+
+      const w1=$("winnerP1")?.value || "";
+      const w2=$("winnerP2")?.value || "";
+      const l1=$("loserP1")?.value || "";
+      const l2=$("loserP2")?.value || "";
+
+      if(!w1 || !w2 || !l1 || !l2){
+        bonusApplied = false;
+        bonusValue = 0;
+        btn.disabled = true;
+        btn.classList.remove("bonus-ready");
+        btn.textContent = "🎁 بونص (غير متاح)";
+        return;
+      }
+
+      const chosen=[w1,w2,l1,l2];
+      if(new Set(chosen).size < 4){
+        bonusApplied = false;
+        bonusValue = 0;
+        btn.disabled = true;
+        btn.classList.remove("bonus-ready");
+        btn.textContent = "🎁 بونص (غير متاح)";
+        return;
+      }
+
+      const latest = getLatestMatch();
+      if(!latest){
+        bonusApplied = false;
+        bonusValue = 0;
+        btn.disabled = true;
+        btn.classList.remove("bonus-ready");
+        btn.textContent = "🎁 بونص (غير متاح)";
+        return;
+      }
+
+      const curW = normTeam([w1,w2]);
+      const curL = normTeam([l1,l2]);
+
+      const lastW = normTeam(latest.winners || []);
+      const lastL = normTeam(latest.losers || []);
+
+      // نفس التقسيمة + نفس الفائز = احتمال ستريك
+      if(teamsEqual(curW, lastW) && teamsEqual(curL, lastL)){
+        bonusEligible = true;
+        const lastBonus = (latest.bonusApplied ? (Number(latest.bonusValue)||0) : 0);
+        bonusSuggested = lastBonus + 1;
+      }
+
+      if(!bonusEligible){
+        bonusApplied = false;
+        bonusValue = 0;
+        btn.disabled = true;
+        btn.classList.remove("bonus-ready");
+        btn.textContent = "🎁 بونص (غير متاح)";
+        return;
+      }
+
+      // متاح: نفعّل الزر ونظلله
+      btn.disabled = false;
+      btn.classList.add("bonus-ready");
+
+      // لو لسه مش متفعل، نعرض القيمة المقترحة
+      if(!bonusApplied){
+        btn.textContent = `🎁 إضافة بونص (+${bonusSuggested})`;
+      }else{
+        btn.textContent = `🎁 بونص مُفعّل (+${bonusValue})`;
+      }
+    }
+
+    function toggleBonus(){
+      if(!isAdmin) return;
+      if(!bonusEligible) return;
+
+      bonusApplied = !bonusApplied;
+      if(bonusApplied){
+        bonusValue = bonusSuggested || 1;
+      }else{
+        bonusValue = 0;
+      }
+      updateBonusEligibility();
+    }
+
+
     // وضع عرض الترتيب (مختصر / تفصيلي) + إعدادات الفرز
     let leaderboardViewMode = "compact"; // "compact" أو "detailed"
     let leaderboardSort = {
@@ -611,6 +779,7 @@
           {key:"rank",   label:"الترتيب"},
           {key:"name",   label:"اللاعب"},
           {key:"points", label:"النقاط"},
+          {key:"bonusNet", label:"بونص"},
           {key:"wins",   label:"فوز"},
           {key:"losses", label:"خسارة"},
           {key:"matches",label:"عدد الماتشات"},
@@ -621,6 +790,7 @@
           {key:"rank",   label:"الترتيب"},
           {key:"name",   label:"اللاعب"},
           {key:"points", label:"النقاط"},
+          {key:"bonusNet", label:"بونص"},
           {key:"wins",   label:"فوز"},
           {key:"losses", label:"خسارة"},
           {key:"matches",label:"عدد الماتشات"},
@@ -635,23 +805,50 @@
       }
     }
 
+    
     function applyLeaderboardSort(rows){
       const col = leaderboardSort.column;
       const dir = leaderboardSort.direction === "asc" ? 1 : -1;
-      const key = (col === "rank") ? "points" : col; // الترتيب حسب النقاط لو اخترنا "الترتيب"
 
-      rows.sort((a,b)=>{
-        if(key === "name"){
-          return dir * a.name.localeCompare(b.name,"ar");
+      // ✅ قاعدة الترتيب الأساسية المطلوبة:
+      // 1) النقاط النهائية (Points + Bonus)
+      // 2) عدد الفوز
+      // 3) الاسم
+      function sortByFinalPoints(a,b){
+        if((b.finalPoints ?? 0) !== (a.finalPoints ?? 0)) return (b.finalPoints - a.finalPoints);
+        if((b.wins ?? 0) !== (a.wins ?? 0)) return (b.wins - a.wins);
+        return a.name.localeCompare(b.name,"ar");
+      }
+
+      // لو المستخدم بيعمل فرز على النقاط/الترتيب -> نطبق القاعدة الأساسية
+      if(col === "points" || col === "rank"){
+        rows.sort(sortByFinalPoints);
+        if(dir === -1){
+          // desc (الافتراضي): لا شيء
         } else {
-          const av = a[key] ?? 0;
-          const bv = b[key] ?? 0;
-          if(av < bv) return -1 * dir;
-          if(av > bv) return  1 * dir;
-          return a.name.localeCompare(b.name,"ar");
+          // asc: نعكس
+          rows.reverse();
         }
+        return;
+      }
+
+      // فرز حسب الاسم
+      if(col === "name"){
+        rows.sort((a,b)=> dir * a.name.localeCompare(b.name,"ar"));
+        return;
+      }
+
+      // باقي الأعمدة الرقمية: فرز بالعمود ثم الاسم
+      rows.sort((a,b)=>{
+        const av = a[col] ?? 0;
+        const bv = b[col] ?? 0;
+        if(av < bv) return -1 * dir;
+        if(av > bv) return  1 * dir;
+        // كسر التعادل بالاسم
+        return a.name.localeCompare(b.name,"ar");
       });
     }
+
 
     function $(id){return document.getElementById(id);}
 
@@ -679,7 +876,8 @@
           players.push({
             id: doc.id,
             name: data.name,
-            avatar: data.avatar || null
+            avatar: data.avatar || null,
+            banPeriods: data.banPeriods || []
           });
         });
         state.players = players;
@@ -687,6 +885,8 @@
         updateLeaderboard();
         updatePlayerDetailsUI();
         updateMatchesLog();
+        updateBonusEligibility();
+        updateChampionsLog();
       });
 
       // استمع لأي تغييرات في الماتشات
@@ -699,7 +899,10 @@
             date: data.date || null,
             winners: data.winners || [],
             losers: data.losers || [],
-            createdAt: data.createdAt || null
+            players: data.players || [],
+            createdAt: data.createdAt || null,
+            bonusApplied: data.bonusApplied || false,
+            bonusValue: Number(data.bonusValue || 0)
           });
         });
         state.matches = matches;
@@ -708,12 +911,13 @@
         updatePlayerDetailsUI();
         updateHeadToHeadUI(false);
         updateMatchesLog();
+        updateChampionsLog();
       });
     }
 
     // ===== ADMIN =====
     function updateAdminUI(){
-      const ids = ["addPlayerBtn","addMatchBtn","undoLastMatchBtn","resetAllBtn"];
+      const ids = ["addPlayerBtn","addMatchBtn","resetAllBtn","bonusBtn"];
       ids.forEach(id=>{
         const el=$(id);
         if(el) el.disabled = !isAdmin;
@@ -733,6 +937,7 @@
       // علشان أزرار تعديل اللاعبين تظهر/تختفي حسب وضع المدير
       updateMatchesLog();
       updatePlayersUI();
+      updateBonusEligibility();
     }
 
     function enableAdminMode(){
@@ -783,11 +988,67 @@
       return p ? p.name : ("ID "+id);
     }
 
+
+    // ===== BAN / UNBAN helpers =====
+    function tsToDate(v){
+      if(!v) return null;
+      if(typeof v.toDate === "function") return v.toDate();
+      if(typeof v.seconds === "number") return new Date(v.seconds * 1000);
+      // fallback (string/date)
+      return new Date(v);
+    }
+
+    function isDateInBanPeriods(dateObj, banPeriods){
+      if(!dateObj) return false;
+      const t = dateObj.getTime();
+      const periods = banPeriods || [];
+      return periods.some(p=>{
+        const fromD = tsToDate(p.from);
+        const toD   = p.to ? tsToDate(p.to) : null;
+        if(!fromD) return false;
+        const fromT = fromD.getTime();
+        const toT   = toD ? toD.getTime() : null;
+        return (toT === null) ? (t >= fromT) : (t >= fromT && t <= toT);
+      });
+    }
+
+    function isPlayerCurrentlyBanned(player){
+      const periods = (player && player.banPeriods) ? player.banPeriods : [];
+      return periods.some(p => p && p.to == null);
+    }
+
+    // ✅ نهاية الفترة المختارة = آخر تاريخ موجود في الماتشات بعد تطبيق الفلتر (ولو مفيش، نستخدم تاريخ اليوم)
+    function getSelectedRangeEndDate(){
+      const matches = getFilteredMatches();
+      let max = null;
+      matches.forEach(m=>{
+        if(!m.date) return;
+        const d = new Date(m.date + "T23:59:59");
+        if(!max || d > max) max = d;
+      });
+      return max || new Date();
+    }
+
+    // ✅ إظهار اللاعب في الإحصائيات يعتمد على "نهاية الفترة المختارة"
+    function shouldShowPlayerForSelectedRange(player, rangeEndDate){
+      return !isDateInBanPeriods(rangeEndDate, player.banPeriods || []);
+    }
+
+
+    
     function updatePlayersUI(){
       // ترتيب اللاعبين أبجديًا بالاسم
-      const players = [...state.players].sort((a,b)=> a.name.localeCompare(b.name,"ar"));
+      const playersAll = [...state.players].sort((a,b)=> a.name.localeCompare(b.name,"ar"));
+
+      // ✅ تسجيل ماتشات جديدة: ممنوع اللاعب المحظور حاليًا
+      const playersForMatch = playersAll.filter(p => !isPlayerCurrentlyBanned(p));
+
+      // ✅ التحليلات/الإحصائيات: يعتمد على نهاية الفترة المختارة
+      const rangeEnd = getSelectedRangeEndDate();
+      const playersForAnalytics = playersAll.filter(p => shouldShowPlayerForSelectedRange(p, rangeEnd));
+
       const scoreSelectIds = ["winnerP1","winnerP2","loserP1","loserP2"];
-      const singleSelectIds = [
+      const analyticsSelectIds = [
         "playerDetailsSelect",
         "h2hP1",
         "h2hP2",
@@ -800,47 +1061,60 @@
       // تحديث الـ select بتاعة تسجيل الماتشات
       scoreSelectIds.forEach(id=>{
         const sel=$(id); if(!sel) return;
+        const current = sel.value;
         sel.innerHTML="";
         const opt=document.createElement("option");
         opt.value=""; opt.textContent="اختر لاعب...";
         sel.appendChild(opt);
-        players.forEach(p=>{
+
+        playersForMatch.forEach(p=>{
           const o=document.createElement("option");
           o.value=p.id; o.textContent=p.name;
           sel.appendChild(o);
         });
+
+        // حاول تحافظ على الاختيار لو مازال متاح
+        if(current && playersForMatch.some(p=>p.id===current)) sel.value=current;
       });
 
       // تحديث الـ select بتاعة التحليل والمواجهات
-      singleSelectIds.forEach(id=>{
+      analyticsSelectIds.forEach(id=>{
         const sel=$(id); if(!sel) return;
+        const current = sel.value;
         sel.innerHTML="";
         const opt=document.createElement("option");
         opt.value=""; opt.textContent="اختر لاعب...";
         sel.appendChild(opt);
-        players.forEach(p=>{
+
+        playersForAnalytics.forEach(p=>{
           const o=document.createElement("option");
           o.value=p.id; o.textContent=p.name;
           sel.appendChild(o);
         });
+
+        if(current && playersForAnalytics.some(p=>p.id===current)) sel.value=current;
+        else if(id === "playerDetailsSelect"){
+          // لو اللاعب المختار اختفى بسبب الحظر/الفترة، نخفي التحليل
+          updatePlayerDetailsUI();
+        }
       });
 
       // السطر النصي تحت قسم إدارة اللاعبين
       const info = $("playersListInfo");
       if(info){
-        if(players.length===0){
+        if(playersAll.length===0){
           info.textContent="لا يوجد لاعبين حتى الآن. أضِف بعض اللاعبين أولاً.";
         } else {
-          info.textContent="اللاعبون المسجّلون: " + players.map(p=>p.name).join("، ");
+          info.textContent="اللاعبون المسجّلون: " + playersAll.map(p=>p.name).join("، ");
         }
       }
 
-      // جدول اللاعبين (عرض + تعديل)
+      // جدول اللاعبين (عرض + تعديل + حظر/حذف)
       const tbody = $("playersTableBody");
       if(!tbody) return;
       tbody.innerHTML = "";
 
-      if(players.length===0){
+      if(playersAll.length===0){
         const tr = document.createElement("tr");
         const td = document.createElement("td");
         td.colSpan = 3;
@@ -850,7 +1124,7 @@
         return;
       }
 
-      players.forEach((p, idx)=>{
+      playersAll.forEach((p, idx)=>{
         const tr = document.createElement("tr");
 
         // رقم
@@ -858,31 +1132,47 @@
         tdIndex.textContent = idx + 1;
         tr.appendChild(tdIndex);
 
-        // اللاعب (صورة + اسم)
+        // اللاعب (صورة + اسم + حالة الحظر)
         const tdPlayer = document.createElement("td");
         const wrapper = document.createElement("div");
         wrapper.className = "player-cell";
+
         if(p.avatar){
           const img = document.createElement("img");
           img.src = p.avatar;
           img.className = "player-avatar";
           wrapper.appendChild(img);
         }
+
         const span = document.createElement("span");
         span.textContent = p.name;
         wrapper.appendChild(span);
+
+        // Badge للحالة
+        const bannedNow = isPlayerCurrentlyBanned(p);
+        const badge = document.createElement("span");
+        badge.style.fontSize = "0.75rem";
+        badge.style.padding = "2px 6px";
+        badge.style.borderRadius = "999px";
+        badge.style.border = "1px solid #ddd";
+        badge.style.marginRight = "6px";
+        badge.textContent = bannedNow ? "محظور" : "نشط";
+        wrapper.appendChild(badge);
+
         tdPlayer.appendChild(wrapper);
         tr.appendChild(tdPlayer);
 
         // الإجراءات
         const tdActions = document.createElement("td");
         if(isAdmin){
+          // تعديل الاسم
           const editBtn = document.createElement("button");
           editBtn.textContent = "✏️ تعديل الاسم";
           editBtn.className = "btn-small";
           editBtn.addEventListener("click", ()=>editPlayerName(p.id, p.name));
           tdActions.appendChild(editBtn);
 
+          // تعديل الصورة
           const imgBtn = document.createElement("button");
           imgBtn.textContent = "🖼 صورة";
           imgBtn.className = "btn-small";
@@ -899,19 +1189,46 @@
             }
             fileInput.value = "";
           });
-
           imgBtn.addEventListener("click", ()=>fileInput.click());
 
           tdActions.appendChild(imgBtn);
           tdActions.appendChild(fileInput);
+
+          // حظر / فك الحظر
+          const banBtn = document.createElement("button");
+          banBtn.className = "btn-small";
+          banBtn.style.marginRight = "4px";
+          banBtn.textContent = bannedNow ? "✅ فك الحظر" : "⛔ حظر";
+          banBtn.addEventListener("click", async ()=>{
+            if(bannedNow){
+              if(!confirm(`فك حظر اللاعب "${p.name}"؟`)) return;
+              await unbanPlayer(p.id);
+            } else {
+              if(!confirm(`حظر اللاعب "${p.name}"؟\n\nلن يظهر في تسجيل الماتشات الجديدة، ولن يظهر في الإحصائيات عندما تقع نهاية الفترة المختارة داخل فترة الحظر.`)) return;
+              await banPlayer(p.id);
+            }
+          });
+          tdActions.appendChild(banBtn);
+
+          // حذف لاعب (نهائي)
+          const delBtn = document.createElement("button");
+          delBtn.textContent = "🗑 حذف";
+          delBtn.className = "danger btn-small";
+          delBtn.addEventListener("click", ()=> deletePlayerAndMatches(p.id, p.name));
+          tdActions.appendChild(delBtn);
+
         } else {
           tdActions.textContent = "-";
         }
-        tr.appendChild(tdActions);
 
+        tr.appendChild(tdActions);
         tbody.appendChild(tr);
       });
+
+      // تحديث إمكانية البونص بعد تغيير القوائم
+      updateBonusEligibility();
     }
+
 
     function addPlayer(){
       if(!isAdmin || !db) return;
@@ -923,7 +1240,8 @@
       const finishAdd = (avatarData)=>{
         db.collection("players").add({
           name,
-          avatar: avatarData || null
+          avatar: avatarData || null,
+          banPeriods: []
         }).then(()=>{
           nameInput.value="";
           fileInput.value="";
@@ -971,7 +1289,92 @@
           });
       };
       reader.readAsDataURL(file);
+   
+    // ===== ADMIN: Delete Player (delete player + all matches retroactively) =====
+    async function deletePlayerAndMatches(playerId, playerName){
+      if(!isAdmin || !db) return;
+
+      const typed = prompt(
+        `⚠️ حذف لاعب نهائي\n\nاللاعب: ${playerName}\nسيتم حذف اللاعب + حذف كل الماتشات التي شارك فيها بأثر رجعي.\n\nاكتب DELETE للتأكيد:`
+      );
+      if(typed !== "DELETE") return;
+
+      const typedName = prompt(`اكتب اسم اللاعب بالضبط للتأكيد:\n${playerName}`);
+      if(typedName !== playerName) return;
+
+      // نجمع كل الماتشات التي شارك فيها اللاعب (حتى لو الدوكيومنتات القديمة لا تحتوي players[])
+      const snap = await db.collection("matches").get();
+      const toDelete = [];
+      snap.forEach(doc=>{
+        const d = doc.data() || {};
+        const w = d.winners || [];
+        const l = d.losers  || [];
+        const p = d.players || [];
+        if(w.includes(playerId) || l.includes(playerId) || p.includes(playerId)){
+          toDelete.push(doc.ref);
+        }
+      });
+
+      // حذف الماتشات في دفعات
+      let deletedCount = 0;
+      for(let i=0;i<toDelete.length;i+=400){
+        const batch = db.batch();
+        toDelete.slice(i,i+400).forEach(ref=> batch.delete(ref));
+        await batch.commit();
+        deletedCount += Math.min(400, toDelete.length - i);
+      }
+
+      // حذف اللاعب
+      await db.collection("players").doc(playerId).delete();
+
+      alert(`✅ تم حذف اللاعب "${playerName}" وحذف ${deletedCount} ماتش(ات) مرتبطة به.`);
+      // الـ onSnapshot هيتولى التحديث
     }
+
+    // ===== ADMIN: Ban / Unban =====
+    async function banPlayer(playerId){
+      if(!isAdmin || !db) return;
+      const ref = db.collection("players").doc(playerId);
+      const now = firebase.firestore.Timestamp.now();
+
+      await db.runTransaction(async (tx)=>{
+        const doc = await tx.get(ref);
+        if(!doc.exists) return;
+        const data = doc.data() || {};
+        const periods = (data.banPeriods || []).slice();
+
+        // لو بالفعل محظور حاليًا
+        if(periods.some(p => p && p.to == null)) return;
+
+        periods.push({ from: now, to: null });
+        tx.update(ref, { banPeriods: periods });
+      });
+    }
+
+    async function unbanPlayer(playerId){
+      if(!isAdmin || !db) return;
+      const ref = db.collection("players").doc(playerId);
+      const now = firebase.firestore.Timestamp.now();
+
+      await db.runTransaction(async (tx)=>{
+        const doc = await tx.get(ref);
+        if(!doc.exists) return;
+        const data = doc.data() || {};
+        const periods = (data.banPeriods || []).slice();
+
+        // اقفل أحدث فترة حظر مفتوحة
+        for(let i=periods.length-1;i>=0;i--){
+          if(periods[i] && periods[i].to == null){
+            periods[i] = { ...periods[i], to: now };
+            break;
+          }
+        }
+        tx.update(ref, { banPeriods: periods });
+      });
+    }
+
+
+      // ===== MATCHES ===== }
 
     // ===== MATCHES =====
     function addMatch(){
@@ -984,6 +1387,22 @@
       if(!w1||!w2||!l1||!l2){ alert("اختر كل اللاعبين."); return; }
       const chosen=[w1,w2,l1,l2];
       if(new Set(chosen).size<4){ alert("نفس اللاعب لا يمكن أن يكون في أكثر من مكان."); return; }
+
+      // ✅ ممنوع تسجيل ماتش جديد لو أي لاعب محظور حاليًا
+      const now = new Date();
+      for(const pid of chosen){
+        const pl = getPlayerById(pid);
+        if(pl && isPlayerCurrentlyBanned(pl)){
+          alert(`لا يمكن تسجيل الماتش لأن اللاعب "${pl.name}" محظور حاليًا.`);
+          return;
+        }
+      }
+
+      // تحديث حالة البونص قبل الحفظ
+      updateBonusEligibility();
+      if(bonusApplied && !bonusEligible){
+        bonusApplied = false; bonusValue = 0;
+      }
 
       let dateStr=$("matchDate").value;
       if(!dateStr){
@@ -998,34 +1417,19 @@
         date: dateStr,
         winners:[w1,w2],
         losers:[l1,l2],
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        players:[w1,w2,l1,l2],
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        bonusApplied: bonusApplied || false,
+        bonusValue: bonusApplied ? (Number(bonusValue)||0) : 0
       }).then(()=>{
         $("matchDate").value="";
         ["winnerP1","winnerP2","loserP1","loserP2"].forEach(id=>$(id).value="");
+        bonusApplied = false;
+        bonusValue = 0;
+        updateBonusEligibility();
       }).catch(err=>{
         console.error(err);
         alert("حصل خطأ أثناء حفظ الماتش.");
-      });
-    }
-
-    function undoLastMatch(){
-      if(!isAdmin || !db) return;
-      if(state.matches.length===0){ alert("لا يوجد ماتشات."); return; }
-      if(!confirm("متأكد ترجع عن آخر ماتش؟")) return;
-
-      // نحدّد آخر ماتش بالـ createdAt أو بالـ date
-      const sorted = [...state.matches].sort((a,b)=>{
-        const ta = a.createdAt && a.createdAt.seconds ? a.createdAt.seconds : 0;
-        const tb = b.createdAt && b.createdAt.seconds ? b.createdAt.seconds : 0;
-        if(tb!==ta) return tb-ta;
-        return (b.date||"").localeCompare(a.date||"");
-      });
-      const last = sorted[0];
-      if(!last){ alert("لا يوجد ماتش مناسب."); return; }
-
-      db.collection("matches").doc(last.id).delete().catch(err=>{
-        console.error(err);
-        alert("حصل خطأ أثناء حذف آخر ماتش.");
       });
     }
 
@@ -1059,7 +1463,280 @@
       });
     }
 
-    function updateMatchesLog(){
+    
+    // ===== CHAMPIONS LOG (Monthly podiums per selected year) =====
+    function updateChampionsLog(){
+      const yearVal = $("filterYear")?.value || "all";
+      const monthVal = $("filterMonth")?.value || "all";
+      const wrapper = $("championsLogWrapper");
+      const hint = $("championsLogHint");
+      const title = $("championsLogTitle");
+      const head = $("championsLogHead");
+      const body = $("championsLogBody");
+      const extra = $("championsLogExtra");
+      const card = $("championsLogCard");
+
+      if(!wrapper || !head || !body || !title || !hint) return;
+      if(!card) return;
+      if(extra) extra.innerHTML = "";
+
+      if(yearVal === "all"){
+        wrapper.style.display = "none";
+        hint.style.display = "block";
+        head.innerHTML = "";
+        body.innerHTML = "";
+        return;
+      }
+
+      const year = Number(yearVal);
+      hint.style.display = "none";
+      wrapper.style.display = "block";
+      title.textContent = `سجل الأبطال لسنة ${year} — الترتيب حسب عدد 🥇 ثم 🥈 ثم 🥉`;
+
+      const monthNames = ["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
+
+      // Helper: end-of-month date (used for ban visibility rule)
+      function endOfMonthDate(y, m){ // m:1-12
+        const d = new Date(y, m, 0); // last day of month
+        d.setHours(23,59,59,999);
+        return d;
+      }
+
+      function getLastMonthWithMatchesInYear(y){
+        let maxM = null;
+        state.matches.forEach(m=>{
+          if(!m.date) return;
+          const yy = Number(m.date.slice(0,4));
+          if(yy !== y) return;
+          const mm = Number(m.date.slice(5,7));
+          if(!maxM || mm > maxM) maxM = mm;
+        });
+        return maxM;
+      }
+
+      function computeChampionNameForMonth(y, m){
+        if(!y || !m) return null;
+        const mMatches = state.matches.filter(mm=>{
+          if(!mm.date) return false;
+          const yy = Number(mm.date.slice(0,4));
+          const mo = Number(mm.date.slice(5,7));
+          return yy===y && mo===m;
+        });
+        if(mMatches.length === 0) return null;
+        const rangeEnd = endOfMonthDate(y, m);
+
+        const rows = [];
+        state.players.forEach(p=>{
+          if(!shouldShowPlayerForSelectedRange(p, rangeEnd)) return;
+          const s = computePlayerFullStats(p.id, mMatches);
+          if(s.totalMatches === 0) return;
+          rows.push({
+            id: p.id,
+            name: p.name,
+            wins: s.wins || 0,
+            finalPoints: (s.points || 0) + (s.bonusNet || 0)
+          });
+        });
+        if(rows.length === 0) return null;
+        rows.sort((a,b)=>{
+          if(b.finalPoints !== a.finalPoints) return b.finalPoints - a.finalPoints;
+          if(b.wins !== a.wins) return b.wins - a.wins;
+          return (a.name||"").localeCompare(b.name||"", "ar");
+        });
+        return rows[0]?.name || null;
+      }
+
+      function computeChampionNameForYear(y){
+        if(!y) return null;
+        const yMatches = state.matches.filter(mm=>{
+          if(!mm.date) return false;
+          const yy = Number(mm.date.slice(0,4));
+          return yy===y;
+        });
+        if(yMatches.length === 0) return null;
+
+        const rangeEnd = endOfMonthDate(y, 12); // end of year
+
+        const rows = [];
+        state.players.forEach(p=>{
+          if(!shouldShowPlayerForSelectedRange(p, rangeEnd)) return;
+          const s = computePlayerFullStats(p.id, yMatches);
+          if((s.totalMatches || 0) === 0) return;
+          rows.push({
+            id: p.id,
+            name: p.name,
+            wins: s.wins || 0,
+            finalPoints: (s.points || 0) + (s.bonusNet || 0)
+          });
+        });
+        if(rows.length === 0) return null;
+        rows.sort((a,b)=>{
+          if(b.finalPoints !== a.finalPoints) return b.finalPoints - a.finalPoints;
+          if(b.wins !== a.wins) return b.wins - a.wins;
+          return (a.name||"").localeCompare(b.name||"", "ar");
+        });
+        return rows[0]?.name || null;
+      }
+
+      // Per-player summary
+      const byId = new Map();
+      state.players.forEach(p=>{
+        byId.set(p.id, {
+          id: p.id,
+          name: p.name,
+          first: 0,
+          second: 0,
+          third: 0,
+          best: null,
+          worst: null
+        });
+      });
+
+      // For each month, compute standings and podium
+      for(let month=1; month<=12; month++){
+        const mMatches = state.matches.filter(m=>{
+          if(!m.date) return false;
+          const y = Number(m.date.slice(0,4));
+          const mo = Number(m.date.slice(5,7));
+          return y===year && mo===month;
+        });
+
+        if(mMatches.length === 0) continue;
+
+        const rangeEnd = endOfMonthDate(year, month);
+
+        // Build monthly rows using same logic as leaderboard
+        const rows = [];
+        state.players.forEach(p=>{
+          if(!shouldShowPlayerForSelectedRange(p, rangeEnd)) return;
+          const s = computePlayerFullStats(p.id, mMatches);
+          if(s.totalMatches === 0) return;
+          rows.push({
+            id: p.id,
+            name: p.name,
+            wins: s.wins || 0,
+            finalPoints: (s.points || 0) + (s.bonusNet || 0)
+          });
+        });
+
+        if(rows.length === 0) continue;
+
+        // Sort: final points desc, wins desc, name asc
+        rows.sort((a,b)=>{
+          if(b.finalPoints !== a.finalPoints) return b.finalPoints - a.finalPoints;
+          if(b.wins !== a.wins) return b.wins - a.wins;
+          return (a.name||"").localeCompare(b.name||"", "ar");
+        });
+
+        // Update best/worst ranks for participants
+        rows.forEach((r, i)=>{
+          const rec = byId.get(r.id);
+          if(!rec) return;
+          const rank = i+1;
+          if(rec.best === null || rank < rec.best) rec.best = rank;
+          if(rec.worst === null || rank > rec.worst) rec.worst = rank;
+        });
+
+        // Podium counts
+        const top1 = rows[0]?.id || null;
+        const top2 = rows[1]?.id || null;
+        const top3 = rows[2]?.id || null;
+
+        if(top1 && byId.get(top1)) byId.get(top1).first += 1;
+        if(top2 && byId.get(top2)) byId.get(top2).second += 1;
+        if(top3 && byId.get(top3)) byId.get(top3).third += 1;
+      }
+
+      // Build final table rows (only players with at least one podium or at least one participation)
+      const summary = Array.from(byId.values()).filter(r=>{
+        const hasPodium = (r.first+r.second+r.third) > 0;
+        const hasRanks = r.best !== null;
+        return hasPodium || hasRanks;
+      });
+
+      // Sort by 🥇 then 🥈 then 🥉 then name
+      summary.sort((a,b)=>{
+        if(b.first !== a.first) return b.first - a.first;
+        if(b.second !== a.second) return b.second - a.second;
+        if(b.third !== a.third) return b.third - a.third;
+        return (a.name||"").localeCompare(b.name||"", "ar");
+      });
+
+      // Render
+      head.innerHTML = "";
+      body.innerHTML = "";
+
+      const trh = document.createElement("tr");
+      [
+        {label:"اللاعب", key:"name"},
+        {label:"🥇1", key:"first"},
+        {label:"🥈2", key:"second"},
+        {label:"🥉3", key:"third"},
+        {label:"أفضل مركز", key:"best"},
+        {label:"أسوأ مركز", key:"worst"},
+      ].forEach(c=>{
+        const th = document.createElement("th");
+        th.textContent = c.label;
+        trh.appendChild(th);
+      });
+      head.appendChild(trh);
+
+      if(summary.length === 0){
+        const tr = document.createElement("tr");
+        const td = document.createElement("td");
+        td.colSpan = 6;
+        td.textContent = "لا توجد بيانات كافية لهذه السنة.";
+        tr.appendChild(td);
+        body.appendChild(tr);
+
+        // Extra (title holders) based on filter end
+        if(extra){
+          const endM = (monthVal !== "all") ? Number(monthVal) : (getLastMonthWithMatchesInYear(year) || 12);
+          const prevYearChampion = computeChampionNameForYear(year-1);
+          const prevMonth = (endM === 1) ? {y: year-1, m: 12} : {y: year, m: endM-1};
+          const prevMonthChampion = computeChampionNameForMonth(prevMonth.y, prevMonth.m);
+
+          extra.innerHTML = `
+            <div>🏆 حامل لقب اخر سنة (<b>${year-1}</b>): <b>${prevYearChampion || "-"}</b></div>
+            <div>🏅 حامل لقب اخر شهر (<b>${monthNames[prevMonth.m-1]}</b> ${prevMonth.y}): <b>${prevMonthChampion || "-"}</b></div>
+          `;
+        }
+        return;
+      }
+
+      summary.forEach(r=>{
+        const tr = document.createElement("tr");
+
+        const nameTd = document.createElement("td");
+        nameTd.textContent = r.name || "-";
+        tr.appendChild(nameTd);
+
+        const td1 = document.createElement("td"); td1.textContent = r.first; tr.appendChild(td1);
+        const td2 = document.createElement("td"); td2.textContent = r.second; tr.appendChild(td2);
+        const td3 = document.createElement("td"); td3.textContent = r.third; tr.appendChild(td3);
+
+        const bestTd = document.createElement("td"); bestTd.textContent = (r.best===null? "-" : r.best); tr.appendChild(bestTd);
+        const worstTd= document.createElement("td"); worstTd.textContent= (r.worst===null? "-" : r.worst); tr.appendChild(worstTd);
+
+        body.appendChild(tr);
+      });
+
+      // Extra (title holders) based on filter end
+      if(extra){
+        const endM = (monthVal !== "all") ? Number(monthVal) : (getLastMonthWithMatchesInYear(year) || 12);
+        const prevYearChampion = computeChampionNameForYear(year-1);
+        const prevMonth = (endM === 1) ? {y: year-1, m: 12} : {y: year, m: endM-1};
+        const prevMonthChampion = computeChampionNameForMonth(prevMonth.y, prevMonth.m);
+
+        extra.innerHTML = `
+          <div>🏆 حامل لقب اخر سنة (<b>${year-1}</b>): <b>${prevYearChampion || "-"}</b></div>
+          <div>🏅 حامل لقب اخر شهر (<b>${monthNames[prevMonth.m-1]}</b> ${prevMonth.y}): <b>${prevMonthChampion || "-"}</b></div>
+        `;
+      }
+    }
+
+
+function updateMatchesLog(){
       const tbody = $("matchesLogBody");
       if(!tbody) return;
       tbody.innerHTML = "";
@@ -1089,7 +1766,8 @@
         const tr = document.createElement("tr");
 
         tr.appendChild(createCell(idx + 1));
-        tr.appendChild(createCell(m.date || "-"));
+        const dateText = (m.date || "-") + (m.bonusApplied ? ` 🎁+${Number(m.bonusValue||0)}` : "");
+        tr.appendChild(createCell(dateText));
         tr.appendChild(createPlayersListCell(m.winners || []));
         tr.appendChild(createPlayersListCell(m.losers || []));
 
@@ -1219,6 +1897,9 @@
 
       // نستخدم نفس منطق تحليل اللاعب الواحد لكل لاعب
       state.players.forEach(p => {
+        // ✅ إخفاء اللاعب من الإحصائيات لو نهاية الفترة المختارة تقع داخل فترة الحظر
+        if(!shouldShowPlayerForSelectedRange(p, getSelectedRangeEndDate())) return;
+
         const s = computePlayerFullStats(p.id, matches);
 
         // لو اللاعب ما لعبش ولا ماتش في الفترة دي، بنخفّيه من الجدول
@@ -1230,7 +1911,12 @@
           wins:     s.wins,
           losses:   s.losses,
           matches:  s.totalMatches,
-          points:   s.wins - s.losses,
+          basePoints: (s.wins - s.losses),
+          finalPoints: (s.wins - s.losses) + (s.bonusNet || 0),
+          points:   (s.wins - s.losses) + (s.bonusNet || 0),
+          bonusPlus: s.bonusPlus || 0,
+          bonusMinus: s.bonusMinus || 0,
+          bonusNet: s.bonusNet || 0,
           rate:     s.winRate,
           // الأيام اللي فيها 2 / 3 / 4+ فوز
           w2:       s.daysWin2,
@@ -1326,8 +2012,11 @@
     }
 
     // ===== PLAYER ANALYSIS (بفترة الفلتر) =====
+    
     function computePlayerFullStats(playerId, matches){
       let wins = 0, losses = 0;
+      let bonusPlus = 0, bonusMinus = 0;
+
       const dayMap = new Map();
       const teammateWin  = new Map(), teammateLose  = new Map();
       const opponentWin  = new Map(), opponentLose  = new Map();
@@ -1337,14 +2026,15 @@
         if(!dayMap.has(d)) dayMap.set(d,{w:0,l:0});
         const ds = dayMap.get(d);
 
-        const isW = m.winners.includes(playerId);
-        const isL = m.losers.includes(playerId);
+        const isW = (m.winners || []).includes(playerId);
+        const isL = (m.losers  || []).includes(playerId);
 
         if(isW){
           wins++; ds.w++;
+          if(m.bonusApplied){ bonusPlus += Number(m.bonusValue||0); }
 
           // زملاء الفوز
-          m.winners.forEach(pid=>{
+          (m.winners || []).forEach(pid=>{
             if(pid!==playerId)
               teammateWin.set(pid,(teammateWin.get(pid)||0)+1);
           });
@@ -1357,9 +2047,10 @@
 
         if(isL){
           losses++; ds.l++;
+          if(m.bonusApplied){ bonusMinus += Number(m.bonusValue||0); }
 
           // زملاء الخسارة
-          m.losers.forEach(pid=>{
+          (m.losers || []).forEach(pid=>{
             if(pid!==playerId)
               teammateLose.set(pid,(teammateLose.get(pid)||0)+1);
           });
@@ -1373,6 +2064,7 @@
 
       const total=wins+losses;
       const rate=total>0?(wins/total)*100:0;
+
       let dW2=0,dW3=0,dW4=0,dL2=0,dL3=0,dL4=0;
       dayMap.forEach(ds=>{
         if(ds.w===2)dW2++; else if(ds.w===3)dW3++; else if(ds.w>=4)dW4++;
@@ -1381,11 +2073,8 @@
 
       function best(map){
         let bestCount = 0;
-        // نحدد أكبر عدد أولاً
         map.forEach((c)=>{ if(c > bestCount) bestCount = c; });
-
-        if(bestCount === 0) return [];  // مفيش حد
-
+        if(bestCount === 0) return [];
         const result = [];
         map.forEach((c,id)=>{
           if(c === bestCount){
@@ -1397,7 +2086,7 @@
             });
           }
         });
-        return result; // قائمة بأكتر من لاعب لو متعادلين
+        return result;
       }
 
       return {
@@ -1405,12 +2094,17 @@
         losses,
         totalMatches: total,
         winRate: rate,
+        bonusPlus,
+        bonusMinus,
+        bonusNet: bonusPlus - bonusMinus,
+
         daysWin2: dW2,
         daysWin3: dW3,
         daysWin4plus: dW4,
         daysLose2: dL2,
         daysLose3: dL3,
         daysLose4plus: dL4,
+
         bestTeammateWin:  best(teammateWin),
         bestTeammateLose: best(teammateLose),
         bestOpponentWin:  best(opponentWin),
@@ -1430,6 +2124,13 @@
       const player=getPlayerById(id);
       if(!player){summary.textContent="لا يوجد لاعب بهذا المعرف.";box.style.display="none";return;}
 
+      // ✅ لو اللاعب محظور حسب نهاية الفترة المختارة، نخفي التحليل
+      if(!shouldShowPlayerForSelectedRange(player, getSelectedRangeEndDate())){
+        summary.textContent = `اللاعب "${player.name}" محظور في هذه الفترة حسب نهاية الفلتر.`;
+        box.style.display = "none";
+        return;
+      }
+
       const matches = getFilteredMatches();
       const s=computePlayerFullStats(id, matches);
 
@@ -1443,6 +2144,9 @@
       $("pTotalLosses").textContent=s.losses;
       $("pTotalMatches").textContent=s.totalMatches;
       $("pWinRate").textContent=s.winRate.toFixed(1)+"٪";
+      $("pBonusPlus").textContent = s.bonusPlus || 0;
+      $("pBonusMinus").textContent = s.bonusMinus || 0;
+      $("pBonusNet").textContent = s.bonusNet || 0;
 
       $("pDaysWin2").textContent=s.daysWin2;
       $("pDaysWin3").textContent=s.daysWin3;
@@ -1497,6 +2201,7 @@
       if(reset) $("h2hSummary").textContent='اختر لاعبين ثم اضغط "تحليل المواجهة".';
     }
 
+
 function analyzeHeadToHead(){
   const p1Str = $("h2hP1").value;
   const p2Str = $("h2hP2").value;
@@ -1527,6 +2232,10 @@ function analyzeHeadToHead(){
   let vs = 0, p1W = 0, p2W = 0;
   let team = 0, teamWins = 0, teamLosses = 0;
 
+  // 🆕 transfers
+  let baseNet = 0;   // + يعني اللاعب 1 حصل على نقاط من اللاعب 2
+  let bonusNet = 0;  // + يعني اللاعب 1 حصل على بونص من اللاعب 2
+
   matches.forEach(m=>{
     const w = m.winners || [];
     const l = m.losers  || [];
@@ -1547,8 +2256,18 @@ function analyzeHeadToHead(){
     // ضد بعض
     if( (p1Win && p2Lose) || (p2Win && p1Lose) ){
       vs++;
-      if(p1Win && p2Lose) p1W++;
-      if(p2Win && p1Lose) p2W++;
+      const b = (m.bonusApplied ? Number(m.bonusValue||0) : 0);
+
+      if(p1Win && p2Lose){
+        p1W++;
+        baseNet += 1;
+        bonusNet += b;
+      }
+      if(p2Win && p1Lose){
+        p2W++;
+        baseNet -= 1;
+        bonusNet -= b;
+      }
     }
   });
 
@@ -1579,8 +2298,18 @@ function analyzeHeadToHead(){
     html += `• خسارة معًا: <strong>${teamLoseRate.toFixed(1)}٪</strong> (${teamLosses} من ${team} ماتشات)<br/>`;
   }
 
+  // 🆕 توسيع المواجهات المباشرة (بونص + نقاط أساسية)
+  html += `<br/><b>🎁 البونص (محسوب منفصل)</b><br/>`;
+  html += `• حصل اللاعب 1 من اللاعب 2 على بونص: <strong>${bonusNet}</strong><br/>`;
+  html += `• حصل اللاعب 2 من اللاعب 1 على بونص: <strong>${-bonusNet}</strong><br/>`;
+
+  html += `<br/><b>🎯 النقاط الأساسية (بدون بونص)</b><br/>`;
+  html += `• حصل اللاعب 1 من اللاعب 2 على نقاط: <strong>${baseNet}</strong><br/>`;
+  html += `• حصل اللاعب 2 من اللاعب 1 على نقاط: <strong>${-baseNet}</strong><br/>`;
+
   out.innerHTML = html;
 }
+
 
     // ===== TEAMS H2H (2 ضد 2) =====
     function normalizeTeamId(p1, p2){
@@ -1691,6 +2420,12 @@ function analyzeHeadToHead(){
     function init(){
       initFirebase();
       updateAdminUI();
+      updateBonusEligibility();
+      ["winnerP1","winnerP2","loserP1","loserP2"].forEach(id=>{
+        const el=$(id);
+        if(el) el.addEventListener("change", updateBonusEligibility);
+      });
+
 
       // ✅ ضبط الفلتر الافتراضي على "الشهر الحالي"
       const now = new Date();
@@ -1724,7 +2459,7 @@ function analyzeHeadToHead(){
       // باقي اللستينرز زي ما هي
       $("addPlayerBtn").addEventListener("click",addPlayer);
       $("addMatchBtn").addEventListener("click",addMatch);
-      $("undoLastMatchBtn").addEventListener("click",undoLastMatch);
+      $("bonusBtn").addEventListener("click",toggleBonus);
       $("resetAllBtn").addEventListener("click",resetAll);
       $("playerDetailsSelect").addEventListener("change",updatePlayerDetailsUI);
       $("h2hAnalyzeBtn").addEventListener("click",analyzeHeadToHead);
@@ -1738,17 +2473,21 @@ function analyzeHeadToHead(){
       }
 
       $("filterYear").addEventListener("change",()=>{
+        updatePlayersUI();
         updateLeaderboard();
         if($("playerDetailsSelect").value) updatePlayerDetailsUI();
         if($("h2hP1").value && $("h2hP2").value) analyzeHeadToHead(); 
         else updateHeadToHeadUI(true);
 
         updateMatchesLog();
+        updateChampionsLog();
+        updateChampionsLog();
         // ⭐ رجّع نص ملخص مواجهات الفرق للوضع الافتراضي
         resetTeamsH2HSummary();
       });
 
       $("filterMonth").addEventListener("change",()=>{
+        updatePlayersUI();
         updateLeaderboard();
         if($("playerDetailsSelect").value) updatePlayerDetailsUI();
         if($("h2hP1").value && $("h2hP2").value) analyzeHeadToHead(); 
