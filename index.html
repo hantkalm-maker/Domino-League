@@ -1604,6 +1604,8 @@
         id: p.id,
         name: p.name,
         wins: s.wins || 0,
+        winRate: (s.totalMatches ? ((s.wins||0) / (s.totalMatches||0)) : 0),
+        totalMatches: s.totalMatches || 0,
         finalPoints: (s.points || 0) + (s.bonusNet || 0)
       });
     });
@@ -1611,7 +1613,10 @@
 
     rows.sort((a,b)=>{
       if(b.finalPoints !== a.finalPoints) return b.finalPoints - a.finalPoints;
+      // tie-breaks: win rate -> wins -> total matches -> name
+      if((b.winRate || 0) !== (a.winRate || 0)) return (b.winRate || 0) - (a.winRate || 0);
       if(b.wins !== a.wins) return b.wins - a.wins;
+      if((b.totalMatches || 0) !== (a.totalMatches || 0)) return (b.totalMatches || 0) - (a.totalMatches || 0);
       return (a.name||"").localeCompare(b.name||"", "ar");
     });
 
@@ -1639,6 +1644,8 @@
         id: p.id,
         name: p.name,
         wins: s.wins || 0,
+        winRate: (s.totalMatches ? ((s.wins||0) / (s.totalMatches||0)) : 0),
+        totalMatches: s.totalMatches || 0,
         finalPoints: (s.points || 0) + (s.bonusNet || 0)
       });
     });
@@ -1646,7 +1653,10 @@
 
     rows.sort((a,b)=>{
       if(b.finalPoints !== a.finalPoints) return b.finalPoints - a.finalPoints;
+      // tie-breaks: win rate -> wins -> total matches -> name
+      if((b.winRate || 0) !== (a.winRate || 0)) return (b.winRate || 0) - (a.winRate || 0);
       if(b.wins !== a.wins) return b.wins - a.wins;
+      if((b.totalMatches || 0) !== (a.totalMatches || 0)) return (b.totalMatches || 0) - (a.totalMatches || 0);
       return (a.name||"").localeCompare(b.name||"", "ar");
     });
 
@@ -1709,6 +1719,8 @@
         id: p.id,
         name: p.name,
         wins: s.wins || 0,
+        winRate: (s.totalMatches ? ((s.wins||0) / (s.totalMatches||0)) : 0),
+        totalMatches: s.totalMatches || 0,
         finalPoints: (s.points || 0) + (s.bonusNet || 0)
       });
     });
@@ -1716,7 +1728,10 @@
 
     rows.sort((a,b)=>{
       if(b.finalPoints !== a.finalPoints) return b.finalPoints - a.finalPoints;
+      // tie-breaks: win rate -> wins -> total matches -> name
+      if((b.winRate || 0) !== (a.winRate || 0)) return (b.winRate || 0) - (a.winRate || 0);
       if(b.wins !== a.wins) return b.wins - a.wins;
+      if((b.totalMatches || 0) !== (a.totalMatches || 0)) return (b.totalMatches || 0) - (a.totalMatches || 0);
       return (a.name||"").localeCompare(b.name||"", "ar");
     });
 
