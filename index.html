@@ -692,7 +692,7 @@
 
 
 // ===== UI Settings: Theme + Language =====
-const I18N = {
+var I18N = {
   ar: {
     // Header
     pageTitle: "برنامج ترتيب الدومينو - العشرة (151)",
@@ -1006,7 +1006,7 @@ function setLang(lang) {
 
 function tr(key) {
   const lang = getLang();
-  return (I18N[lang] && I18N[lang][key]) || (I18N.ar[key] || key);
+  return (window.I18N && I18N[lang] && I18N[lang][key]) || (window.I18N && I18N.ar && I18N.ar[key]) || key;
 }
 
 function applyLang(lang) {
