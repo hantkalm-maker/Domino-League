@@ -1514,6 +1514,34 @@
 
   const monthNames = ["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
 
+  // ===== Robust date helpers (string / Firestore Timestamp / Date) =====
+  function matchToDate(mm){
+    const d = mm?.date;
+    if(!d) return null;
+    if(d instanceof Date) return d;
+    // Firestore Timestamp (compat)
+    if(typeof d === "object" && typeof d.toDate === "function") return d.toDate();
+    if(typeof d === "string"){
+      // supports YYYY-MM-DD or ISO strings
+      const parsed = new Date(d);
+      return Number.isNaN(parsed.getTime()) ? null : parsed;
+    }
+    // numeric millis
+    if(typeof d === "number"){
+      const parsed = new Date(d);
+      return Number.isNaN(parsed.getTime()) ? null : parsed;
+    }
+    return null;
+  }
+
+  function matchYearMonth(mm){
+    const dt = matchToDate(mm);
+    if(!dt) return null;
+    return { y: dt.getFullYear(), m: dt.getMonth() + 1 };
+  }
+
+  
+
   // Helper: end-of-month date (used for ban visibility rule)
   function endOfMonthDate(y, m){ // m:1-12
     const d = new Date(y, m, 0); // last day of month m
@@ -1531,11 +1559,9 @@
 
   function hasMatchesInMonth(y, m){
     return state.matches.some(mm=>{
-      if(!mm.date) return false;
-      if(typeof mm.date !== "string") return false;
-      const yy = Number(mm.date.slice(0,4));
-      const mo = Number(mm.date.slice(5,7));
-      return yy===y && mo===m;
+      const ym = matchYearMonth(mm);
+      if(!ym) return false;
+      return ym.y===y && ym.m===m;
     });
   }
 
@@ -1561,10 +1587,9 @@
   function computeChampionNameForMonth(y, m){
     if(!y || !m) return null;
     const mMatches = state.matches.filter(mm=>{
-      if(!mm.date || typeof mm.date !== "string") return false;
-      const yy = Number(mm.date.slice(0,4));
-      const mo = Number(mm.date.slice(5,7));
-      return yy===y && mo===m;
+      const ym = matchYearMonth(mm);
+      if(!ym) return false;
+      return ym.y===y && ym.m===m;
     });
     if(mMatches.length === 0) return null;
 
@@ -1597,9 +1622,9 @@
   function computeChampionNameForYear(y){
     if(!y) return null;
     const yMatches = state.matches.filter(mm=>{
-      if(!mm.date || typeof mm.date !== "string") return false;
-      const yy = Number(mm.date.slice(0,4));
-      return yy===y;
+      const ym = matchYearMonth(mm);
+      if(!ym) return false;
+      return ym.y===y;
     });
     if(yMatches.length === 0) return null;
 
@@ -1667,10 +1692,9 @@
 
   for(const month of completedMonthsWithData){
     const mMatches = state.matches.filter(mm=>{
-      if(!mm.date || typeof mm.date !== "string") return false;
-      const yy = Number(mm.date.slice(0,4));
-      const mo = Number(mm.date.slice(5,7));
-      return yy===year && mo===month;
+      const ym = matchYearMonth(mm);
+      if(!ym) return false;
+      return ym.y===year && ym.m===month;
     });
     if(mMatches.length === 0) continue;
 
