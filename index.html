@@ -1630,7 +1630,12 @@
 
   // 1) تحقق هل يوجد "شهر مكتمل" داخل السنة المختارة وله مباريات
   const completedMonthsWithData = [];
+  const monthVal = $("filterMonth") ? $("filterMonth").value : "all";
+  const maxMonthCutoff = (monthVal !== "all") ? Number(monthVal) : 12;
+
   for(let m=1; m<=12; m++){
+    // لو المستخدم محدد شهر، نعرض/نحسب الشهور المكتملة حتى هذا الشهر فقط (شامل الشهر نفسه)
+    if(m > maxMonthCutoff) continue;
     if(!isMonthCompleted(year, m)) continue;
     if(!hasMatchesInMonth(year, m)) continue;
     completedMonthsWithData.push(m);
@@ -1711,8 +1716,17 @@
 
   // build summary
   let summary = Array.from(byId.values()).map(r=>{
-    const best = (r.ranks.length ? Math.min(...r.ranks) : null);
-    const worst = (r.ranks.length ? Math.max(...r.ranks) : null);
+    let best = (r.ranks.length ? Math.min(...r.ranks) : null);
+    let worst = (r.ranks.length ? Math.max(...r.ranks) : null);
+
+    // Safety: لو عنده مرات مركز أول/ثاني/ثالث لازم ينعكس على أفضل مركز (حتى لو حصل أي خلل في ranks)
+    if(r.first > 0) best = (best == null ? 1 : Math.min(best, 1));
+    else if(r.second > 0) best = (best == null ? 2 : Math.min(best, 2));
+    else if(r.third > 0) best = (best == null ? 3 : Math.min(best, 3));
+
+    // Safety: لو مفيش ranks لأي سبب، خلي الأسوأ على الأقل 3 لو عنده ميدالية
+    if(worst == null && (r.first > 0 || r.second > 0 || r.third > 0)) worst = 3;
+
     return { ...r, best, worst };
   }).filter(r=>{
     // يظهر لو شارك في أي شهر داخل السنة (لديه ranks)
