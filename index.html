@@ -1630,8 +1630,7 @@
 
   // 1) تحقق هل يوجد "شهر مكتمل" داخل السنة المختارة وله مباريات
   const completedMonthsWithData = [];
-  const monthVal = $("filterMonth") ? $("filterMonth").value : "all";
-  const maxMonthCutoff = (monthVal !== "all") ? Number(monthVal) : 12;
+    const maxMonthCutoff = (monthVal !== "all") ? Number(monthVal) : 12;
 
   for(let m=1; m<=12; m++){
     // لو المستخدم محدد شهر، نعرض/نحسب الشهور المكتملة حتى هذا الشهر فقط (شامل الشهر نفسه)
