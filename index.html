@@ -692,7 +692,7 @@
 
 
 // ===== UI Settings: Theme + Language =====
-var I18N = {
+const I18N = {
   ar: {
     // Header
     pageTitle: "برنامج ترتيب الدومينو - العشرة (151)",
@@ -774,7 +774,7 @@ var I18N = {
     // Champions log
     championsLogHint: "اختر سنة محددة لعرض سجل أبطال الشهور (مثل سجل الدوري الإنجليزي).",
     noCompletedMonths: "لا يوجد شهور مكتملة داخل الفترة المختارة.",
-    noCompletedMonthsInYear: tr("noCompletedMonthsInYear"),
+    noCompletedMonthsInYear: t("noCompletedMonthsInYear"),
     championsLogTitleTpl: "سجل الأبطال لسنة {year} — يمكن إعادة الترتيب من رؤوس الأعمدة",
     first: "الأول",
     second: "الثاني",
@@ -1006,8 +1006,13 @@ function setLang(lang) {
 
 function tr(key) {
   const lang = getLang();
-  return (window.I18N && I18N[lang] && I18N[lang][key]) || (window.I18N && I18N.ar && I18N.ar[key]) || key;
+  return (I18N[lang] && I18N[lang][key]) || (I18N.ar[key] || key);
 }
+
+function t(key){
+  return tr(key);
+}
+
 
 function applyLang(lang) {
   const html = document.documentElement;
@@ -1015,15 +1020,15 @@ function applyLang(lang) {
   html.dir = (lang === "ar") ? "rtl" : "ltr";
 
   // Page title + header
-  document.title = tr("pageTitle");
+  document.title = t("pageTitle");
   const titleEl = document.getElementById("appTitle");
-  if (titleEl) titleEl.textContent = tr("headerTitle");
+  if (titleEl) titleEl.textContent = t("headerTitle");
 
   const sub = document.getElementById("subtitleRule");
-  if (sub) sub.textContent = tr("subtitleRule");
+  if (sub) sub.textContent = t("subtitleRule");
 
   const langLabel = document.getElementById("languageLabel");
-  if (langLabel) langLabel.textContent = tr("languageLabel");
+  if (langLabel) langLabel.textContent = t("languageLabel");
 
   // Section headings
   const sectionIds = [
@@ -1056,42 +1061,42 @@ function applyLang(lang) {
 
   // Inputs/buttons
   const playerNameInput = document.getElementById("playerName");
-  if (playerNameInput) playerNameInput.placeholder = tr("newPlayerNamePh");
+  if (playerNameInput) playerNameInput.placeholder = t("newPlayerNamePh");
 
   const addPlayerBtn = document.getElementById("addPlayerBtn");
-  if (addPlayerBtn) addPlayerBtn.textContent = tr("addPlayer");
+  if (addPlayerBtn) addPlayerBtn.textContent = t("addPlayer");
 
   const togglePlayersBtn = document.getElementById("togglePlayersListBtn");
-  if (togglePlayersBtn) togglePlayersBtn.textContent = (playersListVisible ? tr("hidePlayersList") : tr("showPlayersList"));
+  if (togglePlayersBtn) togglePlayersBtn.textContent = (playersListVisible ? t("hidePlayersList") : t("showPlayersList"));
 
   const addMatchBtn = document.getElementById("addMatchBtn");
-  if (addMatchBtn) addMatchBtn.textContent = tr("saveMatch");
+  if (addMatchBtn) addMatchBtn.textContent = t("saveMatch");
 
   const toggleMatchesBtn = document.getElementById("toggleMatchesLogBtn");
-  if (toggleMatchesBtn) toggleMatchesBtn.textContent = (matchesLogVisible ? tr("hideLog") : tr("showLog"));
+  if (toggleMatchesBtn) toggleMatchesBtn.textContent = (matchesLogVisible ? t("hideLog") : t("showLog"));
 
 const lbToggleBtn = document.getElementById("leaderboardToggleViewBtn");
-if (lbToggleBtn) lbToggleBtn.textContent = (leaderboardViewMode === "compact") ? tr("detailedView") : tr("compactView");
+if (lbToggleBtn) lbToggleBtn.textContent = (leaderboardViewMode === "compact") ? t("detailedView") : t("compactView");
 
   const h2hBtn = document.getElementById("h2hAnalyzeBtn");
-  if (h2hBtn) h2hBtn.textContent = tr("analyze");
+  if (h2hBtn) h2hBtn.textContent = t("analyze");
 
   const h2hTeamsBtn = document.getElementById("h2hTeamsAnalyzeBtn");
-  if (h2hTeamsBtn) h2hTeamsBtn.textContent = tr("analyze");
+  if (h2hTeamsBtn) h2hTeamsBtn.textContent = t("analyze");
 
   const enableAdminBtn = document.getElementById("enableAdminBtn");
-  if (enableAdminBtn) enableAdminBtn.textContent = tr("enableAdmin");
+  if (enableAdminBtn) enableAdminBtn.textContent = t("enableAdmin");
   const disableAdminBtn = document.getElementById("disableAdminBtn");
-  if (disableAdminBtn) disableAdminBtn.textContent = tr("disableAdmin");
+  if (disableAdminBtn) disableAdminBtn.textContent = t("disableAdmin");
 
   const resetAllBtn = document.getElementById("resetAllBtn");
-  if (resetAllBtn) resetAllBtn.textContent = tr("resetAll");
+  if (resetAllBtn) resetAllBtn.textContent = t("resetAll");
   const backupBtn = document.getElementById("backupBtn");
-  if (backupBtn) backupBtn.textContent = tr("backupSoon");
+  if (backupBtn) backupBtn.textContent = t("backupSoon");
   const importBtn = document.getElementById("importBtn");
-  if (importBtn) importBtn.textContent = tr("importSoon");
+  if (importBtn) importBtn.textContent = t("importSoon");
   const exportBtn = document.getElementById("exportBtn");
-  if (exportBtn) exportBtn.textContent = tr("exportSoon");
+  if (exportBtn) exportBtn.textContent = t("exportSoon");
 
   // Static helper texts by id
   const idTextKeys = [
@@ -1126,12 +1131,12 @@ thMap.forEach(([id,key])=>{
   const fy = document.getElementById("filterYear");
   if (fy){
     const optAll = fy.querySelector('option[value="all"]');
-    if (optAll) optAll.textContent = tr("allYears");
+    if (optAll) optAll.textContent = t("allYears");
   }
   const fm = document.getElementById("filterMonth");
   if (fm){
     const optAll = fm.querySelector('option[value="all"]');
-    if (optAll) optAll.textContent = tr("allMonths");
+    if (optAll) optAll.textContent = t("allMonths");
     // month options 1..12
     for(let m=1;m<=12;m++){
       const opt = fm.querySelector(`option[value="${m}"]`);
@@ -1141,7 +1146,7 @@ thMap.forEach(([id,key])=>{
 
   // Champions hint
   const champHint = document.getElementById("championsLogHint");
-  if (champHint) champHint.textContent = tr("championsLogHint");
+  if (champHint) champHint.textContent = t("championsLogHint");
 
   // Re-render any dynamic sections that have language-dependent labels
   try { updatePlayersUI(); } catch(e){}
@@ -1158,7 +1163,7 @@ function getTheme() {
 function applyTheme(theme) {
   document.body.classList.toggle("dark", theme === "dark");
   const btn = document.getElementById("themeToggleBtn");
-  if (btn) btn.textContent = (theme === "dark") ? tr("lightMode") : tr("darkMode");
+  if (btn) btn.textContent = (theme === "dark") ? t("lightMode") : t("darkMode");
 }
 function toggleTheme() {
   const next = (getTheme() === "dark") ? "light" : "dark";
@@ -1209,7 +1214,7 @@ function toggleTheme() {
         bonusValue = 0;
         btn.disabled = true;
         btn.classList.remove("bonus-ready");
-        btn.textContent = tr("bonusUnavailable");
+        btn.textContent = t("bonusUnavailable");
         return;
       }
 
@@ -1223,7 +1228,7 @@ function toggleTheme() {
         bonusValue = 0;
         btn.disabled = true;
         btn.classList.remove("bonus-ready");
-        btn.textContent = tr("bonusUnavailable");
+        btn.textContent = t("bonusUnavailable");
         return;
       }
 
@@ -1233,7 +1238,7 @@ function toggleTheme() {
         bonusValue = 0;
         btn.disabled = true;
         btn.classList.remove("bonus-ready");
-        btn.textContent = tr("bonusUnavailable");
+        btn.textContent = t("bonusUnavailable");
         return;
       }
 
@@ -1243,7 +1248,7 @@ function toggleTheme() {
         bonusValue = 0;
         btn.disabled = true;
         btn.classList.remove("bonus-ready");
-        btn.textContent = tr("bonusUnavailable");
+        btn.textContent = t("bonusUnavailable");
         return;
       }
 
@@ -1265,7 +1270,7 @@ function toggleTheme() {
         bonusValue = 0;
         btn.disabled = true;
         btn.classList.remove("bonus-ready");
-        btn.textContent = tr("bonusUnavailable");
+        btn.textContent = t("bonusUnavailable");
         return;
       }
 
@@ -1275,9 +1280,9 @@ function toggleTheme() {
 
       // لو لسه مش متفعل، نعرض القيمة المقترحة
       if(!bonusApplied){
-        btn.textContent = `${tr("bonusAdd")} (+${bonusSuggested})`;
+        btn.textContent = `${t("bonusAdd")} (+${bonusSuggested})`;
       }else{
-        btn.textContent = `${tr("bonusEnabled")} (+${bonusValue})`;
+        btn.textContent = `${t("bonusEnabled")} (+${bonusValue})`;
       }
     }
 
@@ -1305,31 +1310,31 @@ function toggleTheme() {
     function getLeaderboardColumns(){
       if(leaderboardViewMode === "compact"){
         return [
-          {key:"rank",   label:tr("rank")},
-          {key:"name",   label:tr("player")},
-          {key:"points", label:tr("points")},
-          {key:"bonusNet", label:tr("bonus")},
-          {key:"wins",   label:tr("wins")},
-          {key:"losses", label:tr("losses")},
-          {key:"matches",label:tr("matches")},
-          {key:"rate",   label:tr("winRate")}
+          {key:"rank",   label:t("rank")},
+          {key:"name",   label:t("player")},
+          {key:"points", label:t("points")},
+          {key:"bonusNet", label:t("bonus")},
+          {key:"wins",   label:t("wins")},
+          {key:"losses", label:t("losses")},
+          {key:"matches",label:t("matches")},
+          {key:"rate",   label:t("winRate")}
         ];
       } else {
         return [
-          {key:"rank",   label:tr("rank")},
-          {key:"name",   label:tr("player")},
-          {key:"points", label:tr("points")},
-          {key:"bonusNet", label:tr("bonus")},
-          {key:"wins",   label:tr("wins")},
-          {key:"losses", label:tr("losses")},
-          {key:"matches",label:tr("matches")},
-          {key:"rate",   label:tr("winRate")},
-          {key:"w2",     label:tr("w2")},
-          {key:"w3",     label:tr("w3")},
-          {key:"w4",     label:tr("w4")},
-          {key:"l2",     label:tr("l2")},
-          {key:"l3",     label:tr("l3")},
-          {key:"l4",     label:tr("l4")}
+          {key:"rank",   label:t("rank")},
+          {key:"name",   label:t("player")},
+          {key:"points", label:t("points")},
+          {key:"bonusNet", label:t("bonus")},
+          {key:"wins",   label:t("wins")},
+          {key:"losses", label:t("losses")},
+          {key:"matches",label:t("matches")},
+          {key:"rate",   label:t("winRate")},
+          {key:"w2",     label:t("w2")},
+          {key:"w3",     label:t("w3")},
+          {key:"w4",     label:t("w4")},
+          {key:"l2",     label:t("l2")},
+          {key:"l3",     label:t("l3")},
+          {key:"l4",     label:t("l4")}
         ];
       }
     }
@@ -1486,7 +1491,7 @@ function toggleTheme() {
 
       $("enableAdminBtn").style.display = isAdmin ? "none" : "inline-block";
       $("disableAdminBtn").style.display = isAdmin ? "inline-block" : "none";
-      $("adminStatusText").textContent = isAdmin ? tr("adminEnabled") : tr("adminViewOnly");
+      $("adminStatusText").textContent = isAdmin ? t("adminEnabled") : t("adminViewOnly");
 
       // علشان أزرار تعديل اللاعبين تظهر/تختفي حسب وضع المدير
       updateMatchesLog();
@@ -1518,7 +1523,7 @@ function toggleTheme() {
       if(!wrapper || !btn) return;
       matchesLogVisible = !matchesLogVisible;
       wrapper.style.display = matchesLogVisible ? "" : "none";
-      btn.textContent = matchesLogVisible ? tr("hideLog") : tr("showLog");
+      btn.textContent = matchesLogVisible ? t("hideLog") : t("showLog");
     }
 
     function togglePlayersList(){
@@ -1527,7 +1532,7 @@ function toggleTheme() {
       if(!wrapper || !btn) return;
       playersListVisible = !playersListVisible;
       wrapper.style.display = playersListVisible ? "" : "none";
-      btn.textContent = playersListVisible ? tr("hidePlayersList") : tr("showPlayersList");
+      btn.textContent = playersListVisible ? t("hidePlayersList") : t("showPlayersList");
       }
 
     // ===== PLAYERS =====
@@ -1634,7 +1639,7 @@ function toggleTheme() {
         const current = sel.value;
         sel.innerHTML="";
         const opt=document.createElement("option");
-        opt.value=""; opt.textContent=tr("selectPlayer");
+        opt.value=""; opt.textContent=t("selectPlayer");
         sel.appendChild(opt);
 
         playersForMatch.forEach(p=>{
@@ -1653,7 +1658,7 @@ function toggleTheme() {
         const current = sel.value;
         sel.innerHTML="";
         const opt=document.createElement("option");
-        opt.value=""; opt.textContent=tr("selectPlayer");
+        opt.value=""; opt.textContent=t("selectPlayer");
         sel.appendChild(opt);
 
         playersForAnalytics.forEach(p=>{
@@ -1673,7 +1678,7 @@ function toggleTheme() {
       const info = $("playersListInfo");
       if(info){
         if(playersAll.length===0){
-          info.textContent=tr("noPlayersYet");
+          info.textContent=t("noPlayersYet");
         } else {
           info.textContent="اللاعبون المسجّلون: " + playersAll.map(p=>p.name).join("، ");
         }
@@ -1688,7 +1693,7 @@ function toggleTheme() {
         const tr = document.createElement("tr");
         const td = document.createElement("td");
         td.colSpan = 3;
-        td.textContent = tr("noPlayersYetShort");
+        td.textContent = t("noPlayersYetShort");
         tr.appendChild(td);
         tbody.appendChild(tr);
         return;
@@ -1726,7 +1731,7 @@ function toggleTheme() {
         badge.style.borderRadius = "999px";
         badge.style.border = "1px solid #ddd";
         badge.style.marginRight = "6px";
-        badge.textContent = bannedNow ? tr("statusBanned") : tr("statusActive");
+        badge.textContent = bannedNow ? t("statusBanned") : t("statusActive");
         wrapper.appendChild(badge);
 
         tdPlayer.appendChild(wrapper);
@@ -1737,14 +1742,14 @@ function toggleTheme() {
         if(isAdmin){
           // تعديل الاسم
           const editBtn = document.createElement("button");
-          editBtn.textContent = tr("editName");
+          editBtn.textContent = t("editName");
           editBtn.className = "btn-small";
           editBtn.addEventListener("click", ()=>editPlayerName(p.id, p.name));
           tdActions.appendChild(editBtn);
 
           // تعديل الصورة
           const imgBtn = document.createElement("button");
-          imgBtn.textContent = tr("avatarBtn");
+          imgBtn.textContent = t("avatarBtn");
           imgBtn.className = "btn-small";
           imgBtn.style.marginRight = "4px";
 
@@ -1768,7 +1773,7 @@ function toggleTheme() {
           const banBtn = document.createElement("button");
           banBtn.className = "btn-small";
           banBtn.style.marginRight = "4px";
-          banBtn.textContent = bannedNow ? tr("unbanBtn") : tr("banBtn");
+          banBtn.textContent = bannedNow ? t("unbanBtn") : t("banBtn");
           banBtn.addEventListener("click", async ()=>{
             if(bannedNow){
               if(!confirm(`فك حظر اللاعب "${p.name}"؟`)) return;
@@ -1782,13 +1787,13 @@ function toggleTheme() {
 
           // حذف لاعب (نهائي)
           const delBtn = document.createElement("button");
-          delBtn.textContent = tr("deleteBtn");
+          delBtn.textContent = t("deleteBtn");
           delBtn.className = "danger btn-small";
           delBtn.addEventListener("click", ()=> deletePlayerAndMatches(p.id, p.name));
           tdActions.appendChild(delBtn);
 
         } else {
-          tdActions.textContent = tr("noneDash");
+          tdActions.textContent = t("noneDash");
         }
 
         tr.appendChild(tdActions);
@@ -2242,11 +2247,11 @@ function toggleTheme() {
   hint.style.display = "none";
   wrapper.style.display = "block";
   const championsEmptyMessage = noCompletedMonths
-    ? tr("noCompletedMonthsInYear")
+    ? t("noCompletedMonthsInYear")
     : (getLang()==="en" ? "Not enough data for this year." : "لا توجد بيانات كافية لهذه السنة.");
 
   // العنوان
-  title.textContent = tr("championsLogTitleTpl").replace("{year}", year);
+  title.textContent = t("championsLogTitleTpl").replace("{year}", year);
 
   // 2) تجميع بيانات الأبطال + (أفضل/أسوأ مركز) بطريقة دقيقة
   const byId = new Map();
@@ -2373,13 +2378,13 @@ function toggleTheme() {
   body.innerHTML = "";
 
   const columns = [
-    {label: tr("rank"),      key:"rank",  sortable:false},
-    {label: tr("player"),    key:"name",  sortable:false},
-    {label: tr("first"),     key:"first", sortable:true},
-    {label: tr("second"),    key:"second",sortable:true},
-    {label: tr("third"),     key:"third", sortable:true},
-    {label: tr("bestRank"),  key:"best",  sortable:true},
-    {label: tr("worstRank"), key:"worst", sortable:true}
+    {label: t("rank"),      key:"rank",  sortable:false},
+    {label: t("player"),    key:"name",  sortable:false},
+    {label: t("first"),     key:"first", sortable:true},
+    {label: t("second"),    key:"second",sortable:true},
+    {label: t("third"),     key:"third", sortable:true},
+    {label: t("bestRank"),  key:"best",  sortable:true},
+    {label: t("worstRank"), key:"worst", sortable:true}
   ];
 
   const trh = document.createElement("tr");
@@ -2832,7 +2837,7 @@ function updateMatchesLog(){
       const summary=$("playerDetailsSummary");
       const box=$("playerDetailsStats");
       if(!sel || !sel.value){
-        summary.textContent = tr("selectPlayerAnalysis");
+        summary.textContent = t("selectPlayerAnalysis");
         box.style.display="none"; return;
       }
       const id=sel.value;
