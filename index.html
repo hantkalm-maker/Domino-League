@@ -1641,7 +1641,7 @@
         wins: s.wins || 0,
         winRate: (s.totalMatches ? ((s.wins||0) / (s.totalMatches||0)) : 0),
         totalMatches: s.totalMatches || 0,
-        finalPoints: (s.points || 0) + (s.bonusNet || 0)
+        finalPoints: ((s.wins||0) - (s.losses||0)) + (s.bonusNet || 0)
       });
     });
     if(rows.length === 0) return null;
@@ -1674,7 +1674,7 @@
         wins: s.wins || 0,
         winRate: (s.totalMatches ? ((s.wins||0) / (s.totalMatches||0)) : 0),
         totalMatches: s.totalMatches || 0,
-        finalPoints: (s.points || 0) + (s.bonusNet || 0)
+        finalPoints: ((s.wins||0) - (s.losses||0)) + (s.bonusNet || 0)
       });
     });
     if(rows.length === 0) return null;
@@ -1742,7 +1742,7 @@
         wins: s.wins || 0,
         winRate: (s.totalMatches ? ((s.wins||0) / (s.totalMatches||0)) : 0),
         totalMatches: s.totalMatches || 0,
-        finalPoints: (s.points || 0) + (s.bonusNet || 0)
+        finalPoints: ((s.wins||0) - (s.losses||0)) + (s.bonusNet || 0)
       });
     });
     if(rows.length === 0) continue;
