@@ -1019,6 +1019,24 @@
 
     // ✅ نهاية الفترة المختارة = آخر تاريخ موجود في الماتشات بعد تطبيق الفلتر (ولو مفيش، نستخدم تاريخ اليوم)
     function getSelectedRangeEndDate(){
+      const yearVal = $("filterYear")?.value || "all";
+      const monthVal = $("filterMonth")?.value || "all";
+      const now = new Date();
+
+      // ✅ لو الفلتر على شهر محدد: نهاية هذا الشهر (حتى لو آخر ماتش في الشهر كان بدري)
+      if(yearVal !== "all" && monthVal !== "all"){
+        const y = Number(yearVal);
+        const m = Number(monthVal); // 1-12
+        return new Date(y, m, 0, 23, 59, 59, 999); // آخر يوم في الشهر
+      }
+
+      // ✅ لو الفلتر على سنة محددة: نهاية السنة
+      if(yearVal !== "all" && monthVal === "all"){
+        const y = Number(yearVal);
+        return new Date(y, 11, 31, 23, 59, 59, 999); // 31 ديسمبر
+      }
+
+      // باقي الحالات (كل السنين/كل الوقت): نستخدم آخر تاريخ موجود في النتائج أو تاريخ اليوم
       const matches = getFilteredMatches();
       let max = null;
       matches.forEach(m=>{
@@ -1026,7 +1044,7 @@
         const d = new Date(m.date + "T23:59:59");
         if(!max || d > max) max = d;
       });
-      return max || new Date();
+      return max || now;
     }
 
     // ✅ إظهار اللاعب في الإحصائيات يعتمد على "نهاية الفترة المختارة"
@@ -1467,349 +1485,367 @@
     
     // ===== CHAMPIONS LOG (Monthly podiums per selected year) =====
     function updateChampionsLog(){
-      const yearVal = $("filterYear")?.value || "all";
-      const monthVal = $("filterMonth")?.value || "all";
-      const wrapper = $("championsLogWrapper");
-      const hint = $("championsLogHint");
-      const title = $("championsLogTitle");
-      const head = $("championsLogHead");
-      const body = $("championsLogBody");
-      const extra = $("championsLogExtra");
-      const card = $("championsLogCard");
+  const yearVal = $("filterYear")?.value || "all";
+  const monthVal = $("filterMonth")?.value || "all";
+  const wrapper = $("championsLogWrapper");
+  const hint = $("championsLogHint");
+  const title = $("championsLogTitle");
+  const head = $("championsLogHead");
+  const body = $("championsLogBody");
+  const extra = $("championsLogExtra");
 
-      if(!wrapper || !head || !body || !title || !hint) return;
-      if(!card) return;
-      if(extra) extra.innerHTML = "";
+  if(!wrapper || !head || !body || !title || !hint) return;
+  if(extra) extra.innerHTML = "";
 
-      if(yearVal === "all"){
-        wrapper.style.display = "none";
-        hint.style.display = "block";
-        head.innerHTML = "";
-        body.innerHTML = "";
-        return;
-      }
+  // لا نعرض سجل الأبطال على "كل السنين"
+  if(yearVal === "all"){
+    wrapper.style.display = "none";
+    hint.style.display = "block";
+    head.innerHTML = "";
+    body.innerHTML = "";
+    // لكن نقدر نظهر الألقاب لو حابب (حالياً الألقاب تظهر فقط عندما تختار سنة)
+    return;
+  }
 
-      const year = Number(yearVal);
+  const year = Number(yearVal);
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth() + 1; // 1-12
 
-      const nowDate = new Date();
-      const currentYear = nowDate.getFullYear();
-      const currentMonth = nowDate.getMonth() + 1; // 1-12
+  const monthNames = ["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
 
-      // ✅ الشهور "المكتملة" داخل السنة المختارة:
-      // - لو السنة هي السنة الحالية: الشهور المكتملة هي (الشهر الحالي - 1)
-      // - لو السنة في المستقبل: لا يوجد شهور مكتملة
-      // - لو سنة ماضية: كل الشهور مكتملة (حسب وجود بيانات)
-      let maxClosedMonth = 12;
-      if(year === currentYear) maxClosedMonth = Math.max(0, currentMonth - 1);
-      if(year > currentYear) maxClosedMonth = 0;
-      hint.style.display = "none";
-      wrapper.style.display = "block";
-      title.textContent = `سجل الأبطال لسنة ${year} — الترتيب حسب عدد 🥇 ثم 🥈 ثم 🥉`;
+  // Helper: end-of-month date (used for ban visibility rule)
+  function endOfMonthDate(y, m){ // m:1-12
+    const d = new Date(y, m, 0); // last day of month m
+    d.setHours(23,59,59,999);
+    return d;
+  }
 
-      // ✅ لو السنة المختارة هي السنة الحالية ولسه مفيش أي شهر اتقفل (مثلاً يناير)
-      // مش هنظهر جدول "سجل الأبطال" لأن مفيش شهور مكتملة
-      if(maxClosedMonth === 0){
-        head.innerHTML = "";
-        body.innerHTML = "";
-        const tr = document.createElement("tr");
-        const td = document.createElement("td");
-        td.colSpan = 7;
-        td.textContent = "لا يوجد شهور مكتملة داخل هذه السنة حتى الآن.";
-        tr.appendChild(td);
-        body.appendChild(tr);
+  // الشهر "المكتمل" = شهر انتهى في التقويم (مش الشهر الحالي)
+  function isMonthCompleted(y, m){
+    if(y < currentYear) return true;
+    if(y > currentYear) return false;
+    // نفس السنة الحالية
+    return m < currentMonth;
+  }
 
-        // ما زلنا نعرض حامل لقب آخر سنة + آخر شهر (حسب الفلتر)
-        const monthNames = ["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
-        const prevYearChampion = computeChampionNameForYear(year-1);
-        const prevMonth = {y: year-1, m: 12}; // آخر شهر مكتمل قبل يناير هو ديسمبر السنة السابقة
-        const prevMonthChampion = computeChampionNameForMonth(prevMonth.y, prevMonth.m);
+  function hasMatchesInMonth(y, m){
+    return state.matches.some(mm=>{
+      if(!mm.date) return false;
+      if(typeof mm.date !== "string") return false;
+      const yy = Number(mm.date.slice(0,4));
+      const mo = Number(mm.date.slice(5,7));
+      return yy===y && mo===m;
+    });
+  }
 
-        if(extra){
-          extra.innerHTML = `
-            <div>🏆 حامل لقب اخر سنة (<b>${year-1}</b>): <b>${prevYearChampion || "-"}</b></div>
-            <div>🏅 حامل لقب اخر شهر (<b>${monthNames[prevMonth.m-1]}</b> ${prevMonth.y}): <b>${prevMonthChampion || "-"}</b></div>
-          `;
-        }
-        return;
-      }
+  // تحديد نهاية الفترة المختارة لتحديد "آخر شهر" و "آخر سنة"
+  function getSelectedEndDate(){
+    if(yearVal !== "all" && monthVal !== "all"){
+      return endOfMonthDate(year, Number(monthVal));
+    }
+    // سنة فقط:
+    if(year < currentYear) return endOfMonthDate(year, 12);
+    // سنة حالية: لحد الآن (حتى لو يناير)
+    return now;
+  }
 
+  function prevMonthYearFromDate(d){
+    const y = d.getFullYear();
+    const m = d.getMonth() + 1;
+    if(m === 1) return {y: y-1, m: 12};
+    return {y: y, m: m-1};
+  }
 
-      const monthNames = ["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
+  // بطل شهر محدد
+  function computeChampionNameForMonth(y, m){
+    if(!y || !m) return null;
+    const mMatches = state.matches.filter(mm=>{
+      if(!mm.date || typeof mm.date !== "string") return false;
+      const yy = Number(mm.date.slice(0,4));
+      const mo = Number(mm.date.slice(5,7));
+      return yy===y && mo===m;
+    });
+    if(mMatches.length === 0) return null;
 
-      // Helper: end-of-month date (used for ban visibility rule)
-      function endOfMonthDate(y, m){ // m:1-12
-        const d = new Date(y, m, 0); // last day of month
-        d.setHours(23,59,59,999);
-        return d;
-      }
+    const rangeEnd = endOfMonthDate(y, m);
 
-      function getLastMonthWithMatchesInYear(y){
-        let maxM = null;
-        state.matches.forEach(m=>{
-          if(!m.date) return;
-          const yy = Number(m.date.slice(0,4));
-          if(yy !== y) return;
-          const mm = Number(m.date.slice(5,7));
-          if(!maxM || mm > maxM) maxM = mm;
-        });
-        return maxM;
-      }
-
-
-      function getPrevMonthForFilter(y, monthVal){
-        // monthVal: "all" or "1".."12"
-        if(monthVal !== "all"){
-          const m = Number(monthVal);
-          if(m === 1) return {y: y-1, m: 12};
-          return {y: y, m: m-1};
-        }
-        const lastM = getLastMonthWithMatchesInYear(y);
-        if(lastM){
-          if(lastM === 1) return {y: y-1, m: 12};
-          return {y: y, m: lastM-1};
-        }
-        // no matches in selected year -> previous month is December of previous year
-        return {y: y-1, m: 12};
-      }
-
-      function computeChampionNameForMonth(y, m){
-        if(!y || !m) return null;
-        const mMatches = state.matches.filter(mm=>{
-          if(!mm.date) return false;
-          const yy = Number(mm.date.slice(0,4));
-          const mo = Number(mm.date.slice(5,7));
-          return yy===y && mo===m;
-        });
-        if(mMatches.length === 0) return null;
-        const rangeEnd = endOfMonthDate(y, m);
-
-        const rows = [];
-        state.players.forEach(p=>{
-          if(!shouldShowPlayerForSelectedRange(p, rangeEnd)) return;
-          const s = computePlayerFullStats(p.id, mMatches);
-          if(s.totalMatches === 0) return;
-          rows.push({
-            id: p.id,
-            name: p.name,
-            wins: s.wins || 0,
-            finalPoints: (s.points || 0) + (s.bonusNet || 0)
-          });
-        });
-        if(rows.length === 0) return null;
-        rows.sort((a,b)=>{
-          if(b.finalPoints !== a.finalPoints) return b.finalPoints - a.finalPoints;
-          if(b.wins !== a.wins) return b.wins - a.wins;
-          return (a.name||"").localeCompare(b.name||"", "ar");
-        });
-        return rows[0]?.name || null;
-      }
-
-      function computeChampionNameForYear(y){
-        if(!y) return null;
-        const yMatches = state.matches.filter(mm=>{
-          if(!mm.date) return false;
-          const yy = Number(mm.date.slice(0,4));
-          return yy===y;
-        });
-        if(yMatches.length === 0) return null;
-
-        const rangeEnd = endOfMonthDate(y, 12); // end of year
-
-        const rows = [];
-        state.players.forEach(p=>{
-          if(!shouldShowPlayerForSelectedRange(p, rangeEnd)) return;
-          const s = computePlayerFullStats(p.id, yMatches);
-          if((s.totalMatches || 0) === 0) return;
-          rows.push({
-            id: p.id,
-            name: p.name,
-            wins: s.wins || 0,
-            finalPoints: (s.points || 0) + (s.bonusNet || 0)
-          });
-        });
-        if(rows.length === 0) return null;
-        rows.sort((a,b)=>{
-          if(b.finalPoints !== a.finalPoints) return b.finalPoints - a.finalPoints;
-          if(b.wins !== a.wins) return b.wins - a.wins;
-          return (a.name||"").localeCompare(b.name||"", "ar");
-        });
-        return rows[0]?.name || null;
-      }
-
-      // Per-player summary
-      let maxRankSeen = 0;
-      const byId = new Map();
-      state.players.forEach(p=>{
-        byId.set(p.id, {
-          id: p.id,
-          name: p.name,
-          first: 0,
-          second: 0,
-          third: 0,
-          // counts for all ranks (1..N) used for sorting beyond top 3
-          rankCounts: {},
-          best: null,
-          worst: null
-        });
+    const rows = [];
+    state.players.forEach(p=>{
+      if(!shouldShowPlayerForSelectedRange(p, rangeEnd)) return;
+      const s = computePlayerFullStats(p.id, mMatches);
+      if((s.totalMatches || 0) === 0) return;
+      rows.push({
+        id: p.id,
+        name: p.name,
+        wins: s.wins || 0,
+        finalPoints: (s.points || 0) + (s.bonusNet || 0)
       });
+    });
+    if(rows.length === 0) return null;
 
-      // For each month, compute standings and podium
-      for(let month=1; month<=maxClosedMonth; month++){
-        const mMatches = state.matches.filter(m=>{
-          if(!m.date) return false;
-          const y = Number(m.date.slice(0,4));
-          const mo = Number(m.date.slice(5,7));
-          return y===year && mo===month;
-        });
+    rows.sort((a,b)=>{
+      if(b.finalPoints !== a.finalPoints) return b.finalPoints - a.finalPoints;
+      if(b.wins !== a.wins) return b.wins - a.wins;
+      return (a.name||"").localeCompare(b.name||"", "ar");
+    });
 
-        if(mMatches.length === 0) continue;
+    return rows[0]?.name || null;
+  }
 
-        const rangeEnd = endOfMonthDate(year, month);
+  // بطل سنة كاملة
+  function computeChampionNameForYear(y){
+    if(!y) return null;
+    const yMatches = state.matches.filter(mm=>{
+      if(!mm.date || typeof mm.date !== "string") return false;
+      const yy = Number(mm.date.slice(0,4));
+      return yy===y;
+    });
+    if(yMatches.length === 0) return null;
 
-        // Build monthly rows using same logic as leaderboard
-        const rows = [];
-        state.players.forEach(p=>{
-          if(!shouldShowPlayerForSelectedRange(p, rangeEnd)) return;
-          const s = computePlayerFullStats(p.id, mMatches);
-          if(s.totalMatches === 0) return;
-          rows.push({
-            id: p.id,
-            name: p.name,
-            wins: s.wins || 0,
-            finalPoints: (s.points || 0) + (s.bonusNet || 0)
-          });
-        });
+    const rangeEnd = endOfMonthDate(y, 12);
 
-        if(rows.length === 0) continue;
+    const rows = [];
+    state.players.forEach(p=>{
+      if(!shouldShowPlayerForSelectedRange(p, rangeEnd)) return;
+      const s = computePlayerFullStats(p.id, yMatches);
+      if((s.totalMatches || 0) === 0) return;
+      rows.push({
+        id: p.id,
+        name: p.name,
+        wins: s.wins || 0,
+        finalPoints: (s.points || 0) + (s.bonusNet || 0)
+      });
+    });
+    if(rows.length === 0) return null;
 
-        // Sort: final points desc, wins desc, name asc
-        rows.sort((a,b)=>{
-          if(b.finalPoints !== a.finalPoints) return b.finalPoints - a.finalPoints;
-          if(b.wins !== a.wins) return b.wins - a.wins;
-          return (a.name||"").localeCompare(b.name||"", "ar");
-        });
+    rows.sort((a,b)=>{
+      if(b.finalPoints !== a.finalPoints) return b.finalPoints - a.finalPoints;
+      if(b.wins !== a.wins) return b.wins - a.wins;
+      return (a.name||"").localeCompare(b.name||"", "ar");
+    });
 
-        // Update best/worst ranks for participants
-        rows.forEach((r, i)=>{
-          const rec = byId.get(r.id);
-          if(!rec) return;
-          const rank = i+1;
-          if(rec.best === null || rank < rec.best) rec.best = rank;
-          if(rec.worst === null || rank > rec.worst) rec.worst = rank;
+    return rows[0]?.name || null;
+  }
 
-          // track counts for all ranks to support sorting beyond top 3 (4th, 5th, ...)
-          if(!rec.rankCounts) rec.rankCounts = {};
-          rec.rankCounts[rank] = (rec.rankCounts[rank] || 0) + 1;
-          if(rank > maxRankSeen) maxRankSeen = rank;
-        });
+  // 1) تحقق هل يوجد "شهر مكتمل" داخل السنة المختارة وله مباريات
+  const completedMonthsWithData = [];
+  for(let m=1; m<=12; m++){
+    if(!isMonthCompleted(year, m)) continue;
+    if(!hasMatchesInMonth(year, m)) continue;
+    completedMonthsWithData.push(m);
+  }
 
-        // Podium counts
-        const top1 = rows[0]?.id || null;
-        const top2 = rows[1]?.id || null;
-        const top3 = rows[2]?.id || null;
+  // عرض/إخفاء
+  if(completedMonthsWithData.length === 0){
+    wrapper.style.display = "none";
+    hint.style.display = "block";
+    hint.textContent = "لا يوجد شهور مكتملة داخل هذه السنة لعرض سجل الأبطال.";
+  } else {
+    hint.style.display = "none";
+    wrapper.style.display = "block";
+  }
 
-        if(top1 && byId.get(top1)) byId.get(top1).first += 1;
-        if(top2 && byId.get(top2)) byId.get(top2).second += 1;
-        if(top3 && byId.get(top3)) byId.get(top3).third += 1;
+  // العنوان
+  title.textContent = `سجل الأبطال لسنة ${year} — يمكن إعادة الترتيب من رؤوس الأعمدة`;
+
+  // 2) تجميع بيانات الأبطال + (أفضل/أسوأ مركز) بطريقة دقيقة
+  const byId = new Map();
+  state.players.forEach(p=>{
+    byId.set(p.id, {
+      id: p.id,
+      name: p.name,
+      first: 0,
+      second: 0,
+      third: 0,
+      ranks: [] // كل المراكز الشهرية داخل السنة
+    });
+  });
+
+  for(const month of completedMonthsWithData){
+    const mMatches = state.matches.filter(mm=>{
+      if(!mm.date || typeof mm.date !== "string") return false;
+      const yy = Number(mm.date.slice(0,4));
+      const mo = Number(mm.date.slice(5,7));
+      return yy===year && mo===month;
+    });
+    if(mMatches.length === 0) continue;
+
+    const rangeEnd = endOfMonthDate(year, month);
+
+    const rows = [];
+    state.players.forEach(p=>{
+      if(!shouldShowPlayerForSelectedRange(p, rangeEnd)) return;
+      const s = computePlayerFullStats(p.id, mMatches);
+      if((s.totalMatches || 0) === 0) return;
+      rows.push({
+        id: p.id,
+        name: p.name,
+        wins: s.wins || 0,
+        finalPoints: (s.points || 0) + (s.bonusNet || 0)
+      });
+    });
+    if(rows.length === 0) continue;
+
+    rows.sort((a,b)=>{
+      if(b.finalPoints !== a.finalPoints) return b.finalPoints - a.finalPoints;
+      if(b.wins !== a.wins) return b.wins - a.wins;
+      return (a.name||"").localeCompare(b.name||"", "ar");
+    });
+
+    // حفظ الرانك الشهري لكل لاعب
+    rows.forEach((r, i)=>{
+      const rec = byId.get(r.id);
+      if(!rec) return;
+      rec.ranks.push(i+1);
+    });
+
+    // Podium counts
+    const top1 = rows[0]?.id || null;
+    const top2 = rows[1]?.id || null;
+    const top3 = rows[2]?.id || null;
+    if(top1 && byId.get(top1)) byId.get(top1).first += 1;
+    if(top2 && byId.get(top2)) byId.get(top2).second += 1;
+    if(top3 && byId.get(top3)) byId.get(top3).third += 1;
+  }
+
+  // build summary
+  let summary = Array.from(byId.values()).map(r=>{
+    const best = (r.ranks.length ? Math.min(...r.ranks) : null);
+    const worst = (r.ranks.length ? Math.max(...r.ranks) : null);
+    return { ...r, best, worst };
+  }).filter(r=>{
+    // يظهر لو شارك في أي شهر داخل السنة (لديه ranks)
+    return r.ranks && r.ranks.length > 0;
+  });
+
+  // ===== Sorting state for Champions Log =====
+  if(!window.championsSort){
+    window.championsSort = { column: "first", direction: "desc" };
+  }
+
+  function applyChampionsSort(arr){
+    const col = window.championsSort.column;
+    const dir = window.championsSort.direction === "asc" ? 1 : -1;
+
+    const num = (v, fallback)=> (typeof v === "number" && !Number.isNaN(v)) ? v : fallback;
+
+    arr.sort((a,b)=>{
+      // best: الأصغر أفضل، worst: الأكبر أسوأ (لكن نسمح بعكسه حسب السهم)
+      if(col === "best"){
+        const av = num(a.best, 9999);
+        const bv = num(b.best, 9999);
+        if(av !== bv) return (av - bv) * dir;
+      } else if(col === "worst"){
+        const av = num(a.worst, -1);
+        const bv = num(b.worst, -1);
+        if(av !== bv) return (av - bv) * dir;
+      } else {
+        const av = num(a[col], 0);
+        const bv = num(b[col], 0);
+        if(av !== bv) return (av - bv) * dir;
       }
 
-      // Build final table rows (only players with at least one podium or at least one participation)
-      const summary = Array.from(byId.values()).filter(r=>{
-        const hasPodium = (r.first+r.second+r.third) > 0;
-        const hasRanks = r.best !== null;
-        return hasPodium || hasRanks;
-      });
+      // Tie-break ثابت (منطقي)
+      if(b.first !== a.first) return b.first - a.first;
+      if(b.second !== a.second) return b.second - a.second;
+      if(b.third !== a.third) return b.third - a.third;
 
-      // Sort by 🥇 then 🥈 then 🥉 then 4th then 5th ... then name
-      summary.sort((a,b)=>{
-        // compare rank counts from 1..maxRankSeen
-        for(let r=1; r<=maxRankSeen; r++){
-          const av = (a.rankCounts && a.rankCounts[r]) ? a.rankCounts[r] : 0;
-          const bv = (b.rankCounts && b.rankCounts[r]) ? b.rankCounts[r] : 0;
-          if(bv !== av) return bv - av;
+      // الأفضل/الأسوأ كتعادل
+      const ab = num(a.best, 9999), bb = num(b.best, 9999);
+      if(ab !== bb) return ab - bb;
+      const aw = num(a.worst, -1), bw = num(b.worst, -1);
+      if(aw !== bw) return aw - bw;
+
+      return (a.name||"").localeCompare(b.name||"", "ar");
+    });
+  }
+
+  applyChampionsSort(summary);
+
+  // ===== Render Table =====
+  head.innerHTML = "";
+  body.innerHTML = "";
+
+  const columns = [
+    {label:"المركز", key:"rank", sortable:false},
+    {label:"اللاعب", key:"name", sortable:false},
+    {label:"🥇1", key:"first", sortable:true},
+    {label:"🥈2", key:"second", sortable:true},
+    {label:"🥉3", key:"third", sortable:true},
+    {label:"أفضل مركز", key:"best", sortable:true},
+    {label:"أسوأ مركز", key:"worst", sortable:true},
+  ];
+
+  const trh = document.createElement("tr");
+  columns.forEach(c=>{
+    const th = document.createElement("th");
+    th.textContent = c.label;
+
+    if(c.sortable){
+      th.classList.add("sortable");
+      th.dataset.col = c.key;
+
+      const arrow = document.createElement("span");
+      arrow.className = "sort-arrow";
+      const isActive = (window.championsSort.column === c.key);
+      arrow.textContent = isActive ? (window.championsSort.direction === "asc" ? "▲" : "▼") : "↕";
+      th.appendChild(arrow);
+
+      th.addEventListener("click", ()=>{
+        if(window.championsSort.column === c.key){
+          window.championsSort.direction = (window.championsSort.direction === "asc") ? "desc" : "asc";
+        } else {
+          window.championsSort.column = c.key;
+          // default direction: counts desc, best asc, worst desc
+          if(c.key === "best") window.championsSort.direction = "asc";
+          else if(c.key === "worst") window.championsSort.direction = "desc";
+          else window.championsSort.direction = "desc";
         }
-        return (a.name||"").localeCompare(b.name||"", "ar");
+        updateChampionsLog();
       });
-
-      // Render
-      head.innerHTML = "";
-      body.innerHTML = "";
-
-      const trh = document.createElement("tr");
-      [
-        {label:"المركز", key:"rank"},
-        {label:"اللاعب", key:"name"},
-        {label:"🥇1", key:"first"},
-        {label:"🥈2", key:"second"},
-        {label:"🥉3", key:"third"},
-        {label:"أفضل مركز", key:"best"},
-        {label:"أسوأ مركز", key:"worst"},
-      ].forEach(c=>{
-        const th = document.createElement("th");
-        th.textContent = c.label;
-        trh.appendChild(th);
-      });
-      head.appendChild(trh);
-
-      if(summary.length === 0){
-        const tr = document.createElement("tr");
-        const td = document.createElement("td");
-        td.colSpan = 7;
-        td.textContent = "لا توجد بيانات كافية لهذه السنة.";
-        tr.appendChild(td);
-        body.appendChild(tr);
-
-        // Extra (title holders) based on filter end
-        if(extra){
-          const endM = (monthVal !== "all") ? Number(monthVal) : ((year === currentYear) ? currentMonth : (getLastMonthWithMatchesInYear(year) || 12));
-          const prevYearChampion = computeChampionNameForYear(year-1);
-          const prevMonth = getPrevMonthForFilter(year, String(endM));
-          const prevMonthChampion = computeChampionNameForMonth(prevMonth.y, prevMonth.m);
-
-          extra.innerHTML = `
-            <div>🏆 حامل لقب اخر سنة (<b>${year-1}</b>): <b>${prevYearChampion || "-"}</b></div>
-            <div>🏅 حامل لقب اخر شهر (<b>${monthNames[prevMonth.m-1]}</b> ${prevMonth.y}): <b>${prevMonthChampion || "-"}</b></div>
-          `;
-        }
-        return;
-      }
-
-      summary.forEach((r, idx)=>{
-        const tr = document.createElement("tr");
-
-        const rankTd = document.createElement("td");
-        rankTd.textContent = String(idx + 1);
-        tr.appendChild(rankTd);
-
-        const nameTd = document.createElement("td");
-        nameTd.textContent = r.name || "-";
-        tr.appendChild(nameTd);
-
-        const td1 = document.createElement("td"); td1.textContent = r.first; tr.appendChild(td1);
-        const td2 = document.createElement("td"); td2.textContent = r.second; tr.appendChild(td2);
-        const td3 = document.createElement("td"); td3.textContent = r.third; tr.appendChild(td3);
-
-        const bestTd = document.createElement("td"); bestTd.textContent = (r.best===null? "-" : r.best); tr.appendChild(bestTd);
-        const worstTd= document.createElement("td"); worstTd.textContent= (r.worst===null? "-" : r.worst); tr.appendChild(worstTd);
-
-        body.appendChild(tr);
-      });
-
-      // Extra (title holders) based on filter end
-      if(extra){
-        const endM = (monthVal !== "all") ? Number(monthVal) : ((year === currentYear) ? currentMonth : (getLastMonthWithMatchesInYear(year) || 12));
-        const prevYearChampion = computeChampionNameForYear(year-1);
-        const prevMonth = getPrevMonthForFilter(year, String(endM));
-        const prevMonthChampion = computeChampionNameForMonth(prevMonth.y, prevMonth.m);
-
-        extra.innerHTML = `
-          <div>🏆 حامل لقب اخر سنة (<b>${year-1}</b>): <b>${prevYearChampion || "-"}</b></div>
-          <div>🏅 حامل لقب اخر شهر (<b>${monthNames[prevMonth.m-1]}</b> ${prevMonth.y}): <b>${prevMonthChampion || "-"}</b></div>
-        `;
-      }
     }
 
+    trh.appendChild(th);
+  });
+  head.appendChild(trh);
 
+  if(summary.length === 0){
+    const tr = document.createElement("tr");
+    const td = document.createElement("td");
+    td.colSpan = columns.length;
+    td.textContent = "لا توجد بيانات كافية لهذه السنة.";
+    tr.appendChild(td);
+    body.appendChild(tr);
+  } else {
+    summary.forEach((r, idx)=>{
+      const tr = document.createElement("tr");
+      tr.appendChild(createCell(idx+1));
+      tr.appendChild(createCell(r.name || "-"));
+      tr.appendChild(createCell(r.first || 0));
+      tr.appendChild(createCell(r.second || 0));
+      tr.appendChild(createCell(r.third || 0));
+      tr.appendChild(createCell(r.best==null? "-" : r.best));
+      tr.appendChild(createCell(r.worst==null? "-" : r.worst));
+      body.appendChild(tr);
+    });
+  }
+
+  // ===== Extra (Title holders) =====
+  const endDate = getSelectedEndDate();
+  const prev = prevMonthYearFromDate(endDate);
+
+  const prevYear = endDate.getFullYear() - 1;
+  const prevYearChampion = computeChampionNameForYear(prevYear);
+  const prevMonthChampion = computeChampionNameForMonth(prev.y, prev.m);
+
+  if(extra){
+    extra.innerHTML = `
+      <div>🏆 حامل لقب اخر سنة (<b>${prevYear}</b>): <b>${prevYearChampion || "-"}</b></div>
+      <div>🏅 حامل لقب اخر شهر (<b>${monthNames[prev.m-1]}</b> ${prev.y}): <b>${prevMonthChampion || "-"}</b></div>
+    `;
+  }
+}
 function updateMatchesLog(){
       const tbody = $("matchesLogBody");
       if(!tbody) return;
