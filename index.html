@@ -1289,7 +1289,8 @@
           });
       };
       reader.readAsDataURL(file);
-   
+    }
+
     // ===== ADMIN: Delete Player (delete player + all matches retroactively) =====
     async function deletePlayerAndMatches(playerId, playerName){
       if(!isAdmin || !db) return;
