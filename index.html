@@ -1549,6 +1549,29 @@
     return d;
   }
 
+
+  // ✅ ترتيب الشهر الرسمي (للاستخدام في سجل الأبطال + تحديد بطل الشهر/السنة)
+  // 1) Final Points = Points + Bonus
+  // 2) Win Rate (wins / totalMatches) عند تساوي النقاط
+  // 3) Wins عند تساوي النقاط ونسبة الفوز
+  // 4) Total Matches عند تساوي ما سبق
+  // 5) Name
+  function compareMonthlyStanding(a,b){
+    const ap = (a.finalPoints ?? 0), bp = (b.finalPoints ?? 0);
+    if(bp !== ap) return bp - ap;
+
+    const ar = (a.winRate ?? 0), br = (b.winRate ?? 0);
+    if(br !== ar) return br - ar;
+
+    const aw = (a.wins ?? 0), bw = (b.wins ?? 0);
+    if(bw !== aw) return bw - aw;
+
+    const am = (a.totalMatches ?? 0), bm = (b.totalMatches ?? 0);
+    if(bm !== am) return bm - am;
+
+    return (a.name||"").localeCompare(b.name||"", "ar");
+  }
+
   // الشهر "المكتمل" = شهر انتهى في التقويم (مش الشهر الحالي)
   function isMonthCompleted(y, m){
     if(y < currentYear) return true;
@@ -1611,14 +1634,7 @@
     });
     if(rows.length === 0) return null;
 
-    rows.sort((a,b)=>{
-      if(b.finalPoints !== a.finalPoints) return b.finalPoints - a.finalPoints;
-      // tie-breaks: win rate -> wins -> total matches -> name
-      if((b.winRate || 0) !== (a.winRate || 0)) return (b.winRate || 0) - (a.winRate || 0);
-      if(b.wins !== a.wins) return b.wins - a.wins;
-      if((b.totalMatches || 0) !== (a.totalMatches || 0)) return (b.totalMatches || 0) - (a.totalMatches || 0);
-      return (a.name||"").localeCompare(b.name||"", "ar");
-    });
+    rows.sort(compareMonthlyStanding);
 
     return rows[0]?.name || null;
   }
@@ -1651,14 +1667,7 @@
     });
     if(rows.length === 0) return null;
 
-    rows.sort((a,b)=>{
-      if(b.finalPoints !== a.finalPoints) return b.finalPoints - a.finalPoints;
-      // tie-breaks: win rate -> wins -> total matches -> name
-      if((b.winRate || 0) !== (a.winRate || 0)) return (b.winRate || 0) - (a.winRate || 0);
-      if(b.wins !== a.wins) return b.wins - a.wins;
-      if((b.totalMatches || 0) !== (a.totalMatches || 0)) return (b.totalMatches || 0) - (a.totalMatches || 0);
-      return (a.name||"").localeCompare(b.name||"", "ar");
-    });
+    rows.sort(compareMonthlyStanding);
 
     return rows[0]?.name || null;
   }
@@ -1726,14 +1735,7 @@
     });
     if(rows.length === 0) continue;
 
-    rows.sort((a,b)=>{
-      if(b.finalPoints !== a.finalPoints) return b.finalPoints - a.finalPoints;
-      // tie-breaks: win rate -> wins -> total matches -> name
-      if((b.winRate || 0) !== (a.winRate || 0)) return (b.winRate || 0) - (a.winRate || 0);
-      if(b.wins !== a.wins) return b.wins - a.wins;
-      if((b.totalMatches || 0) !== (a.totalMatches || 0)) return (b.totalMatches || 0) - (a.totalMatches || 0);
-      return (a.name||"").localeCompare(b.name||"", "ar");
-    });
+    rows.sort(compareMonthlyStanding);
 
     // حفظ الرانك الشهري لكل لاعب
     rows.forEach((r, i)=>{
