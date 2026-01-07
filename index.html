@@ -1640,15 +1640,14 @@
     completedMonthsWithData.push(m);
   }
 
+
   // عرض/إخفاء
-  if(completedMonthsWithData.length === 0){
-    wrapper.style.display = "none";
-    hint.style.display = "block";
-    hint.textContent = "لا يوجد شهور مكتملة داخل هذه السنة لعرض سجل الأبطال.";
-  } else {
-    hint.style.display = "none";
-    wrapper.style.display = "block";
-  }
+  const noCompletedMonths = (completedMonthsWithData.length === 0);
+  hint.style.display = "none";
+  wrapper.style.display = "block";
+  const championsEmptyMessage = noCompletedMonths
+    ? "لا يوجد شهور مكتملة داخل هذه السنة لعرض سجل الأبطال."
+    : "لا توجد بيانات كافية لهذه السنة.";
 
   // العنوان
   title.textContent = `سجل الأبطال لسنة ${year} — يمكن إعادة الترتيب من رؤوس الأعمدة`;
@@ -1827,7 +1826,7 @@
     const tr = document.createElement("tr");
     const td = document.createElement("td");
     td.colSpan = columns.length;
-    td.textContent = "لا توجد بيانات كافية لهذه السنة.";
+    td.textContent = championsEmptyMessage;
     tr.appendChild(td);
     body.appendChild(tr);
   } else {
@@ -2575,6 +2574,7 @@ function analyzeHeadToHead(){
       }
 
       // نحدّث الترتيب والسجل بناءً على الفترة الافتراضية      updateLeaderboard();
+      updateChampionsLog();
       updateMatchesLog();
       updateHeadToHeadUI(true);
       if($("playerDetailsSelect")) updatePlayerDetailsUI();
@@ -2617,6 +2617,7 @@ function analyzeHeadToHead(){
         else updateHeadToHeadUI(true);
 
         updateMatchesLog();
+        updateChampionsLog();
         // ⭐ برضه نرجّع ملخص الفرق
         resetTeamsH2HSummary();
       });
