@@ -219,6 +219,45 @@
         padding: 6px 4px;
       }
     }
+  
+    /* ===== UI Settings: Dark Mode ===== */
+    body.dark {
+      background: #0b1220;
+      color: #e5e7eb;
+    }
+    body.dark header { background:#0f172a; }
+    body.dark .card { background:#0b1a33; box-shadow:none; border:1px solid rgba(255,255,255,0.08); }
+    body.dark .small-text { color:#cbd5e1; }
+    body.dark input[type="text"],
+    body.dark input[type="date"],
+    body.dark select {
+      background:#0f172a;
+      color:#e5e7eb;
+      border:1px solid rgba(255,255,255,0.15);
+    }
+    body.dark table { color:#e5e7eb; }
+    body.dark th { background:#122042; border-bottom:1px solid rgba(255,255,255,0.08); }
+    body.dark td { border-bottom:1px solid rgba(255,255,255,0.06); }
+    body.dark tr:nth-child(even) td { background:#0e1b35; }
+    body.dark .stat-box { background:#0f172a; }
+    body.dark button.primary { background:#3b82f6; }
+    body.dark button.primary:hover { background:#2563eb; }
+    body.dark button.danger { background:#ef4444; }
+    body.dark button.danger:hover { background:#dc2626; }
+
+    .settings-bar{
+      margin-top:10px;
+      display:flex;
+      gap:10px;
+      justify-content:center;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .settings-bar select, .settings-bar button{
+      font-size:0.85rem;
+      padding:6px 10px;
+    }
+
   </style>
 
   <!-- Firebase (CDN compat) -->
@@ -231,6 +270,19 @@
     <div class="small-text">
       كل ماتش (عشرة) = الفريق الكسبان +1 لكل لاعب / الخسران -1 لكل لاعب
     </div>
+  
+    <div class="settings-bar">
+      <button class="primary" id="themeToggleBtn" type="button">🌙 Dark Mode</button>
+
+      <label class="small-text" for="langSelect" style="margin:0;">
+        Language:
+      </label>
+      <select id="langSelect">
+        <option value="ar">العربية</option>
+        <option value="en">English</option>
+      </select>
+    </div>
+
   </header>
 
   <main>
@@ -637,6 +689,84 @@
       players: [], // {id, name, avatar}
       matches: []  // {id, date, winners, losers, createdAt}
     };
+
+
+// ===== UI Settings: Theme + Language =====
+const I18N = {
+  ar: {
+    appTitle: "Domino League",
+    darkMode: "🌙 Dark Mode",
+    lightMode: "☀️ Light Mode",
+    languageLabel: "اللغة:",
+    championsLog: "سجل الأبطال",
+    noCompletedMonths: "لا يوجد شهور مكتملة داخل الفترة المختارة.",
+    lastYearChampion: "🏆 حامل لقب آخر سنة",
+    lastMonthChampion: "🏅 حامل لقب آخر شهر"
+  },
+  en: {
+    appTitle: "Domino League",
+    darkMode: "🌙 Dark Mode",
+    lightMode: "☀️ Light Mode",
+    languageLabel: "Language:",
+    championsLog: "Champions Log",
+    noCompletedMonths: "No completed months in the selected period.",
+    lastYearChampion: "🏆 Last Year Champion",
+    lastMonthChampion: "🏅 Last Month Champion"
+  }
+};
+
+function getLang() {
+  return localStorage.getItem("dl_lang") || "ar";
+}
+function setLang(lang) {
+  localStorage.setItem("dl_lang", lang);
+  applyLang(lang);
+  // Re-render dynamic sections that include text
+  if (typeof reloadAllDataAndRender === "function") {
+    // In your code this might be heavy; we just re-render visible sections
+    try { renderAll(); } catch(e) {}
+    try { updateChampionsLog(); } catch(e) {}
+  } else {
+    try { updateChampionsLog(); } catch(e) {}
+  }
+}
+
+function tr(key) {
+  const lang = getLang();
+  return (I18N[lang] && I18N[lang][key]) || (I18N.ar[key] || key);
+}
+
+function applyLang(lang) {
+  const html = document.documentElement;
+  html.lang = lang;
+  html.dir = (lang === "ar") ? "rtl" : "ltr";
+
+  // Static UI
+  const titleEl = document.querySelector("header h1");
+  if (titleEl) titleEl.textContent = tr("appTitle");
+
+  const langLabel = document.querySelector('label[for="langSelect"]');
+  if (langLabel) langLabel.textContent = tr("languageLabel");
+
+  // If your Champions section has headings by id, update them too (safe if absent)
+  const championsTitle = document.getElementById("championsTitle");
+  if (championsTitle) championsTitle.textContent = tr("championsLog");
+}
+
+function getTheme() {
+  return localStorage.getItem("dl_theme") || "light";
+}
+function applyTheme(theme) {
+  document.body.classList.toggle("dark", theme === "dark");
+  const btn = document.getElementById("themeToggleBtn");
+  if (btn) btn.textContent = (theme === "dark") ? tr("lightMode") : tr("darkMode");
+}
+function toggleTheme() {
+  const next = (getTheme() === "dark") ? "light" : "dark";
+  localStorage.setItem("dl_theme", next);
+  applyTheme(next);
+}
+
 
     // ===== BONUS (Streak Bonus) =====
     // يظهر زر البونص فقط عندما يكون هناك احتمال "ستريك":
@@ -2697,7 +2827,22 @@ function analyzeHeadToHead(){
     }
 
     document.addEventListener("DOMContentLoaded",init);
-  </script>
+  
+  // ===== Init Theme + Language =====
+  (function(){
+    const langSelect = document.getElementById("langSelect");
+    if (langSelect) {
+      langSelect.value = getLang();
+      langSelect.addEventListener("change", (e) => setLang(e.target.value));
+    }
+    const themeBtn = document.getElementById("themeToggleBtn");
+    if (themeBtn) themeBtn.addEventListener("click", toggleTheme);
+
+    applyLang(getLang());
+    applyTheme(getTheme());
+  })();
+
+</script>
 </body>
 </html>
 
