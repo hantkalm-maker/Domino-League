@@ -812,11 +812,23 @@
 
       // ✅ قاعدة الترتيب الأساسية المطلوبة:
       // 1) النقاط النهائية (Points + Bonus)
-      // 2) عدد الفوز
-      // 3) الاسم
+      // 2) نسبة الفوز (WinRate) في حال تساوي النقاط
+      // 3) عدد مرات الفوز
+      // 4) عدد الماتشات
+      // 5) الاسم
       function sortByFinalPoints(a,b){
-        if((b.finalPoints ?? 0) !== (a.finalPoints ?? 0)) return (b.finalPoints - a.finalPoints);
-        if((b.wins ?? 0) !== (a.wins ?? 0)) return (b.wins - a.wins);
+        const ap = (a.finalPoints ?? 0), bp = (b.finalPoints ?? 0);
+        if(bp !== ap) return bp - ap;
+
+        const ar = (a.rate ?? 0), br = (b.rate ?? 0);
+        if(br !== ar) return br - ar;
+
+        const aw = (a.wins ?? 0), bw = (b.wins ?? 0);
+        if(bw !== aw) return bw - aw;
+
+        const am = (a.matches ?? 0), bm = (b.matches ?? 0);
+        if(bm !== am) return bm - am;
+
         return a.name.localeCompare(b.name,"ar");
       }
 
