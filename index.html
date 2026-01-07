@@ -266,29 +266,29 @@
 </head>
 <body>
   <header>
-    <h1>برنامج ترتيب الدومينو الزوجي - العشرة (151)</h1>
-    <div class="small-text">
+    <h1 id="appTitle">برنامج ترتيب الدومينو الزوجي - العشرة (151)</h1>
+    <div class="small-text" id="subtitleRule">
       كل ماتش (عشرة) = الفريق الكسبان +1 لكل لاعب / الخسران -1 لكل لاعب
     </div>
   
     <div class="settings-bar">
       <button class="primary" id="themeToggleBtn" type="button">🌙 Dark Mode</button>
 
-      <label class="small-text" for="langSelect" style="margin:0;">
-        Language:
-      </label>
+      <label class="small-text" for="langSelect" id="languageLabel" style="margin:0;">Language:</label>
       <select id="langSelect">
         <option value="ar">العربية</option>
         <option value="en">English</option>
       </select>
     </div>
 
+    <div id="fbStatus" class="small-text" style="margin-top:6px;"></div>
+
   </header>
 
   <main>
     <!-- إدارة اللاعبين -->
     <section class="card">
-      <h2>👤 إدارة اللاعبين</h2>
+      <h2 id="playersSectionTitle">👤 إدارة اللاعبين</h2>
       <div class="row">
         <div class="field">
           <label for="playerName">اسم اللاعب الجديد</label>
@@ -333,7 +333,7 @@
 
     <!-- تسجيل نتيجة ماتش -->
     <section class="card">
-      <h2>🧮 تسجيل نتيجة ماتش (عشرة كاملة)</h2>
+      <h2 id="matchSectionTitle">🧮 تسجيل نتيجة ماتش (عشرة كاملة)</h2>
       <div class="row">
         <div class="field">
           <label for="matchDate">تاريخ الماتش</label>
@@ -379,7 +379,7 @@
 
     <!-- الترتيب والإحصائيات العامة -->
     <section class="card">
-      <h2>🏆 الترتيب والإحصائيات العامة</h2>
+      <h2 id="leaderboardSectionTitle">🏆 الترتيب والإحصائيات العامة</h2>
       <div class="row">
         <div class="field">
           <label for="filterYear">السنة</label>
@@ -421,7 +421,7 @@
 
     <!-- سجل الأبطال -->
     <section class="card" id="championsLogCard">
-      <h2>🏅 سجل الأبطال (شهري)</h2>
+      <h2 id="championsSectionTitle">🏅 سجل الأبطال (شهري)</h2>
       <div class="small-text" id="championsLogHint">
         اختر سنة محددة لعرض سجل أبطال الشهور (مثل سجل الدوري الإنجليزي).
       </div>
@@ -439,7 +439,7 @@
 
     <!-- سجل الماتشات -->
     <section class="card">
-      <h2>📜 سجل الماتشات (كل الوقت)</h2>
+      <h2 id="matchesLogSectionTitle">📜 سجل الماتشات (كل الوقت)</h2>
 
       <div class="row" style="margin-bottom:4px;">
         <div class="field" style="flex:0 0 auto;">
@@ -449,16 +449,16 @@
 
       <div id="matchesLogWrapper" style="display:none;">
         <div class="small-text">
-          أحدث ماتش في الأعلى. يمكنك حذف أي ماتش غلط بدون التأثير على الباقي.
+          <span id="matchesLogIntro">أحدث ماتش في الأعلى. يمكنك حذف أي ماتش غلط بدون التأثير على الباقي.</span>
         </div>
         <table>
           <thead>
             <tr>
               <th>#</th>
-              <th>التاريخ</th>
-              <th>الفريق الكسبان</th>
-              <th>الفريق الخسران</th>
-              <th>حذف</th>
+              <th id="thMatchesDate">التاريخ</th>
+              <th id="thMatchesWin">الفريق الكسبان</th>
+              <th id="thMatchesLose">الفريق الخسران</th>
+              <th id="thMatchesDelete">حذف</th>
             </tr>
           </thead>
           <tbody id="matchesLogBody"></tbody>
@@ -468,7 +468,7 @@
 
     <!-- تحليل لاعب واحد -->
     <section class="card">
-      <h2>📊 تحليل لاعب منفرد</h2>
+      <h2 id="playerAnalysisSectionTitle">📊 تحليل لاعب منفرد</h2>
       <div class="row">
         <div class="field">
           <label for="playerDetailsSelect">اختر لاعب</label>
@@ -476,7 +476,7 @@
         </div>
       </div>
       <div id="playerDetailsSummary" class="small-text">
-        اختر لاعب من القائمة لعرض تحليله.
+        <span id="playerDetailsHelp">اختر لاعب من القائمة لعرض تحليله.</span>
       </div>
 
       <div id="playerDetailsStats" style="margin-top:10px; display:none;">
@@ -578,7 +578,7 @@
 
     <!-- تحليل المواجهات المباشرة -->
     <section class="card">
-      <h2>⚔️ تحليل المواجهات المباشرة بين لاعبين</h2>
+      <h2 id="h2hPlayersTitle">⚔️ تحليل المواجهات المباشرة بين لاعبين</h2>
       <div class="row">
         <div class="field">
           <label for="h2hP1">اللاعب الأول</label>
@@ -593,13 +593,13 @@
         </div>
       </div>
       <div id="h2hSummary" class="small-text">
-        اختر لاعبين ثم اضغط "تحليل المواجهة".
+        <span id="h2hHelp">اختر لاعبين ثم اضغط "تحليل المواجهة".</span>
       </div>
     </section>
 
     <!-- تحليل المواجهات المباشرة بين فرق 2 ضد 2 -->
     <section class="card">
-      <h2>🧩 تحليل المواجهات المباشرة بين فرق (2 ضد 2)</h2>
+      <h2 id="h2hTeamsTitle">🧩 تحليل المواجهات المباشرة بين فرق (2 ضد 2)</h2>
 
       <div class="row">
         <div class="field">
@@ -627,13 +627,13 @@
       </div>
 
       <div id="h2hTeamsSummary" class="small-text">
-        اختر لاعبي الفريقين ثم اضغط "تحليل المواجهة".
+        <span id="h2hTeamsHelp">اختر لاعبي الفريقين ثم اضغط "تحليل المواجهة".</span>
       </div>
     </section>
 
     <!-- قسم المدير والإدارة المتقدمة -->
     <section class="card">
-      <h2>🔐 وضع المدير والإدارة المتقدمة</h2>
+      <h2 id="adminSectionTitle">🔐 وضع المدير والإدارة المتقدمة</h2>
 
       <div class="admin-bar">
         <button class="primary" id="enableAdminBtn">🔑 تفعيل وضع المدير</button>
@@ -668,11 +668,11 @@
     </section>
 
     <section class="card">
-      <h2>ℹ️ ملاحظات الاستخدام</h2>
+      <h2 id="notesSectionTitle">ℹ️ ملاحظات الاستخدام</h2>
       <ul class="small-text">
-        <li>من غير تفعيل وضع المدير، البرنامج في وضع المشاهدة فقط.</li>
-        <li>كل البيانات محفوظة أونلاين في Firebase Firestore، تقدر تفتح من أي جهاز.</li>
-        <li>استخدم فلتر السنة والشهر للتحكم في فترة الإحصائيات للتـرتيب والتحليل والمواجهات.</li>
+        <li><span id="note1">من غير تفعيل وضع المدير، البرنامج في وضع المشاهدة فقط.</span></li>
+        <li><span id="note2">كل البيانات محفوظة أونلاين في Firebase Firestore، تقدر تفتح من أي جهاز.</span></li>
+        <li><span id="note3">استخدم فلتر السنة والشهر للتحكم في فترة الإحصائيات للتـرتيب والتحليل والمواجهات.</span></li>
       </ul>
     </section>
   </main>
@@ -694,26 +694,298 @@
 // ===== UI Settings: Theme + Language =====
 const I18N = {
   ar: {
-    appTitle: "Domino League",
+    // Header
+    pageTitle: "برنامج ترتيب الدومينو - العشرة (151)",
+    headerTitle: "برنامج ترتيب الدومينو الزوجي - العشرة (151)",
+    subtitleRule: "كل ماتش (عشرة) = الفريق الكسبان +1 لكل لاعب / الخسران -1 لكل لاعب",
     darkMode: "🌙 Dark Mode",
     lightMode: "☀️ Light Mode",
     languageLabel: "اللغة:",
-    championsLog: "سجل الأبطال",
+    // Sections
+    playersSectionTitle: "👤 إدارة اللاعبين",
+    matchSectionTitle: "🧮 تسجيل نتيجة ماتش (عشرة كاملة)",
+    leaderboardSectionTitle: "🏆 الترتيب والإحصائيات العامة",
+    championsSectionTitle: "🏅 سجل الأبطال (شهري)",
+    matchesLogSectionTitle: "📜 سجل الماتشات (كل الوقت)",
+    playerAnalysisSectionTitle: "📊 تحليل لاعب منفرد",
+    h2hPlayersTitle: "⚔️ تحليل المواجهات المباشرة بين لاعبين",
+    h2hTeamsTitle: "🧩 تحليل المواجهات المباشرة بين فرق (2 ضد 2)",
+    adminSectionTitle: "🔐 وضع المدير والإدارة المتقدمة",
+    notesSectionTitle: "ℹ️ ملاحظات الاستخدام",
+
+    // Player management
+    newPlayerName: "اسم اللاعب الجديد",
+    newPlayerNamePh: "مثال: أحمد، علي، حسام...",
+    playerAvatar: "صورة اللاعب (اختياري)",
+    addPlayer: "➕ إضافة لاعب",
+    showPlayersList: "👥 عرض قائمة اللاعبين",
+    hidePlayersList: "👥 إخفاء قائمة اللاعبين",
+    playersListEditHint: "تقدر تعدّل اسم اللاعب أو تضيف/تغيّر صورة اللاعب من الجدول (التعديل متاح للمدير فقط).",
+    playersTableNum: "#",
+    playersTablePlayer: "اللاعب",
+    playersTableActions: "إجراءات",
+    statusActive: "نشط",
+    statusBanned: "محظور",
+    editName: "✏️ تعديل الاسم",
+    avatarBtn: "🖼 صورة",
+    banBtn: "⛔ حظر",
+    unbanBtn: "✅ فك الحظر",
+    deleteBtn: "🗑 حذف",
+    noneDash: "-",
+    noPlayersYet: "لا يوجد لاعبين حتى الآن. أضِف بعض اللاعبين أولاً.",
+    noPlayersYetShort: "لا يوجد لاعبين حتى الآن.",
+
+    // Match entry
+    matchDate: "تاريخ الماتش",
+    matchDateHint: "لو تركته فاضي، هيتسجل بتاريخ اليوم",
+    winnerTeamP1: "الفريق الكسبان - لاعب 1",
+    winnerTeamP2: "الفريق الكسبان - لاعب 2",
+    loserTeamP1: "الفريق الخسران - لاعب 1",
+    loserTeamP2: "الفريق الخسران - لاعب 2",
+    saveMatch: "✅ حفظ نتيجة الماتش",
+    bonusUnavailable: "🎁 بونص (غير متاح)",
+    bonusAdd: "🎁 إضافة بونص",
+    bonusEnabled: "🎁 بونص مُفعّل",
+    matchNote: "ملاحظة: نفس اللاعب ما ينفعش يكون في الفريقين في نفس الماتش.",
+    selectPlayer: "اختر لاعب...",
+
+    // Filters + leaderboard
+    year: "السنة",
+    month: "الشهر",
+    allYears: "كل السنوات",
+    allMonths: "كل الشهور",
+    detailedView: "📊 عرض تفصيلي",
+    compactView: "📊 عرض مختصر",
+    rank: "الترتيب",
+    player: "اللاعب",
+    points: "النقاط",
+    bonus: "بونص",
+    wins: "فوز",
+    losses: "خسارة",
+    matches: "عدد الماتشات",
+    winRate: "% الفوز",
+    w2: "ثنائية ف",
+    w3: "ثلاثية ف",
+    w4: "رباعية ف",
+    l2: "ثنائية خ",
+    l3: "ثلاثية خ",
+    l4: "رباعية خ",
+
+    // Champions log
+    championsLogHint: "اختر سنة محددة لعرض سجل أبطال الشهور (مثل سجل الدوري الإنجليزي).",
     noCompletedMonths: "لا يوجد شهور مكتملة داخل الفترة المختارة.",
+    noCompletedMonthsInYear: tr("noCompletedMonthsInYear"),
+    championsLogTitleTpl: "سجل الأبطال لسنة {year} — يمكن إعادة الترتيب من رؤوس الأعمدة",
+    first: "الأول",
+    second: "الثاني",
+    third: "الثالث",
+    bestRank: "أفضل مركز",
+    worstRank: "أسوأ مركز",
     lastYearChampion: "🏆 حامل لقب آخر سنة",
-    lastMonthChampion: "🏅 حامل لقب آخر شهر"
+    lastMonthChampion: "🏅 حامل لقب آخر شهر",
+    selectPlayerAnalysis: "اختر لاعب من القائمة لعرض تحليله.",
+
+    // Matches log
+    showLog: "👁️ عرض السجل",
+    hideLog: "👁️ إخفاء السجل",
+    matchesLogIntro: "أحدث ماتش في الأعلى. يمكنك حذف أي ماتش غلط بدون التأثير على الباقي.",
+    date: "التاريخ",
+    winningTeam: "الفريق الكسبان",
+    losingTeam: "الفريق الخسران",
+    delete: "حذف",
+
+    // Player analysis
+    choosePlayer: "اختر لاعب",
+    playerDetailsHelp: "اختر لاعب من القائمة لعرض تحليله.",
+    totalWins: "إجمالي مرات الفوز في الفترة المحددة",
+    totalLosses: "إجمالي مرات الخسارة في الفترة المحددة",
+    totalMatches: "إجمالي الماتشات في الفترة المحددة",
+    winRatePeriod: "نسبة الفوز في الفترة المحددة",
+    bonusPlus: "بونص + (مكسب)",
+    bonusMinus: "بونص − (خسارة)",
+    bonusNet: "صافي البونص",
+
+    // H2H
+    firstPlayer: "اللاعب الأول",
+    secondPlayer: "اللاعب الثاني",
+    analyze: "🔍 تحليل المواجهة",
+    h2hHelp: "اختر لاعبين ثم اضغط \"تحليل المواجهة\".",
+    team1p1: "الفريق الأول - لاعب 1",
+    team1p2: "الفريق الأول - لاعب 2",
+    team2p1: "الفريق الثاني - لاعب 1",
+    team2p2: "الفريق الثاني - لاعب 2",
+    h2hTeamsHelp: "اختر لاعبي الفريقين ثم اضغط \"تحليل المواجهة\".",
+
+    // Admin
+    enableAdmin: "🔑 تفعيل وضع المدير",
+    disableAdmin: "🚪 قفل وضع المدير",
+    adminViewOnly: "وضع المشاهدة فقط: لا يمكن تعديل البيانات إلا بعد إدخال كود المدير.",
+    adminEnabled: "وضع المدير مُفعّل: مسموح بإضافة لاعبين وتسجيل/حذف الماتشات ومسح البيانات.",
+    dataAdminTitle: "إدارة البيانات (للمدير فقط)",
+    resetAll: "🧨 مسح كل البيانات",
+    backupSoon: "💾 نسخ احتياطي (قريبًا)",
+    importSoon: "📥 استيراد البيانات (قريبًا)",
+    exportSoon: "📤 تصدير البيانات (قريبًا)",
+    resetWarning1: "زر مسح كل البيانات يمسح كل اللاعبين وكل الماتشات نهائيًا من قاعدة البيانات (للاستخدام بحذر شديد).",
+    resetWarning2: "أزرار النسخ الاحتياطي والاستيراد والتصدير غير مفعّلة حاليًا، وهنفعّلها بعد ما نضبط منطق حفظ/استرجاع البيانات.",
+
+    // Notes
+    note1: "من غير تفعيل وضع المدير، البرنامج في وضع المشاهدة فقط.",
+    note2: "كل البيانات محفوظة أونلاين في Firebase Firestore، تقدر تفتح من أي جهاز.",
+    note3: "استخدم فلتر السنة والشهر للتحكم في فترة الإحصائيات للتـرتيب والتحليل والمواجهات."
   },
   en: {
-    appTitle: "Domino League",
+    // Header
+    pageTitle: "Domino League - Tens (151)",
+    headerTitle: "Domino Doubles League - Tens (151)",
+    subtitleRule: "Each match (Tens) = Winning team +1 per player / Losing team -1 per player",
     darkMode: "🌙 Dark Mode",
     lightMode: "☀️ Light Mode",
     languageLabel: "Language:",
-    championsLog: "Champions Log",
+    // Sections
+    playersSectionTitle: "👤 Player Management",
+    matchSectionTitle: "🧮 Record a Match Result (Full Ten)",
+    leaderboardSectionTitle: "🏆 Leaderboard & Overall Stats",
+    championsSectionTitle: "🏅 Champions Log (Monthly)",
+    matchesLogSectionTitle: "📜 Matches Log (All Time)",
+    playerAnalysisSectionTitle: "📊 Single Player Analysis",
+    h2hPlayersTitle: "⚔️ Head-to-Head (Player vs Player)",
+    h2hTeamsTitle: "🧩 Head-to-Head (2 vs 2 Teams)",
+    adminSectionTitle: "🔐 Admin Mode & Advanced Management",
+    notesSectionTitle: "ℹ️ Usage Notes",
+
+    // Player management
+    newPlayerName: "New Player Name",
+    newPlayerNamePh: "Example: Ahmed, Ali, Hossam...",
+    playerAvatar: "Player Photo (optional)",
+    addPlayer: "➕ Add Player",
+    showPlayersList: "👥 Show Players List",
+    hidePlayersList: "👥 Hide Players List",
+    playersListEditHint: "You can edit the player name or add/change the player photo from the table (admin only).",
+    playersTableNum: "#",
+    playersTablePlayer: "Player",
+    playersTableActions: "Actions",
+    statusActive: "Active",
+    statusBanned: "Banned",
+    editName: "✏️ Edit Name",
+    avatarBtn: "🖼 Photo",
+    banBtn: "⛔ Ban",
+    unbanBtn: "✅ Unban",
+    deleteBtn: "🗑 Delete",
+    noneDash: "-",
+    noPlayersYet: "No players yet. Add some players first.",
+    noPlayersYetShort: "No players yet.",
+
+    // Match entry
+    matchDate: "Match Date",
+    matchDateHint: "If left empty, it will be saved as today's date",
+    winnerTeamP1: "Winning Team - Player 1",
+    winnerTeamP2: "Winning Team - Player 2",
+    loserTeamP1: "Losing Team - Player 1",
+    loserTeamP2: "Losing Team - Player 2",
+    saveMatch: "✅ Save Match Result",
+    bonusUnavailable: "🎁 Bonus (Unavailable)",
+    bonusAdd: "🎁 Add Bonus",
+    bonusEnabled: "🎁 Bonus Enabled",
+    matchNote: "Note: The same player cannot be in both teams in the same match.",
+    selectPlayer: "Select player...",
+
+    // Filters + leaderboard
+    year: "Year",
+    month: "Month",
+    allYears: "All years",
+    allMonths: "All months",
+    detailedView: "📊 Detailed View",
+    compactView: "📊 Compact View",
+    rank: "Rank",
+    player: "Player",
+    points: "Points",
+    bonus: "Bonus",
+    wins: "Wins",
+    losses: "Losses",
+    matches: "Matches",
+    winRate: "Win Rate %",
+    w2: "2 Wins",
+    w3: "3 Wins",
+    w4: "4+ Wins",
+    l2: "2 Losses",
+    l3: "3 Losses",
+    l4: "4+ Losses",
+
+    // Champions log
+    championsLogHint: "Select a specific year to view monthly champions (like a league record).",
     noCompletedMonths: "No completed months in the selected period.",
+    noCompletedMonthsInYear: "No completed months in this year to display the champions log.",
+    championsLogTitleTpl: "Champions Log for {year} — click headers to sort",
+    first: "1st",
+    second: "2nd",
+    third: "3rd",
+    bestRank: "Best Rank",
+    worstRank: "Worst Rank",
     lastYearChampion: "🏆 Last Year Champion",
-    lastMonthChampion: "🏅 Last Month Champion"
+    lastMonthChampion: "🏅 Last Month Champion",
+    selectPlayerAnalysis: "Select a player to view their analysis.",
+
+    // Matches log
+    showLog: "👁️ Show Log",
+    hideLog: "👁️ Hide Log",
+    matchesLogIntro: "Latest match on top. You can delete any wrong match without affecting the others.",
+    date: "Date",
+    winningTeam: "Winning Team",
+    losingTeam: "Losing Team",
+    delete: "Delete",
+
+    // Player analysis
+    choosePlayer: "Choose Player",
+    playerDetailsHelp: "Choose a player from the list to view their analysis.",
+    totalWins: "Total wins in the selected period",
+    totalLosses: "Total losses in the selected period",
+    totalMatches: "Total matches in the selected period",
+    winRatePeriod: "Win rate in the selected period",
+    bonusPlus: "Bonus + (Win)",
+    bonusMinus: "Bonus − (Loss)",
+    bonusNet: "Net bonus",
+
+    // H2H
+    firstPlayer: "Player 1",
+    secondPlayer: "Player 2",
+    analyze: "🔍 Analyze",
+    h2hHelp: "Choose two players then click \"Analyze\".",
+    team1p1: "Team 1 - Player 1",
+    team1p2: "Team 1 - Player 2",
+    team2p1: "Team 2 - Player 1",
+    team2p2: "Team 2 - Player 2",
+    h2hTeamsHelp: "Choose both teams then click \"Analyze\".",
+
+    // Admin
+    enableAdmin: "🔑 Enable Admin Mode",
+    disableAdmin: "🚪 Disable Admin Mode",
+    adminViewOnly: "View-only mode: data cannot be edited unless admin PIN is entered.",
+    adminEnabled: "Admin mode enabled: you can add players, add/delete matches, and reset data.",
+    dataAdminTitle: "Data Management (Admin only)",
+    resetAll: "🧨 Reset All Data",
+    backupSoon: "💾 Backup (Soon)",
+    importSoon: "📥 Import (Soon)",
+    exportSoon: "📤 Export (Soon)",
+    resetWarning1: "Reset All Data deletes all players and all matches permanently from the database (use with extreme caution).",
+    resetWarning2: "Backup/Import/Export buttons are currently disabled and will be enabled after implementing reliable save/restore logic.",
+
+    // Notes
+    note1: "Without admin mode, the app is view-only.",
+    note2: "All data is stored online in Firebase Firestore; you can open it from any device.",
+    note3: "Use the Year/Month filters to control the stats period for leaderboard, analysis, and head-to-head."
   }
 };
+
+const MONTHS = {
+  ar: ["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"],
+  en: ["January","February","March","April","May","June","July","August","September","October","November","December"]
+};
+
+function monthName(m){
+  const lang = getLang();
+  return (MONTHS[lang] || MONTHS.ar)[m-1] || "";
+}
 
 function getLang() {
   return localStorage.getItem("dl_lang") || "ar";
@@ -741,16 +1013,140 @@ function applyLang(lang) {
   html.lang = lang;
   html.dir = (lang === "ar") ? "rtl" : "ltr";
 
-  // Static UI
-  const titleEl = document.querySelector("header h1");
-  if (titleEl) titleEl.textContent = tr("appTitle");
+  // Page title + header
+  document.title = tr("pageTitle");
+  const titleEl = document.getElementById("appTitle");
+  if (titleEl) titleEl.textContent = tr("headerTitle");
 
-  const langLabel = document.querySelector('label[for="langSelect"]');
+  const sub = document.getElementById("subtitleRule");
+  if (sub) sub.textContent = tr("subtitleRule");
+
+  const langLabel = document.getElementById("languageLabel");
   if (langLabel) langLabel.textContent = tr("languageLabel");
 
-  // If your Champions section has headings by id, update them too (safe if absent)
-  const championsTitle = document.getElementById("championsTitle");
-  if (championsTitle) championsTitle.textContent = tr("championsLog");
+  // Section headings
+  const sectionIds = [
+    "playersSectionTitle","matchSectionTitle","leaderboardSectionTitle","championsSectionTitle",
+    "matchesLogSectionTitle","playerAnalysisSectionTitle","h2hPlayersTitle","h2hTeamsTitle",
+    "adminSectionTitle","notesSectionTitle"
+  ];
+  sectionIds.forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.textContent = tr(id);
+  });
+
+  // Labels
+  const setLabel = (forId, key) => {
+    const el = document.querySelector(`label[for="${forId}"]`);
+    if (el) el.textContent = tr(key);
+  };
+  setLabel("playerName", "newPlayerName");
+  setLabel("playerAvatarFile", "playerAvatar");
+  setLabel("matchDate", "matchDate");
+  setLabel("filterYear", "year");
+  setLabel("filterMonth", "month");
+  setLabel("playerDetailsSelect", "choosePlayer");
+  setLabel("h2hP1", "firstPlayer");
+  setLabel("h2hP2", "secondPlayer");
+  setLabel("h2hT1P1", "team1p1");
+  setLabel("h2hT1P2", "team1p2");
+  setLabel("h2hT2P1", "team2p1");
+  setLabel("h2hT2P2", "team2p2");
+
+  // Inputs/buttons
+  const playerNameInput = document.getElementById("playerName");
+  if (playerNameInput) playerNameInput.placeholder = tr("newPlayerNamePh");
+
+  const addPlayerBtn = document.getElementById("addPlayerBtn");
+  if (addPlayerBtn) addPlayerBtn.textContent = tr("addPlayer");
+
+  const togglePlayersBtn = document.getElementById("togglePlayersListBtn");
+  if (togglePlayersBtn) togglePlayersBtn.textContent = (playersListVisible ? tr("hidePlayersList") : tr("showPlayersList"));
+
+  const addMatchBtn = document.getElementById("addMatchBtn");
+  if (addMatchBtn) addMatchBtn.textContent = tr("saveMatch");
+
+  const toggleMatchesBtn = document.getElementById("toggleMatchesLogBtn");
+  if (toggleMatchesBtn) toggleMatchesBtn.textContent = (matchesLogVisible ? tr("hideLog") : tr("showLog"));
+
+const lbToggleBtn = document.getElementById("leaderboardToggleViewBtn");
+if (lbToggleBtn) lbToggleBtn.textContent = (leaderboardViewMode === "compact") ? tr("detailedView") : tr("compactView");
+
+  const h2hBtn = document.getElementById("h2hAnalyzeBtn");
+  if (h2hBtn) h2hBtn.textContent = tr("analyze");
+
+  const h2hTeamsBtn = document.getElementById("h2hTeamsAnalyzeBtn");
+  if (h2hTeamsBtn) h2hTeamsBtn.textContent = tr("analyze");
+
+  const enableAdminBtn = document.getElementById("enableAdminBtn");
+  if (enableAdminBtn) enableAdminBtn.textContent = tr("enableAdmin");
+  const disableAdminBtn = document.getElementById("disableAdminBtn");
+  if (disableAdminBtn) disableAdminBtn.textContent = tr("disableAdmin");
+
+  const resetAllBtn = document.getElementById("resetAllBtn");
+  if (resetAllBtn) resetAllBtn.textContent = tr("resetAll");
+  const backupBtn = document.getElementById("backupBtn");
+  if (backupBtn) backupBtn.textContent = tr("backupSoon");
+  const importBtn = document.getElementById("importBtn");
+  if (importBtn) importBtn.textContent = tr("importSoon");
+  const exportBtn = document.getElementById("exportBtn");
+  if (exportBtn) exportBtn.textContent = tr("exportSoon");
+
+  // Static helper texts by id
+  const idTextKeys = [
+    ["matchesLogIntro","matchesLogIntro"],
+    ["playerDetailsHelp","playerDetailsHelp"],
+    ["h2hHelp","h2hHelp"],
+    ["h2hTeamsHelp","h2hTeamsHelp"],
+    ["note1","note1"],
+    ["note2","note2"],
+    ["note3","note3"]
+  ];
+  idTextKeys.forEach(([id,key])=>{
+    const el = document.getElementById(id);
+    if(el) el.textContent = tr(key);
+  });
+
+// Matches log table headers
+const thMap = [
+  ["thMatchesDate","date"],
+  ["thMatchesWin","winningTeam"],
+  ["thMatchesLose","losingTeam"],
+  ["thMatchesDelete","delete"]
+];
+thMap.forEach(([id,key])=>{
+  const el=document.getElementById(id);
+  if(el) el.textContent = tr(key);
+});
+
+  // Filter dropdown static options
+  const fy = document.getElementById("filterYear");
+  if (fy){
+    const optAll = fy.querySelector('option[value="all"]');
+    if (optAll) optAll.textContent = tr("allYears");
+  }
+  const fm = document.getElementById("filterMonth");
+  if (fm){
+    const optAll = fm.querySelector('option[value="all"]');
+    if (optAll) optAll.textContent = tr("allMonths");
+    // month options 1..12
+    for(let m=1;m<=12;m++){
+      const opt = fm.querySelector(`option[value="${m}"]`);
+      if(opt) opt.textContent = monthName(m);
+    }
+  }
+
+  // Champions hint
+  const champHint = document.getElementById("championsLogHint");
+  if (champHint) champHint.textContent = tr("championsLogHint");
+
+  // Re-render any dynamic sections that have language-dependent labels
+  try { updatePlayersUI(); } catch(e){}
+  try { updateLeaderboard(); } catch(e){}
+  try { updateMatchesLog(); } catch(e){}
+  try { updateChampionsLog(); } catch(e){}
+  try { updatePlayerDetailsUI(); } catch(e){}
+  try { updateHeadToHeadUI(false); } catch(e){}
 }
 
 function getTheme() {
@@ -810,7 +1206,7 @@ function toggleTheme() {
         bonusValue = 0;
         btn.disabled = true;
         btn.classList.remove("bonus-ready");
-        btn.textContent = "🎁 بونص (غير متاح)";
+        btn.textContent = tr("bonusUnavailable");
         return;
       }
 
@@ -824,7 +1220,7 @@ function toggleTheme() {
         bonusValue = 0;
         btn.disabled = true;
         btn.classList.remove("bonus-ready");
-        btn.textContent = "🎁 بونص (غير متاح)";
+        btn.textContent = tr("bonusUnavailable");
         return;
       }
 
@@ -834,7 +1230,7 @@ function toggleTheme() {
         bonusValue = 0;
         btn.disabled = true;
         btn.classList.remove("bonus-ready");
-        btn.textContent = "🎁 بونص (غير متاح)";
+        btn.textContent = tr("bonusUnavailable");
         return;
       }
 
@@ -844,7 +1240,7 @@ function toggleTheme() {
         bonusValue = 0;
         btn.disabled = true;
         btn.classList.remove("bonus-ready");
-        btn.textContent = "🎁 بونص (غير متاح)";
+        btn.textContent = tr("bonusUnavailable");
         return;
       }
 
@@ -866,7 +1262,7 @@ function toggleTheme() {
         bonusValue = 0;
         btn.disabled = true;
         btn.classList.remove("bonus-ready");
-        btn.textContent = "🎁 بونص (غير متاح)";
+        btn.textContent = tr("bonusUnavailable");
         return;
       }
 
@@ -876,9 +1272,9 @@ function toggleTheme() {
 
       // لو لسه مش متفعل، نعرض القيمة المقترحة
       if(!bonusApplied){
-        btn.textContent = `🎁 إضافة بونص (+${bonusSuggested})`;
+        btn.textContent = `${tr("bonusAdd")} (+${bonusSuggested})`;
       }else{
-        btn.textContent = `🎁 بونص مُفعّل (+${bonusValue})`;
+        btn.textContent = `${tr("bonusEnabled")} (+${bonusValue})`;
       }
     }
 
@@ -906,31 +1302,31 @@ function toggleTheme() {
     function getLeaderboardColumns(){
       if(leaderboardViewMode === "compact"){
         return [
-          {key:"rank",   label:"الترتيب"},
-          {key:"name",   label:"اللاعب"},
-          {key:"points", label:"النقاط"},
-          {key:"bonusNet", label:"بونص"},
-          {key:"wins",   label:"فوز"},
-          {key:"losses", label:"خسارة"},
-          {key:"matches",label:"عدد الماتشات"},
-          {key:"rate",   label:"% الفوز"}
+          {key:"rank",   label:tr("rank")},
+          {key:"name",   label:tr("player")},
+          {key:"points", label:tr("points")},
+          {key:"bonusNet", label:tr("bonus")},
+          {key:"wins",   label:tr("wins")},
+          {key:"losses", label:tr("losses")},
+          {key:"matches",label:tr("matches")},
+          {key:"rate",   label:tr("winRate")}
         ];
       } else {
         return [
-          {key:"rank",   label:"الترتيب"},
-          {key:"name",   label:"اللاعب"},
-          {key:"points", label:"النقاط"},
-          {key:"bonusNet", label:"بونص"},
-          {key:"wins",   label:"فوز"},
-          {key:"losses", label:"خسارة"},
-          {key:"matches",label:"عدد الماتشات"},
-          {key:"rate",   label:"% الفوز"},
-          {key:"w2",     label:"ثنائية ف"},
-          {key:"w3",     label:"ثلاثية ف"},
-          {key:"w4",     label:"رباعية ف"},
-          {key:"l2",     label:"ثنائية خ"},
-          {key:"l3",     label:"ثلاثية خ"},
-          {key:"l4",     label:"رباعية خ"}
+          {key:"rank",   label:tr("rank")},
+          {key:"name",   label:tr("player")},
+          {key:"points", label:tr("points")},
+          {key:"bonusNet", label:tr("bonus")},
+          {key:"wins",   label:tr("wins")},
+          {key:"losses", label:tr("losses")},
+          {key:"matches",label:tr("matches")},
+          {key:"rate",   label:tr("winRate")},
+          {key:"w2",     label:tr("w2")},
+          {key:"w3",     label:tr("w3")},
+          {key:"w4",     label:tr("w4")},
+          {key:"l2",     label:tr("l2")},
+          {key:"l3",     label:tr("l3")},
+          {key:"l4",     label:tr("l4")}
         ];
       }
     }
@@ -1010,6 +1406,13 @@ function toggleTheme() {
       firebase.initializeApp(firebaseConfig);
       db = firebase.firestore();
 
+      // Firebase status indicator
+      try {
+        const s = document.getElementById("fbStatus");
+        if(s) s.textContent = "Firebase: connected (listening for data...)";
+      } catch(e) {}
+
+
       // استمع لأي تغييرات في اللاعبين
       db.collection("players").onSnapshot(snapshot => {
         const players = [];
@@ -1029,6 +1432,10 @@ function toggleTheme() {
         updateMatchesLog();
         updateBonusEligibility();
         updateChampionsLog();
+            }, (err)=>{
+        console.error("players onSnapshot error:", err);
+        const s = document.getElementById("fbStatus");
+        if(s) s.textContent = "Firebase error (players): " + (err?.message || err);
       });
 
       // استمع لأي تغييرات في الماتشات
@@ -1045,7 +1452,11 @@ function toggleTheme() {
             createdAt: data.createdAt || null,
             bonusApplied: data.bonusApplied || false,
             bonusValue: Number(data.bonusValue || 0)
-          });
+                }, (err)=>{
+        console.error("matches onSnapshot error:", err);
+        const s = document.getElementById("fbStatus");
+        if(s) s.textContent = "Firebase error (matches): " + (err?.message || err);
+      });
         });
         state.matches = matches;
         updateFilterYearOptions();
@@ -1072,9 +1483,7 @@ function toggleTheme() {
 
       $("enableAdminBtn").style.display = isAdmin ? "none" : "inline-block";
       $("disableAdminBtn").style.display = isAdmin ? "inline-block" : "none";
-      $("adminStatusText").textContent = isAdmin
-        ? "وضع المدير مُفعّل: مسموح بإضافة لاعبين وتسجيل/حذف الماتشات ومسح البيانات."
-        : "وضع المشاهدة فقط: لا يمكن تعديل البيانات إلا بعد إدخال كود المدير.";
+      $("adminStatusText").textContent = isAdmin ? tr("adminEnabled") : tr("adminViewOnly");
 
       // علشان أزرار تعديل اللاعبين تظهر/تختفي حسب وضع المدير
       updateMatchesLog();
@@ -1083,13 +1492,13 @@ function toggleTheme() {
     }
 
     function enableAdminMode(){
-      const pin = prompt("أدخل كود المدير:");
+      const pin = prompt((getLang()==="en") ? "Enter admin PIN:" : "أدخل كود المدير:");
       if(pin === null) return;
       if(pin === ADMIN_PIN){
         isAdmin = true;
-        alert("تم تفعيل وضع المدير.");
+        alert((getLang()==="en") ? "Admin mode enabled." : "تم تفعيل وضع المدير.");
       } else {
-        alert("كود غير صحيح.");
+        alert((getLang()==="en") ? "Incorrect PIN." : "كود غير صحيح.");
       }
       updateAdminUI();
     }
@@ -1106,7 +1515,7 @@ function toggleTheme() {
       if(!wrapper || !btn) return;
       matchesLogVisible = !matchesLogVisible;
       wrapper.style.display = matchesLogVisible ? "" : "none";
-      btn.textContent = matchesLogVisible ? "👁️ إخفاء السجل" : "👁️ عرض السجل";
+      btn.textContent = matchesLogVisible ? tr("hideLog") : tr("showLog");
     }
 
     function togglePlayersList(){
@@ -1115,9 +1524,7 @@ function toggleTheme() {
       if(!wrapper || !btn) return;
       playersListVisible = !playersListVisible;
       wrapper.style.display = playersListVisible ? "" : "none";
-      btn.textContent = playersListVisible
-        ? "👥 إخفاء قائمة اللاعبين"
-        : "👥 عرض قائمة اللاعبين";
+      btn.textContent = playersListVisible ? tr("hidePlayersList") : tr("showPlayersList");
       }
 
     // ===== PLAYERS =====
@@ -1224,7 +1631,7 @@ function toggleTheme() {
         const current = sel.value;
         sel.innerHTML="";
         const opt=document.createElement("option");
-        opt.value=""; opt.textContent="اختر لاعب...";
+        opt.value=""; opt.textContent=tr("selectPlayer");
         sel.appendChild(opt);
 
         playersForMatch.forEach(p=>{
@@ -1243,7 +1650,7 @@ function toggleTheme() {
         const current = sel.value;
         sel.innerHTML="";
         const opt=document.createElement("option");
-        opt.value=""; opt.textContent="اختر لاعب...";
+        opt.value=""; opt.textContent=tr("selectPlayer");
         sel.appendChild(opt);
 
         playersForAnalytics.forEach(p=>{
@@ -1263,7 +1670,7 @@ function toggleTheme() {
       const info = $("playersListInfo");
       if(info){
         if(playersAll.length===0){
-          info.textContent="لا يوجد لاعبين حتى الآن. أضِف بعض اللاعبين أولاً.";
+          info.textContent=tr("noPlayersYet");
         } else {
           info.textContent="اللاعبون المسجّلون: " + playersAll.map(p=>p.name).join("، ");
         }
@@ -1278,7 +1685,7 @@ function toggleTheme() {
         const tr = document.createElement("tr");
         const td = document.createElement("td");
         td.colSpan = 3;
-        td.textContent = "لا يوجد لاعبين حتى الآن.";
+        td.textContent = tr("noPlayersYetShort");
         tr.appendChild(td);
         tbody.appendChild(tr);
         return;
@@ -1316,7 +1723,7 @@ function toggleTheme() {
         badge.style.borderRadius = "999px";
         badge.style.border = "1px solid #ddd";
         badge.style.marginRight = "6px";
-        badge.textContent = bannedNow ? "محظور" : "نشط";
+        badge.textContent = bannedNow ? tr("statusBanned") : tr("statusActive");
         wrapper.appendChild(badge);
 
         tdPlayer.appendChild(wrapper);
@@ -1327,14 +1734,14 @@ function toggleTheme() {
         if(isAdmin){
           // تعديل الاسم
           const editBtn = document.createElement("button");
-          editBtn.textContent = "✏️ تعديل الاسم";
+          editBtn.textContent = tr("editName");
           editBtn.className = "btn-small";
           editBtn.addEventListener("click", ()=>editPlayerName(p.id, p.name));
           tdActions.appendChild(editBtn);
 
           // تعديل الصورة
           const imgBtn = document.createElement("button");
-          imgBtn.textContent = "🖼 صورة";
+          imgBtn.textContent = tr("avatarBtn");
           imgBtn.className = "btn-small";
           imgBtn.style.marginRight = "4px";
 
@@ -1358,7 +1765,7 @@ function toggleTheme() {
           const banBtn = document.createElement("button");
           banBtn.className = "btn-small";
           banBtn.style.marginRight = "4px";
-          banBtn.textContent = bannedNow ? "✅ فك الحظر" : "⛔ حظر";
+          banBtn.textContent = bannedNow ? tr("unbanBtn") : tr("banBtn");
           banBtn.addEventListener("click", async ()=>{
             if(bannedNow){
               if(!confirm(`فك حظر اللاعب "${p.name}"؟`)) return;
@@ -1372,13 +1779,13 @@ function toggleTheme() {
 
           // حذف لاعب (نهائي)
           const delBtn = document.createElement("button");
-          delBtn.textContent = "🗑 حذف";
+          delBtn.textContent = tr("deleteBtn");
           delBtn.className = "danger btn-small";
           delBtn.addEventListener("click", ()=> deletePlayerAndMatches(p.id, p.name));
           tdActions.appendChild(delBtn);
 
         } else {
-          tdActions.textContent = "-";
+          tdActions.textContent = tr("noneDash");
         }
 
         tr.appendChild(tdActions);
@@ -1654,7 +2061,7 @@ function toggleTheme() {
   const currentYear = now.getFullYear();
   const currentMonth = now.getMonth() + 1; // 1-12
 
-  const monthNames = ["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
+  const monthNames = (MONTHS[getLang()] || MONTHS.ar);
 
   // ===== Robust date helpers (string / Firestore Timestamp / Date) =====
   function matchToDate(mm){
@@ -1832,11 +2239,11 @@ function toggleTheme() {
   hint.style.display = "none";
   wrapper.style.display = "block";
   const championsEmptyMessage = noCompletedMonths
-    ? "لا يوجد شهور مكتملة داخل هذه السنة لعرض سجل الأبطال."
-    : "لا توجد بيانات كافية لهذه السنة.";
+    ? tr("noCompletedMonthsInYear")
+    : (getLang()==="en" ? "Not enough data for this year." : "لا توجد بيانات كافية لهذه السنة.");
 
   // العنوان
-  title.textContent = `سجل الأبطال لسنة ${year} — يمكن إعادة الترتيب من رؤوس الأعمدة`;
+  title.textContent = tr("championsLogTitleTpl").replace("{year}", year);
 
   // 2) تجميع بيانات الأبطال + (أفضل/أسوأ مركز) بطريقة دقيقة
   const byId = new Map();
@@ -2422,7 +2829,7 @@ function updateMatchesLog(){
       const summary=$("playerDetailsSummary");
       const box=$("playerDetailsStats");
       if(!sel || !sel.value){
-        summary.textContent="اختر لاعب من القائمة لعرض تحليله.";
+        summary.textContent = tr("selectPlayerAnalysis");
         box.style.display="none"; return;
       }
       const id=sel.value;
@@ -2503,7 +2910,7 @@ function updateMatchesLog(){
 
     // ===== H2H (بفترة الفلتر) =====
     function updateHeadToHeadUI(reset=true){
-      if(reset) $("h2hSummary").textContent='اختر لاعبين ثم اضغط "تحليل المواجهة".';
+      if(reset) $("h2hSummary").textContent='<span id="h2hHelp">اختر لاعبين ثم اضغط "تحليل المواجهة".</span>';
     }
 
 
@@ -2626,7 +3033,7 @@ function analyzeHeadToHead(){
     function resetTeamsH2HSummary(){
       const el = $("h2hTeamsSummary");
       if(el){
-        el.textContent = 'اختر لاعبي الفريقين ثم اضغط "تحليل المواجهة".';
+        el.textContent = '<span id="h2hTeamsHelp">اختر لاعبي الفريقين ثم اضغط "تحليل المواجهة".</span>';
       }
     }
 
