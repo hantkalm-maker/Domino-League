@@ -1515,7 +1515,6 @@ function refreshPlayerAnalysisTexts(){
       if(el) el.textContent = T(key);
     });
   }catch(e){}
-}
 
 function applyLang(lang) {
   const html = document.documentElement;
@@ -1767,7 +1766,6 @@ try{
       analyzeTeamsHeadToHead();
     }
   }catch(e){}
-}
 
 function getTheme() {
   return localStorage.getItem("dl_theme") || "light";
