@@ -288,15 +288,15 @@
 </head>
 <body>
   <header>
-    <h1 id="appTitle">دوري الأصدقاء </h1>
-    <div class="small-text" id="subtitleRule">
+    <h1 id="appTitle" data-i18n="headerTitle">دوري الأصدقاء </h1>
+    <div class="small-text" id="subtitleRule" data-i18n="subtitleRule">
       كل ماتش = الفريق الكسبان +1 لكل لاعب / الخسران -1 لكل لاعب
     </div>
   
     <div class="settings-bar">
-      <button class="primary" id="themeToggleBtn" type="button">🌙 Dark Mode</button>
+      <button class="primary" id="themeToggleBtn" type="button" data-i18n="darkMode">🌙 Dark Mode</button>
 
-      <label class="small-text" for="langSelect" id="languageLabel" style="margin:0;">Language:</label>
+      <label class="small-text" for="langSelect" id="languageLabel" style="margin:0;" data-i18n="languageLabel">Language:</label>
       <select id="langSelect">
         <option value="ar">العربية</option>
         <option value="en">English</option>
@@ -311,25 +311,25 @@
   <main>
     <!-- إدارة اللاعبين -->
     <section class="card">
-      <h2 id="playersSectionTitle">👤 إدارة اللاعبين</h2>
+      <h2 id="playersSectionTitle" data-i18n="playersSectionTitle">👤 إدارة اللاعبين</h2>
       <div class="row">
         <div class="field">
-          <label for="playerName">اسم اللاعب الجديد</label>
-          <input type="text" id="playerName" placeholder="مثال: أحمد، علي، حسام..." />
+          <label for="playerName" data-i18n="newPlayerName">اسم اللاعب الجديد</label>
+          <input type="text" id="playerName" placeholder="مثال: أحمد، علي، حسام..." / data-i18n-placeholder="newPlayerNamePh">
         </div>
         <div class="field">
-          <label for="playerAvatarFile">صورة اللاعب (اختياري)</label>
+          <label for="playerAvatarFile" data-i18n="playerAvatar">صورة اللاعب (اختياري)</label>
           <input type="file" id="playerAvatarFile" accept="image/*" />
         </div>
         <div class="field" style="align-self:flex-end;">
-          <button class="primary" id="addPlayerBtn">➕ إضافة لاعب</button>
+          <button class="primary" id="addPlayerBtn" data-i18n="addPlayer">➕ إضافة لاعب</button>
         </div>
       </div>
 
       <!-- زر عرض/إخفاء قائمة اللاعبين -->
       <div class="row" style="margin-bottom:4px;">
         <div class="field" style="flex:0 0 auto;">
-          <button class="primary" id="togglePlayersListBtn">👥 عرض قائمة اللاعبين</button>
+          <button class="primary" id="togglePlayersListBtn" data-i18n="showPlayersList">👥 عرض قائمة اللاعبين</button>
         </div>
       </div>
 
@@ -341,9 +341,9 @@
         <table style="margin-top:8px;">
           <thead>
             <tr>
-              <th id="thPlayersNum">#</th>
-              <th id="thPlayersPlayer">اللاعب</th>
-              <th id="thPlayersActions">إجراءات</th>
+              <th id="thPlayersNum" data-i18n="thPlayersNum">#</th>
+              <th id="thPlayersPlayer" data-i18n="thPlayersPlayer">اللاعب</th>
+              <th id="thPlayersActions" data-i18n="thPlayersActions">إجراءات</th>
             </tr>
           </thead>
           <tbody id="playersTableBody"></tbody>
@@ -356,62 +356,62 @@
 
     <!-- تسجيل نتيجة ماتش -->
     <section class="card">
-      <h2 id="matchSectionTitle">🧮 تسجيل نتيجة ماتش (عشرة كاملة)</h2>
+      <h2 id="matchSectionTitle" data-i18n="matchSectionTitle">🧮 تسجيل نتيجة ماتش (عشرة كاملة)</h2>
       <div class="row">
         <div class="field">
-          <label for="matchDate">تاريخ الماتش</label>
+          <label for="matchDate" data-i18n="matchDate">تاريخ الماتش</label>
           <input type="date" id="matchDate" />
-          <span class="small-text"><span id="matchDateHintText">لو تركته فاضي، هيتسجل بتاريخ اليوم</span></span>
+          <span class="small-text"><span id="matchDateHintText" data-i18n="matchDateHintText">لو تركته فاضي، هيتسجل بتاريخ اليوم</span></span>
         </div>
       </div>
 
       <div class="row">
         <div class="field">
-          <label for="winnerP1" id="lblWinnerP1">الفريق الكسبان - لاعب 1</label>
+          <label for="winnerP1" id="lblWinnerP1" data-i18n="winnerTeamP1">الفريق الكسبان - لاعب 1</label>
           <select id="winnerP1"></select>
         </div>
         <div class="field">
-          <label for="winnerP2" id="lblWinnerP2">الفريق الكسبان - لاعب 2</label>
+          <label for="winnerP2" id="lblWinnerP2" data-i18n="winnerTeamP2">الفريق الكسبان - لاعب 2</label>
           <select id="winnerP2"></select>
         </div>
       </div>
 
       <div class="row">
         <div class="field">
-          <label for="loserP1" id="lblLoserP1">الفريق الخسران - لاعب 1</label>
+          <label for="loserP1" id="lblLoserP1" data-i18n="loserTeamP1">الفريق الخسران - لاعب 1</label>
           <select id="loserP1"></select>
         </div>
         <div class="field">
-          <label for="loserP2" id="lblLoserP2">الفريق الخسران - لاعب 2</label>
+          <label for="loserP2" id="lblLoserP2" data-i18n="loserTeamP2">الفريق الخسران - لاعب 2</label>
           <select id="loserP2"></select>
         </div>
       </div>
 
       <div class="row" style="margin-top:8px;">
         <div class="field" style="align-self:flex-end;">
-          <button class="primary" id="addMatchBtn">✅ حفظ نتيجة الماتش</button>
+          <button class="primary" id="addMatchBtn" data-i18n="saveMatch">✅ حفظ نتيجة الماتش</button>
         </div>
         <div class="field" style="align-self:flex-end;">
-          <button class="primary" id="bonusBtn" disabled>🎁 بونص (غير متاح)</button>
+          <button class="primary" id="bonusBtn" disabled data-i18n="bonusUnavailable">🎁 بونص (غير متاح)</button>
         </div>
       </div>
-      <div class="small-text" id="matchNoteText">
+      <div class="small-text" id="matchNoteText" data-i18n="matchNoteText">
         ملاحظة: نفس اللاعب ما ينفعش يكون في الفريقين في نفس الماتش.
       </div>
     </section>
 
     <!-- الترتيب والإحصائيات العامة -->
     <section class="card">
-      <h2 id="leaderboardSectionTitle">🏆 الترتيب والإحصائيات العامة</h2>
+      <h2 id="leaderboardSectionTitle" data-i18n="leaderboardSectionTitle">🏆 الترتيب والإحصائيات العامة</h2>
       <div class="row">
         <div class="field">
-          <label for="filterYear">السنة</label>
+          <label for="filterYear" data-i18n="year">السنة</label>
           <select id="filterYear">
             <option value="all">كل السنوات</option>
           </select>
         </div>
         <div class="field">
-          <label for="filterMonth">الشهر</label>
+          <label for="filterMonth" data-i18n="month">الشهر</label>
           <select id="filterMonth">
             <option value="all">كل الشهور</option>
             <option value="1">يناير</option>
@@ -429,7 +429,7 @@
           </select>
         </div>
         <div class="field" style="align-self:flex-end;">
-          <button id="leaderboardToggleViewBtn">📊 عرض تفصيلي</button>
+          <button id="leaderboardToggleViewBtn" data-i18n="detailedView">📊 عرض تفصيلي</button>
         </div>
       </div>
 
@@ -444,8 +444,8 @@
 
     <!-- سجل الأبطال -->
     <section class="card" id="championsLogCard">
-      <h2 id="championsSectionTitle">🏅 سجل الأبطال (شهري)</h2>
-      <div class="small-text" id="championsLogHint">
+      <h2 id="championsSectionTitle" data-i18n="championsSectionTitle">🏅 سجل الأبطال (شهري)</h2>
+      <div class="small-text" id="championsLogHint" data-i18n="championsLogHint">
         اختر سنة محددة لعرض سجل أبطال الشهور (مثل سجل الدوري الإنجليزي).
       </div>
 
@@ -462,26 +462,26 @@
 
     <!-- سجل الماتشات -->
     <section class="card">
-      <h2 id="matchesLogSectionTitle">📜 سجل الماتشات (كل الوقت)</h2>
+      <h2 id="matchesLogSectionTitle" data-i18n="matchesLogSectionTitle">📜 سجل الماتشات (كل الوقت)</h2>
 
       <div class="row" style="margin-bottom:4px;">
         <div class="field" style="flex:0 0 auto;">
-          <button class="primary" id="toggleMatchesLogBtn">👁️ عرض السجل</button>
+          <button class="primary" id="toggleMatchesLogBtn" data-i18n="showLog">👁️ عرض السجل</button>
         </div>
       </div>
 
       <div id="matchesLogWrapper" style="display:none;">
         <div class="small-text">
-          <span id="matchesLogIntro">أحدث ماتش في الأعلى. يمكنك حذف أي ماتش غلط بدون التأثير على الباقي.</span>
+          <span id="matchesLogIntro" data-i18n="matchesLogIntro">أحدث ماتش في الأعلى. يمكنك حذف أي ماتش غلط بدون التأثير على الباقي.</span>
         </div>
         <table>
           <thead>
             <tr>
               <th>#</th>
-              <th id="thMatchesDate">التاريخ</th>
-              <th id="thMatchesWin">الفريق الكسبان</th>
-              <th id="thMatchesLose">الفريق الخسران</th>
-              <th id="thMatchesDelete">حذف</th>
+              <th id="thMatchesDate" data-i18n="thMatchesDate">التاريخ</th>
+              <th id="thMatchesWin" data-i18n="thMatchesWin">الفريق الكسبان</th>
+              <th id="thMatchesLose" data-i18n="thMatchesLose">الفريق الخسران</th>
+              <th id="thMatchesDelete" data-i18n="thMatchesDelete">حذف</th>
             </tr>
           </thead>
           <tbody id="matchesLogBody"></tbody>
@@ -491,108 +491,108 @@
 
     <!-- تحليل لاعب واحد -->
     <section class="card">
-      <h2 id="playerAnalysisSectionTitle">📊 تحليل لاعب منفرد</h2>
+      <h2 id="playerAnalysisSectionTitle" data-i18n="playerAnalysisSectionTitle">📊 تحليل لاعب منفرد</h2>
       <div class="row">
         <div class="field">
-          <label for="playerDetailsSelect">اختر لاعب</label>
+          <label for="playerDetailsSelect" data-i18n="choosePlayer">اختر لاعب</label>
           <select id="playerDetailsSelect"></select>
         </div>
       </div>
       <div id="playerDetailsSummary" class="small-text">
-        <span id="playerDetailsHelp">اختر لاعب من القائمة لعرض تحليله.</span>
+        <span id="playerDetailsHelp" data-i18n="playerDetailsHelp">اختر لاعب من القائمة لعرض تحليله.</span>
       </div>
 
       <div id="playerDetailsStats" style="margin-top:10px; display:none;">
         <div class="stats-grid">
           <div class="stat-box">
             <strong id="pTotalWins">0</strong>
-            <span id="lblTotalWins">إجمالي مرات الفوز في الفترة المحددة</span>
+            <span id="lblTotalWins" data-i18n="lblTotalWins">إجمالي مرات الفوز في الفترة المحددة</span>
           </div>
           <div class="stat-box">
             <strong id="pTotalLosses">0</strong>
-            <span id="lblTotalLosses">إجمالي مرات الخسارة في الفترة المحددة</span>
+            <span id="lblTotalLosses" data-i18n="lblTotalLosses">إجمالي مرات الخسارة في الفترة المحددة</span>
           </div>
           <div class="stat-box">
             <strong id="pTotalMatches">0</strong>
-            <span id="lblTotalMatches">إجمالي الماتشات في الفترة المحددة</span>
+            <span id="lblTotalMatches" data-i18n="lblTotalMatches">إجمالي الماتشات في الفترة المحددة</span>
           </div>
           <div class="stat-box">
             <strong id="pWinRate">0%</strong>
-            <span id="lblWinRatePeriod">نسبة الفوز في الفترة المحددة</span>
+            <span id="lblWinRatePeriod" data-i18n="lblWinRatePeriod">نسبة الفوز في الفترة المحددة</span>
           </div>
           <div class="stat-box">
             <strong id="pBonusPlus">0</strong>
-            <span id="lblBonusPlus">بونص + (مكسب)</span>
+            <span id="lblBonusPlus" data-i18n="lblBonusPlus">بونص + (مكسب)</span>
           </div>
           <div class="stat-box">
             <strong id="pBonusMinus">0</strong>
-            <span id="lblBonusMinus">بونص − (خسارة)</span>
+            <span id="lblBonusMinus" data-i18n="lblBonusMinus">بونص − (خسارة)</span>
           </div>
           <div class="stat-box">
             <strong id="pBonusNet">0</strong>
-            <span id="lblBonusNet">صافي البونص</span>
+            <span id="lblBonusNet" data-i18n="lblBonusNet">صافي البونص</span>
           </div>
         </div>
 
-        <h3 style="font-size:0.95rem; margin-top:14px;" id="playerDaysAnalysisTitle">📆 تحليل أيام الفوز والخسارة في الفترة المختارة</h3>
+        <h3 style="font-size:0.95rem; margin-top:14px;" id="playerDaysAnalysisTitle" data-i18n="playerDaysAnalysisTitle">📆 تحليل أيام الفوز والخسارة في الفترة المختارة</h3>
         <div class="stats-grid">
           <div class="stat-box">
             <strong id="pDaysWin2">0</strong>
-            <span id="lblDaysWin2">أيام كسب فيها مرتين</span>
+            <span id="lblDaysWin2" data-i18n="lblDaysWin2">أيام كسب فيها مرتين</span>
           </div>
           <div class="stat-box">
             <strong id="pDaysWin3">0</strong>
-            <span id="lblDaysWin3">أيام كسب فيها 3 مرات</span>
+            <span id="lblDaysWin3" data-i18n="lblDaysWin3">أيام كسب فيها 3 مرات</span>
           </div>
           <div class="stat-box">
             <strong id="pDaysWin4plus">0</strong>
-            <span id="lblDaysWin4p">أيام كسب فيها 4 مرات أو أكثر</span>
+            <span id="lblDaysWin4p" data-i18n="lblDaysWin4p">أيام كسب فيها 4 مرات أو أكثر</span>
           </div>
           <div class="stat-box">
             <strong id="pDaysLose2">0</strong>
-            <span id="lblDaysLose2">أيام خسر فيها مرتين</span>
+            <span id="lblDaysLose2" data-i18n="lblDaysLose2">أيام خسر فيها مرتين</span>
           </div>
           <div class="stat-box">
             <strong id="pDaysLose3">0</strong>
-            <span id="lblDaysLose3">أيام خسر فيها 3 مرات</span>
+            <span id="lblDaysLose3" data-i18n="lblDaysLose3">أيام خسر فيها 3 مرات</span>
           </div>
           <div class="stat-box">
             <strong id="pDaysLose4plus">0</strong>
-            <span id="lblDaysLose4p">أيام خسر فيها 4 مرات أو أكثر</span>
+            <span id="lblDaysLose4p" data-i18n="lblDaysLose4p">أيام خسر فيها 4 مرات أو أكثر</span>
           </div>
         </div>
 
-        <h3 style="font-size:0.95rem; margin-top:14px;" id="playerBestMateTitle">🤝 الشريك المفضل في نفس الفترة</h3>
+        <h3 style="font-size:0.95rem; margin-top:14px;" id="playerBestMateTitle" data-i18n="playerBestMateTitle">🤝 الشريك المفضل في نفس الفترة</h3>
         <div class="stats-grid">
           <div class="stat-box">
             <strong id="pBestMateWinName">-</strong>
-            <span id="lblBestMateWin">أكتر واحد كسبت معاه</span>
+            <span id="lblBestMateWin" data-i18n="lblBestMateWin">أكتر واحد كسبت معاه</span>
             <div class="small-text">
-              <span id="lblCountTimes1">عدد المرات:</span> <span id="pBestMateWinCount">0</span>
+              <span id="lblCountTimes1" data-i18n="lblCountTimes1">عدد المرات:</span> <span id="pBestMateWinCount">0</span>
             </div>
           </div>
           <div class="stat-box">
             <strong id="pBestMateLoseName">-</strong>
-            <span id="lblBestMateLose">أكتر واحد خسرّت معاه</span>
+            <span id="lblBestMateLose" data-i18n="lblBestMateLose">أكتر واحد خسرّت معاه</span>
             <div class="small-text">
-              <span id="lblCountTimes2">عدد المرات:</span> <span id="pBestMateLoseCount">0</span>
+              <span id="lblCountTimes2" data-i18n="lblCountTimes2">عدد المرات:</span> <span id="pBestMateLoseCount">0</span>
             </div>
           </div>
         </div>
-        <h3 style="font-size:0.95rem; margin-top:14px;" id="playerBestOppTitle">👊 الخصم المفضل في نفس الفترة</h3>
+        <h3 style="font-size:0.95rem; margin-top:14px;" id="playerBestOppTitle" data-i18n="playerBestOppTitle">👊 الخصم المفضل في نفس الفترة</h3>
         <div class="stats-grid">
           <div class="stat-box">
             <strong id="pBestOppWinName">-</strong>
-            <span id="lblBestOppWin">أكتر واحد كسبت ضده</span>
+            <span id="lblBestOppWin" data-i18n="lblBestOppWin">أكتر واحد كسبت ضده</span>
             <div class="small-text">
-              <span id="lblCountTimes3">عدد المرات:</span> <span id="pBestOppWinCount">0</span>
+              <span id="lblCountTimes3" data-i18n="lblCountTimes3">عدد المرات:</span> <span id="pBestOppWinCount">0</span>
             </div>
           </div>
           <div class="stat-box">
             <strong id="pBestOppLoseName">-</strong>
-            <span id="lblBestOppLose">أكتر واحد خسرت ضده</span>
+            <span id="lblBestOppLose" data-i18n="lblBestOppLose">أكتر واحد خسرت ضده</span>
             <div class="small-text">
-              <span id="lblCountTimes4">عدد المرات:</span> <span id="pBestOppLoseCount">0</span>
+              <span id="lblCountTimes4" data-i18n="lblCountTimes4">عدد المرات:</span> <span id="pBestOppLoseCount">0</span>
             </div>
           </div>
         </div>
@@ -601,14 +601,14 @@
 
     <!-- تحليل المواجهات المباشرة -->
     <section class="card">
-      <h2 id="h2hPlayersTitle">⚔️ تحليل المواجهات المباشرة بين لاعبين</h2>
+      <h2 id="h2hPlayersTitle" data-i18n="h2hPlayersTitle">⚔️ تحليل المواجهات المباشرة بين لاعبين</h2>
       <div class="row">
         <div class="field">
-          <label for="h2hP1">اللاعب الأول</label>
+          <label for="h2hP1" data-i18n="firstPlayer">اللاعب الأول</label>
           <select id="h2hP1"></select>
         </div>
         <div class="field">
-          <label for="h2hP2">اللاعب الثاني</label>
+          <label for="h2hP2" data-i18n="secondPlayer">اللاعب الثاني</label>
           <select id="h2hP2"></select>
         </div>
         
@@ -620,26 +620,26 @@
 
     <!-- تحليل المواجهات المباشرة بين فرق 2 ضد 2 -->
     <section class="card">
-      <h2 id="h2hTeamsTitle">🧩 تحليل المواجهات المباشرة بين فرق (2 ضد 2)</h2>
+      <h2 id="h2hTeamsTitle" data-i18n="h2hTeamsTitle">🧩 تحليل المواجهات المباشرة بين فرق (2 ضد 2)</h2>
 
       <div class="row">
         <div class="field">
-          <label for="h2hT1P1">الفريق الأول - لاعب 1</label>
+          <label for="h2hT1P1" data-i18n="team1p1">الفريق الأول - لاعب 1</label>
           <select id="h2hT1P1"></select>
         </div>
         <div class="field">
-          <label for="h2hT1P2">الفريق الأول - لاعب 2</label>
+          <label for="h2hT1P2" data-i18n="team1p2">الفريق الأول - لاعب 2</label>
           <select id="h2hT1P2"></select>
         </div>
       </div>
 
       <div class="row">
         <div class="field">
-          <label for="h2hT2P1">الفريق الثاني - لاعب 1</label>
+          <label for="h2hT2P1" data-i18n="team2p1">الفريق الثاني - لاعب 1</label>
           <select id="h2hT2P1"></select>
         </div>
         <div class="field">
-          <label for="h2hT2P2">الفريق الثاني - لاعب 2</label>
+          <label for="h2hT2P2" data-i18n="team2p2">الفريق الثاني - لاعب 2</label>
           <select id="h2hT2P2"></select>
         </div>
         
@@ -652,11 +652,11 @@
 
     <!-- قسم المدير والإدارة المتقدمة -->
     <section class="card">
-      <h2 id="adminSectionTitle">🔐 وضع المدير والإدارة المتقدمة</h2>
+      <h2 id="adminSectionTitle" data-i18n="adminSectionTitle">🔐 وضع المدير والإدارة المتقدمة</h2>
 
       <div class="admin-bar">
-        <button class="primary" id="enableAdminBtn">🔑 تفعيل وضع المدير</button>
-        <button class="danger" id="disableAdminBtn" style="display:none;">🚪 قفل وضع المدير</button>
+        <button class="primary" id="enableAdminBtn" data-i18n="enableAdmin">🔑 تفعيل وضع المدير</button>
+        <button class="danger" id="disableAdminBtn" style="display:none;" data-i18n="disableAdmin">🚪 قفل وضع المدير</button>
         <div id="adminStatusText" class="admin-bar-text">
           وضع المشاهدة فقط: لا يمكن تعديل البيانات إلا بعد إدخال كود المدير.
         </div>
@@ -664,35 +664,35 @@
 
       <hr style="margin:12px 0; border:none; border-top:1px solid #eee;">
 
-      <h3 class="small-text" style="margin-bottom:8px;" id="dataAdminTitle">إدارة البيانات (للمدير فقط)</h3>
+      <h3 class="small-text" style="margin-bottom:8px;" id="dataAdminTitle" data-i18n="dataAdminTitle">إدارة البيانات (للمدير فقط)</h3>
       <div class="row">
         <div class="field" style="flex:0 0 auto;">
-          <button class="danger" id="resetAllBtn">🧨 مسح كل البيانات</button>
+          <button class="danger" id="resetAllBtn" data-i18n="resetAll">🧨 مسح كل البيانات</button>
         </div>
         <div class="field" style="flex:0 0 auto;">
-          <button class="primary" id="backupBtn" disabled>💾 نسخ احتياطي (قريبًا)</button>
+          <button class="primary" id="backupBtn" disabled data-i18n="backupSoon">💾 نسخ احتياطي (قريبًا)</button>
         </div>
         <div class="field" style="flex:0 0 auto;">
-          <button class="primary" id="importBtn" disabled>📥 استيراد البيانات (قريبًا)</button>
+          <button class="primary" id="importBtn" disabled data-i18n="importSoon">📥 استيراد البيانات (قريبًا)</button>
         </div>
         <div class="field" style="flex:0 0 auto;">
-          <button class="primary" id="exportBtn" disabled>📤 تصدير البيانات (قريبًا)</button>
+          <button class="primary" id="exportBtn" disabled data-i18n="exportSoon">📤 تصدير البيانات (قريبًا)</button>
         </div>
       </div>
 
       <div class="small-text" id="adminDataNotes">
-        <span id="resetWarning1">زر <strong>مسح كل البيانات</strong> يمسح كل اللاعبين وكل الماتشات نهائيًا من قاعدة البيانات (للاستخدام بحذر شديد).</span><br>
-        <span id="resetWarning2">أزرار النسخ الاحتياطي والاستيراد والتصدير <strong>غير مفعّلة حاليًا</strong>،
+        <span id="resetWarning1" data-i18n="resetWarning1">زر <strong>مسح كل البيانات</strong> يمسح كل اللاعبين وكل الماتشات نهائيًا من قاعدة البيانات (للاستخدام بحذر شديد).</span><br>
+        <span id="resetWarning2" data-i18n="resetWarning2">أزرار النسخ الاحتياطي والاستيراد والتصدير <strong>غير مفعّلة حاليًا</strong>،
         وهنفعّلها بعد ما نضبط منطق حفظ/استرجاع البيانات.</span>
       </div>
     </section>
 
     <section class="card">
-      <h2 id="notesSectionTitle">ℹ️ ملاحظات الاستخدام</h2>
+      <h2 id="notesSectionTitle" data-i18n="notesSectionTitle">ℹ️ ملاحظات الاستخدام</h2>
       <ul class="small-text">
-        <li><span id="note1">من غير تفعيل وضع المدير، البرنامج في وضع المشاهدة فقط.</span></li>
-        <li><span id="note2">كل البيانات محفوظة أونلاين في Firebase Firestore، تقدر تفتح من أي جهاز.</span></li>
-        <li><span id="note3">استخدم فلتر السنة والشهر للتحكم في فترة الإحصائيات للتـرتيب والتحليل والمواجهات.</span></li>
+        <li><span id="note1" data-i18n="note1">من غير تفعيل وضع المدير، البرنامج في وضع المشاهدة فقط.</span></li>
+        <li><span id="note2" data-i18n="note2">كل البيانات محفوظة أونلاين في Firebase Firestore، تقدر تفتح من أي جهاز.</span></li>
+        <li><span id="note3" data-i18n="note3">استخدم فلتر السنة والشهر للتحكم في فترة الإحصائيات للتـرتيب والتحليل والمواجهات.</span></li>
       </ul>
     </section>
   </main>
@@ -752,12 +752,42 @@ window.t  = window.t  || window.T;
     let db = null;
 
     let state = {
+
       players: [], // {id, name, avatar}
       matches: []  // {id, date, winners, losers, createdAt}
     };
 
 
-    const APP_BUILD_VERSION = "v48";
+function refreshToggleButtonsText(){
+  try{
+    const pBtn = document.getElementById("togglePlayersListBtn");
+    if(pBtn) pBtn.textContent = playersListVisible ? T("hidePlayersList") : T("showPlayersList");
+  }catch(e){}
+  try{
+    const mBtn = document.getElementById("toggleMatchesLogBtn");
+    if(mBtn) mBtn.textContent = matchesLogVisible ? T("hideLog") : T("showLog");
+  }catch(e){}
+  try{
+    const vBtn = document.getElementById("leaderboardToggleViewBtn");
+    if(vBtn) vBtn.textContent = (window.__leaderboardDetailed ? T("compactView") : T("detailedView"));
+  }catch(e){}
+  try{
+    const bBtn = document.getElementById("bonusBtn");
+    if(bBtn) bBtn.textContent = bBtn.disabled ? T("bonusUnavailable") : T("bonusAdd");
+  }catch(e){}
+  try{
+    const tbtn = document.getElementById("themeToggleBtn");
+    if(tbtn){
+      const isDark = document.body.classList.contains("dark");
+      tbtn.textContent = isDark ? T("lightMode") : T("darkMode");
+    }
+  }catch(e){}
+}
+
+
+
+
+    const APP_BUILD_VERSION = "v52";
 
 
 // ===== UI Settings: Theme + Language =====
@@ -1473,7 +1503,9 @@ function setLang(lang) {
   try{ const sel=document.getElementById("langSelect"); if(sel) sel.value=lang; }catch(e){}
   applyLang(lang);
 
-  // Re-render dynamic sections so tables/headers/buttons update immediately
+  
+  try{ refreshToggleButtonsText(); }catch(e){}
+// Re-render dynamic sections so tables/headers/buttons update immediately
   const fns = [
     "updatePlayersUI",
     "updatePlayerDetailsUI",
@@ -1535,10 +1567,37 @@ function __old_T(key){
 }
 
 
+
+// ===== Strong i18n DOM Binder (v52) =====
+function applyI18nToDom(){
+  try{
+    document.querySelectorAll("[data-i18n]").forEach(el=>{
+      const key = el.getAttribute("data-i18n");
+      if(!key) return;
+      el.textContent = T(key);
+    });
+    document.querySelectorAll("[data-i18n-html]").forEach(el=>{
+      const key = el.getAttribute("data-i18n-html");
+      if(!key) return;
+      el.innerHTML = T(key);
+    });
+    document.querySelectorAll("[data-i18n-placeholder]").forEach(el=>{
+      const key = el.getAttribute("data-i18n-placeholder");
+      if(!key) return;
+      el.setAttribute("placeholder", T(key));
+    });
+  }catch(e){}
+}
+
 function applyLang(lang) {
   const html = document.documentElement;
   html.lang = lang;
   html.dir = (lang === "ar") ? "rtl" : "ltr";
+
+  applyI18nToDom();
+  // Keep theme button consistent with language
+  try{ const tbtn=document.getElementById("themeToggleBtn"); if(tbtn){ const isDark=document.body.classList.contains("dark"); tbtn.textContent = isDark ? T("lightMode") : T("darkMode"); } }catch(e){}
+
 
   // Page title + header
   document.title = T("pagetitle");
@@ -1733,6 +1792,7 @@ thMap.forEach(([id,key])=>{
   if (fy){
     const optAll = fy.querySelector('option[value="all"]');
     if (optAll) optAll.textContent = T("allYears");
+  try{ refreshToggleButtonsText(); }catch(e){}
   }
   const fm = document.getElementById("filterMonth");
   if (fm){
