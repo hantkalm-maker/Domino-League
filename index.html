@@ -340,28 +340,28 @@
         <div class="field">
           <label for="matchDate">تاريخ الماتش</label>
           <input type="date" id="matchDate" />
-          <span class="small-text">لو تركته فاضي، هيتسجل بتاريخ اليوم</span>
+          <span class="small-text"><span id="matchDateHintText">لو تركته فاضي، هيتسجل بتاريخ اليوم</span></span>
         </div>
       </div>
 
       <div class="row">
         <div class="field">
-          <label>الفريق الكسبان - لاعب 1</label>
+          <label for="winnerP1">الفريق الكسبان - لاعب 1</label>
           <select id="winnerP1"></select>
         </div>
         <div class="field">
-          <label>الفريق الكسبان - لاعب 2</label>
+          <label for="winnerP2">الفريق الكسبان - لاعب 2</label>
           <select id="winnerP2"></select>
         </div>
       </div>
 
       <div class="row">
         <div class="field">
-          <label>الفريق الخسران - لاعب 1</label>
+          <label for="loserP1">الفريق الخسران - لاعب 1</label>
           <select id="loserP1"></select>
         </div>
         <div class="field">
-          <label>الفريق الخسران - لاعب 2</label>
+          <label for="loserP2">الفريق الخسران - لاعب 2</label>
           <select id="loserP2"></select>
         </div>
       </div>
@@ -374,7 +374,7 @@
           <button class="primary" id="bonusBtn" disabled>🎁 بونص (غير متاح)</button>
         </div>
       </div>
-      <div class="small-text">
+      <div class="small-text" id="matchNoteText">
         ملاحظة: نفس اللاعب ما ينفعش يكون في الفريقين في نفس الماتش.
       </div>
     </section>
@@ -485,93 +485,93 @@
         <div class="stats-grid">
           <div class="stat-box">
             <strong id="pTotalWins">0</strong>
-            إجمالي مرات الفوز في الفترة المحددة
+            <span id="lblTotalWins">إجمالي مرات الفوز في الفترة المحددة</span>
           </div>
           <div class="stat-box">
             <strong id="pTotalLosses">0</strong>
-            إجمالي مرات الخسارة في الفترة المحددة
+            <span id="lblTotalLosses">إجمالي مرات الخسارة في الفترة المحددة</span>
           </div>
           <div class="stat-box">
             <strong id="pTotalMatches">0</strong>
-            إجمالي الماتشات في الفترة المحددة
+            <span id="lblTotalMatches">إجمالي الماتشات في الفترة المحددة</span>
           </div>
           <div class="stat-box">
             <strong id="pWinRate">0%</strong>
-            نسبة الفوز في الفترة المحددة
+            <span id="lblWinRatePeriod">نسبة الفوز في الفترة المحددة</span>
           </div>
           <div class="stat-box">
             <strong id="pBonusPlus">0</strong>
-            بونص + (مكسب)
+            <span id="lblBonusPlus">بونص + (مكسب)</span>
           </div>
           <div class="stat-box">
             <strong id="pBonusMinus">0</strong>
-            بونص − (خسارة)
+            <span id="lblBonusMinus">بونص − (خسارة)</span>
           </div>
           <div class="stat-box">
             <strong id="pBonusNet">0</strong>
-            صافي البونص
+            <span id="lblBonusNet">صافي البونص</span>
           </div>
         </div>
 
-        <h3 style="font-size:0.95rem; margin-top:14px;">📆 تحليل أيام الفوز والخسارة في الفترة المختارة</h3>
+        <h3 style="font-size:0.95rem; margin-top:14px;" id="playerDaysAnalysisTitle">📆 تحليل أيام الفوز والخسارة في الفترة المختارة</h3>
         <div class="stats-grid">
           <div class="stat-box">
             <strong id="pDaysWin2">0</strong>
-            أيام كسب فيها مرتين
+            <span id="lblDaysWin2">أيام كسب فيها مرتين</span>
           </div>
           <div class="stat-box">
             <strong id="pDaysWin3">0</strong>
-            أيام كسب فيها 3 مرات
+            <span id="lblDaysWin3">أيام كسب فيها 3 مرات</span>
           </div>
           <div class="stat-box">
             <strong id="pDaysWin4plus">0</strong>
-            أيام كسب فيها 4 مرات أو أكثر
+            <span id="lblDaysWin4p">أيام كسب فيها 4 مرات أو أكثر</span>
           </div>
           <div class="stat-box">
             <strong id="pDaysLose2">0</strong>
-            أيام خسر فيها مرتين
+            <span id="lblDaysLose2">أيام خسر فيها مرتين</span>
           </div>
           <div class="stat-box">
             <strong id="pDaysLose3">0</strong>
-            أيام خسر فيها 3 مرات
+            <span id="lblDaysLose3">أيام خسر فيها 3 مرات</span>
           </div>
           <div class="stat-box">
             <strong id="pDaysLose4plus">0</strong>
-            أيام خسر فيها 4 مرات أو أكثر
+            <span id="lblDaysLose4p">أيام خسر فيها 4 مرات أو أكثر</span>
           </div>
         </div>
 
-        <h3 style="font-size:0.95rem; margin-top:14px;">🤝 الشريك المفضل في نفس الفترة</h3>
+        <h3 style="font-size:0.95rem; margin-top:14px;" id="playerBestMateTitle">🤝 الشريك المفضل في نفس الفترة</h3>
         <div class="stats-grid">
           <div class="stat-box">
             <strong id="pBestMateWinName">-</strong>
-            أكتر واحد كسبت معاه
+            <span id="lblBestMateWin">أكتر واحد كسبت معاه</span>
             <div class="small-text">
-              عدد المرات: <span id="pBestMateWinCount">0</span>
+              <span id="lblCountTimes1">عدد المرات:</span> <span id="pBestMateWinCount">0</span>
             </div>
           </div>
           <div class="stat-box">
             <strong id="pBestMateLoseName">-</strong>
-            أكتر واحد خسرّت معاه
+            <span id="lblBestMateLose">أكتر واحد خسرّت معاه</span>
             <div class="small-text">
-              عدد المرات: <span id="pBestMateLoseCount">0</span>
+              <span id="lblCountTimes2">عدد المرات:</span> <span id="pBestMateLoseCount">0</span>
             </div>
           </div>
         </div>
-        <h3 style="font-size:0.95rem; margin-top:14px;">👊 الخصم المفضل في نفس الفترة</h3>
+        <h3 style="font-size:0.95rem; margin-top:14px;" id="playerBestOppTitle">👊 الخصم المفضل في نفس الفترة</h3>
         <div class="stats-grid">
           <div class="stat-box">
             <strong id="pBestOppWinName">-</strong>
-            أكتر واحد كسبت ضده
+            <span id="lblBestOppWin">أكتر واحد كسبت ضده</span>
             <div class="small-text">
-              عدد المرات: <span id="pBestOppWinCount">0</span>
+              <span id="lblCountTimes3">عدد المرات:</span> <span id="pBestOppWinCount">0</span>
             </div>
           </div>
           <div class="stat-box">
             <strong id="pBestOppLoseName">-</strong>
-            أكتر واحد خسرت ضده
+            <span id="lblBestOppLose">أكتر واحد خسرت ضده</span>
             <div class="small-text">
-              عدد المرات: <span id="pBestOppLoseCount">0</span>
+              <span id="lblCountTimes4">عدد المرات:</span> <span id="pBestOppLoseCount">0</span>
             </div>
           </div>
         </div>
@@ -647,7 +647,7 @@
 
       <hr style="margin:12px 0; border:none; border-top:1px solid #eee;">
 
-      <h3 class="small-text" style="margin-bottom:8px;">إدارة البيانات (للمدير فقط)</h3>
+      <h3 class="small-text" style="margin-bottom:8px;" id="dataAdminTitle">إدارة البيانات (للمدير فقط)</h3>
       <div class="row">
         <div class="field" style="flex:0 0 auto;">
           <button class="danger" id="resetAllBtn">🧨 مسح كل البيانات</button>
@@ -663,9 +663,10 @@
         </div>
       </div>
 
-      <div class="small-text">
-        زر <strong>مسح كل البيانات</strong> يمسح كل اللاعبين وكل الماتشات نهائيًا من قاعدة البيانات (للاستخدام بحذر شديد).<br>
-        أزرار النسخ الاحتياطي والاستيراد والتصدير <strong>غير مفعّلة حاليًا</strong>، وهنفعّلها بعد ما نضبط منطق حفظ/استرجاع البيانات.
+      <div class="small-text" id="adminDataNotes">
+        <span id="resetWarning1">زر <strong>مسح كل البيانات</strong> يمسح كل اللاعبين وكل الماتشات نهائيًا من قاعدة البيانات (للاستخدام بحذر شديد).</span><br>
+        <span id="resetWarning2">أزرار النسخ الاحتياطي والاستيراد والتصدير <strong>غير مفعّلة حاليًا</strong>،
+        وهنفعّلها بعد ما نضبط منطق حفظ/استرجاع البيانات.</span>
       </div>
     </section>
 
@@ -849,7 +850,95 @@ const I18N = {
     exportSoon: "📤 تصدير البيانات (قريبًا)",
     resetWarning1: "زر مسح كل البيانات يمسح كل اللاعبين وكل الماتشات نهائيًا من قاعدة البيانات (للاستخدام بحذر شديد).",
     resetWarning2: "أزرار النسخ الاحتياطي والاستيراد والتصدير غير مفعّلة حاليًا، وهنفعّلها بعد ما نضبط منطق حفظ/استرجاع البيانات.",
-    // Extra / Missing translations
+    
+    // Player analysis
+    totalWinsPeriod: "إجمالي مرات الفوز في الفترة المحددة",
+    totalLossesPeriod: "إجمالي مرات الخسارة في الفترة المحددة",
+    totalMatchesPeriod: "إجمالي الماتشات في الفترة المحددة",
+    bonusPlusLabel: "بونص + (مكسب)",
+    bonusMinusLabel: "بونص − (خسارة)",
+    bonusNetLabel: "صافي البونص",
+    playerDaysAnalysisTitle: "📆 تحليل أيام الفوز والخسارة في الفترة المختارة",
+    playerBestMateTitle: "🤝 الشريك المفضل في نفس الفترة",
+    bestMateWinLabel: "أكتر واحد كسبت معاه",
+    bestMateLoseLabel: "أكتر واحد خسرّت معاه",
+    playerBestOppTitle: "👊 الخصم المفضل في نفس الفترة",
+    bestOppWinLabel: "أكتر واحد كسبت ضده",
+    bestOppLoseLabel: "أكتر واحد خسرت ضده",
+    countTimesLabel: "عدد المرات:",
+
+    // Champions extra
+    lastYearChampionLabel: "🏆 حامل لقب اخر سنة",
+    lastMonthChampionLabel: "🏅 حامل لقب اخر شهر",
+
+    // Head-to-head (1v1)
+    h2hReportTitleTpl: "تحليل المواجهات بين {p1} و {p2} ({period}):<br/><br/>",
+    h2hPlayedAgainstTpl: "• لعبوا ضد بعض في {n} ماتش(ات) عشرة.<br/>",
+    h2hP1BeatP2Tpl: "• مرات فاز فيها {p1} على {p2}: {n} مرة.<br/>",
+    h2hP2BeatP1Tpl: "• مرات فاز فيها {p2} على {p1}: {n} مرة.<br/>",
+    h2hPlayedSameTeamTpl: "• لعبوا معًا في نفس الفريق في {n} ماتش(ات) عشرة.<br/>",
+    h2hWinRateVsTitle: "<br/>نسبة الفوز عندما يتقابلان ضد بعض في هذه الفترة:<br/>",
+    h2hSameTeamRateTitle: "<br/>نسبة النتائج عندما يلعبان معًا في نفس الفريق في هذه الفترة:<br/>",
+    h2hSameTeamWinTpl: "• فوز معًا: {rate} ({wins} من {total} ماتشات)<br/>",
+    h2hSameTeamLoseTpl: "• خسارة معًا: {rate} ({losses} من {total} ماتشات)<br/>",
+    h2hBonusTitle: "<br/><b>🎁 البونص (محسوب منفصل)</b><br/>",
+    h2hBaseTitle: "<br/><b>🎯 النقاط الأساسية (بدون بونص)</b><br/>",
+    h2hP1GotBonusFromP2Tpl: "• حصل اللاعب 1 من اللاعب 2 على بونص: {n}<br/>",
+    h2hP2GotBonusFromP1Tpl: "• حصل اللاعب 2 من اللاعب 1 على بونص: {n}<br/>",
+    h2hP1GotBaseFromP2Tpl: "• حصل اللاعب 1 من اللاعب 2 على نقاط: {n}<br/>",
+    h2hP2GotBaseFromP1Tpl: "• حصل اللاعب 2 من اللاعب 1 على نقاط: {n}<br/>",
+
+    // Head-to-head (2v2 teams)
+    h2hTeamsReportTitleTpl: "تحليل المواجهات بين الفريق {t1} والفريق {t2} ({period}):<br/><br/>",
+    h2hTeamsPlayedAgainstTpl: "• لعبوا ضد بعض في {n} ماتش(ات) عشرة.<br/>",
+    h2hTeamsT1WinsTpl: "• مرات فاز فيها {t1}: {n} مرة.<br/>",
+    h2hTeamsT2WinsTpl: "• مرات فاز فيها {t2}: {n} مرة.<br/>",
+    h2hTeamsWinRateTitle: "<br/>نسبة الفوز عندما يتقابلان في هذه الفترة:<br/>",
+
+    // Player analysis
+    totalWinsPeriod: "Total wins in selected period",
+    totalLossesPeriod: "Total losses in selected period",
+    totalMatchesPeriod: "Total matches in selected period",
+    bonusPlusLabel: "Bonus + (win)",
+    bonusMinusLabel: "Bonus − (loss)",
+    bonusNetLabel: "Net bonus",
+    playerDaysAnalysisTitle: "📆 Win/Loss days analysis in selected period",
+    playerBestMateTitle: "🤝 Best teammate in the same period",
+    bestMateWinLabel: "Most wins with",
+    bestMateLoseLabel: "Most losses with",
+    playerBestOppTitle: "👊 Favorite opponent in the same period",
+    bestOppWinLabel: "Most wins against",
+    bestOppLoseLabel: "Most losses against",
+    countTimesLabel: "Times:",
+
+    // Champions extra
+    lastYearChampionLabel: "🏆 Last year champion",
+    lastMonthChampionLabel: "🏅 Last month champion",
+
+    // Head-to-head (1v1)
+    h2hReportTitleTpl: "Head-to-head analysis between {p1} and {p2} ({period}):<br/><br/>",
+    h2hPlayedAgainstTpl: "• Played against each other in {n} full-ten match(es).<br/>",
+    h2hP1BeatP2Tpl: "• {p1} beat {p2}: {n} time(s).<br/>",
+    h2hP2BeatP1Tpl: "• {p2} beat {p1}: {n} time(s).<br/>",
+    h2hPlayedSameTeamTpl: "• Played together on the same team in {n} full-ten match(es).<br/>",
+    h2hWinRateVsTitle: "<br/>Win rate when they face each other in this period:<br/>",
+    h2hSameTeamRateTitle: "<br/>Results when they play on the same team in this period:<br/>",
+    h2hSameTeamWinTpl: "• Win together: {rate} ({wins} of {total} matches)<br/>",
+    h2hSameTeamLoseTpl: "• Lose together: {rate} ({losses} of {total} matches)<br/>",
+    h2hBonusTitle: "<br/><b>🎁 Bonus (calculated separately)</b><br/>",
+    h2hBaseTitle: "<br/><b>🎯 Base points (without bonus)</b><br/>",
+    h2hP1GotBonusFromP2Tpl: "• Player 1 received bonus from Player 2: {n}<br/>",
+    h2hP2GotBonusFromP1Tpl: "• Player 2 received bonus from Player 1: {n}<br/>",
+    h2hP1GotBaseFromP2Tpl: "• Player 1 received points from Player 2: {n}<br/>",
+    h2hP2GotBaseFromP1Tpl: "• Player 2 received points from Player 1: {n}<br/>",
+
+    // Head-to-head (2v2 teams)
+    h2hTeamsReportTitleTpl: "Head-to-head analysis between Team {t1} and Team {t2} ({period}):<br/><br/>",
+    h2hTeamsPlayedAgainstTpl: "• Played against each other in {n} full-ten match(es).<br/>",
+    h2hTeamsT1WinsTpl: "• {t1} wins: {n}.<br/>",
+    h2hTeamsT2WinsTpl: "• {t2} wins: {n}.<br/>",
+    h2hTeamsWinRateTitle: "<br/>Win rate when they face each other in this period:<br/>",
+// Extra / Missing translations
     registeredPlayers: "اللاعبون المسجّلون",
     notEnoughDataForYear: "لا توجد بيانات كافية لهذه السنة.",
     confirmUnbanPlayer: "فك حظر اللاعب",
@@ -1223,6 +1312,45 @@ if (lbToggleBtn) lbToggleBtn.textContent = (leaderboardViewMode === "compact") ?
     ["playerDetailsHelp","playerDetailsHelp"],
     ["h2hHelp","h2hHelp"],
     ["h2hTeamsHelp","h2hTeamsHelp"],
+
+    // Match form notes
+    ["matchDateHintText","matchDateHint"],
+    ["matchNoteText","matchNote"],
+
+    // Player analysis (single player)
+    ["lblTotalWins","totalWinsPeriod"],
+    ["lblTotalLosses","totalLossesPeriod"],
+    ["lblTotalMatches","totalMatchesPeriod"],
+    ["lblWinRatePeriod","winRatePeriod"],
+    ["lblBonusPlus","bonusPlusLabel"],
+    ["lblBonusMinus","bonusMinusLabel"],
+    ["lblBonusNet","bonusNetLabel"],
+
+    ["playerDaysAnalysisTitle","playerDaysAnalysisTitle"],
+    ["lblDaysWin2","daysWin2"],
+    ["lblDaysWin3","daysWin3"],
+    ["lblDaysWin4p","daysWin4plus"],
+    ["lblDaysLose2","daysLose2"],
+    ["lblDaysLose3","daysLose3"],
+    ["lblDaysLose4p","daysLose4plus"],
+
+    ["playerBestMateTitle","playerBestMateTitle"],
+    ["lblBestMateWin","bestMateWinLabel"],
+    ["lblBestMateLose","bestMateLoseLabel"],
+
+    ["playerBestOppTitle","playerBestOppTitle"],
+    ["lblBestOppWin","bestOppWinLabel"],
+    ["lblBestOppLose","bestOppLoseLabel"],
+
+    ["lblCountTimes1","countTimesLabel"],
+    ["lblCountTimes2","countTimesLabel"],
+    ["lblCountTimes3","countTimesLabel"],
+    ["lblCountTimes4","countTimesLabel"],
+
+    // Admin notes
+    ["resetWarning1","resetWarning1"],
+    ["resetWarning2","resetWarning2"],
+
     ["note1","note1"],
     ["note2","note2"],
     ["note3","note3"]
@@ -2572,8 +2700,8 @@ ${T("banExplanation")}`)) return;
 
   if(extra){
     extra.innerHTML = `
-      <div>🏆 حامل لقب اخر سنة (<b>${prevYear}</b>): <b>${prevYearChampion || "-"}</b></div>
-      <div>🏅 حامل لقب اخر شهر (<b>${monthNames[prev.m-1]}</b> ${prev.y}): <b>${prevMonthChampion || "-"}</b></div>
+      <div>${T("lastYearChampionLabel")} (<b>${prevYear}</b>): <b>${prevYearChampion || "-"}</b></div>
+      <div>${T("lastMonthChampionLabel")} (<b>${monthNames[prev.m-1]}</b> ${prev.y}): <b>${prevMonthChampion || "-"}</b></div>
     `;
   }
 }
@@ -3042,7 +3170,7 @@ function updateMatchesLog(){
 
     // ===== H2H (بفترة الفلتر) =====
     function updateHeadToHeadUI(reset=true){
-      if(reset) $("h2hSummary").textContent='<span id="h2hHelp">اختر لاعبين ثم اضغط "تحليل المواجهة".</span>';
+      if(reset) $("h2hSummary").innerHTML = '<span id="h2hHelp">'+T("h2hHelp")+'</span>';
     }
 
 
@@ -3119,37 +3247,53 @@ function analyzeHeadToHead(){
   const monthVal = $("filterMonth").value;
   const label    = getFilterLabel(yearVal, monthVal);
 
-  let html = `تحليل المواجهات بين <strong>${pl1.name}</strong> و <strong>${pl2.name}</strong> (${label}):<br/><br/>`;
-  html += `• لعبوا ضد بعض في <strong>${vs}</strong> ماتش(ات) عشرة.<br/>`;
-  html += `• مرات فاز فيها <strong>${pl1.name}</strong> على ${pl2.name}: <strong>${p1W}</strong> مرة.<br/>`;
-  html += `• مرات فاز فيها <strong>${pl2.name}</strong> على ${pl1.name}: <strong>${p2W}</strong> مرة.<br/>`;
-  html += `• لعبوا معًا في نفس الفريق في <strong>${team}</strong> ماتش(ات) عشرة.<br/>`;
+  let html = T("h2hReportTitleTpl")
+    .replace("{p1}", `<strong>${pl1.name}</strong>`)
+    .replace("{p2}", `<strong>${pl2.name}</strong>`)
+    .replace("{period}", label);
+
+  html += T("h2hPlayedAgainstTpl").replace("{n}", `<strong>${vs}</strong>`);
+  html += T("h2hP1BeatP2Tpl")
+    .replace("{p1}", `<strong>${pl1.name}</strong>`)
+    .replace("{p2}", pl2.name)
+    .replace("{n}", `<strong>${p1W}</strong>`);
+  html += T("h2hP2BeatP1Tpl")
+    .replace("{p2}", `<strong>${pl2.name}</strong>`)
+    .replace("{p1}", pl1.name)
+    .replace("{n}", `<strong>${p2W}</strong>`);
+  html += T("h2hPlayedSameTeamTpl").replace("{n}", `<strong>${team}</strong>`);
 
   if(vs > 0){
     const r1 = (p1W / vs) * 100;
     const r2 = (p2W / vs) * 100;
-    html += `<br/>نسبة الفوز عندما يتقابلان ضد بعض في هذه الفترة:<br/>`;
-    html += `• ${pl1.name}: <strong>${r1.toFixed(1)}٪</strong><br/>`;
-    html += `• ${pl2.name}: <strong>${r2.toFixed(1)}٪</strong><br/>`;
+    html += T("h2hWinRateVsTitle");
+    html += `• ${pl1.name}: <strong>${r1.toFixed(1)}%</strong><br/>`;
+    html += `• ${pl2.name}: <strong>${r2.toFixed(1)}%</strong><br/>`;
   }
 
-  // 🆕 نسبة النتائج وهم في نفس الفريق
+  // Same team results
   if(team > 0){
     const teamWinRate  = (teamWins   / team) * 100;
     const teamLoseRate = (teamLosses / team) * 100;
-    html += `<br/>نسبة النتائج عندما يلعبان معًا في نفس الفريق في هذه الفترة:<br/>`;
-    html += `• فوز معًا: <strong>${teamWinRate.toFixed(1)}٪</strong> (${teamWins} من ${team} ماتشات)<br/>`;
-    html += `• خسارة معًا: <strong>${teamLoseRate.toFixed(1)}٪</strong> (${teamLosses} من ${team} ماتشات)<br/>`;
+    html += T("h2hSameTeamRateTitle");
+    html += T("h2hSameTeamWinTpl")
+      .replace("{rate}", `<strong>${teamWinRate.toFixed(1)}%</strong>`)
+      .replace("{wins}", teamWins)
+      .replace("{total}", team);
+    html += T("h2hSameTeamLoseTpl")
+      .replace("{rate}", `<strong>${teamLoseRate.toFixed(1)}%</strong>`)
+      .replace("{losses}", teamLosses)
+      .replace("{total}", team);
   }
 
-  // 🆕 توسيع المواجهات المباشرة (بونص + نقاط أساسية)
-  html += `<br/><b>🎁 البونص (محسوب منفصل)</b><br/>`;
-  html += `• حصل اللاعب 1 من اللاعب 2 على بونص: <strong>${bonusNet}</strong><br/>`;
-  html += `• حصل اللاعب 2 من اللاعب 1 على بونص: <strong>${-bonusNet}</strong><br/>`;
+  // Bonus & base points
+  html += T("h2hBonusTitle");
+  html += T("h2hP1GotBonusFromP2Tpl").replace("{n}", `<strong>${bonusNet}</strong>`);
+  html += T("h2hP2GotBonusFromP1Tpl").replace("{n}", `<strong>${-bonusNet}</strong>`);
 
-  html += `<br/><b>🎯 النقاط الأساسية (بدون بونص)</b><br/>`;
-  html += `• حصل اللاعب 1 من اللاعب 2 على نقاط: <strong>${baseNet}</strong><br/>`;
-  html += `• حصل اللاعب 2 من اللاعب 1 على نقاط: <strong>${-baseNet}</strong><br/>`;
+  html += T("h2hBaseTitle");
+  html += T("h2hP1GotBaseFromP2Tpl").replace("{n}", `<strong>${baseNet}</strong>`);
+  html += T("h2hP2GotBaseFromP1Tpl").replace("{n}", `<strong>${-baseNet}</strong>`);
 
   out.innerHTML = html;
 }
@@ -3165,7 +3309,7 @@ function analyzeHeadToHead(){
     function resetTeamsH2HSummary(){
       const el = $("h2hTeamsSummary");
       if(el){
-        el.textContent = '<span id="h2hTeamsHelp">اختر لاعبي الفريقين ثم اضغط "تحليل المواجهة".</span>';
+        el.innerHTML = '<span id="h2hTeamsHelp">'+T("h2hTeamsHelp")+'</span>';
       }
     }
 
@@ -3249,13 +3393,17 @@ function analyzeHeadToHead(){
       const t1Rate = (t1Wins / vs) * 100;
       const t2Rate = (t2Wins / vs) * 100;
 
-      let html = `تحليل المواجهات بين الفريق <strong>${t1Name}</strong> والفريق <strong>${t2Name}</strong> (${label}):<br/><br/>`;
-      html += `• لعبوا ضد بعض في <strong>${vs}</strong> ماتش(ات) عشرة.<br/>`;
-      html += `• مرات فاز فيها <strong>${t1Name}</strong>: <strong>${t1Wins}</strong> مرة.<br/>`;
-      html += `• مرات فاز فيها <strong>${t2Name}</strong>: <strong>${t2Wins}</strong> مرة.<br/>`;
-      html += `<br/>نسبة الفوز عندما يتقابلان في هذه الفترة:<br/>`;
-      html += `• ${t1Name}: <strong>${t1Rate.toFixed(1)}٪</strong><br/>`;
-      html += `• ${t2Name}: <strong>${t2Rate.toFixed(1)}٪</strong><br/>`;
+      let html = T("h2hTeamsReportTitleTpl")
+        .replace("{t1}", `<strong>${t1Name}</strong>`)
+        .replace("{t2}", `<strong>${t2Name}</strong>`)
+        .replace("{period}", label);
+
+      html += T("h2hTeamsPlayedAgainstTpl").replace("{n}", `<strong>${vs}</strong>`);
+      html += T("h2hTeamsT1WinsTpl").replace("{t1}", `<strong>${t1Name}</strong>`).replace("{n}", `<strong>${t1Wins}</strong>`);
+      html += T("h2hTeamsT2WinsTpl").replace("{t2}", `<strong>${t2Name}</strong>`).replace("{n}", `<strong>${t2Wins}</strong>`);
+      html += T("h2hTeamsWinRateTitle");
+      html += `• ${t1Name}: <strong>${t1Rate.toFixed(1)}%</strong><br/>`;
+      html += `• ${t2Name}: <strong>${t2Rate.toFixed(1)}%</strong><br/>`;
 
       out.innerHTML = html;
     }
