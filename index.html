@@ -902,6 +902,8 @@ const I18N = {
     h2hTeamsT1WinsTpl: "• مرات فاز فيها {t1}: {n} مرة.<br/>",
     h2hTeamsT2WinsTpl: "• مرات فاز فيها {t2}: {n} مرة.<br/>",
     h2hTeamsWinRateTitle: "<br/>نسبة الفوز عندما يتقابلان في هذه الفترة:<br/>",
+    h2hNoVsTpl: "لا توجد أي مواجهات مباشرة بين <strong>{p1}</strong> و <strong>{p2}</strong> في هذه الفترة ({period}).",
+    h2hTeamsNoVsTpl: "لا توجد أي مواجهات مباشرة بين <strong>{t1}</strong> و <strong>{t2}</strong> في هذه الفترة ({period}).",
 
     // Player analysis
     totalWinsPeriod: "Total wins in selected period",
@@ -946,6 +948,8 @@ const I18N = {
     h2hTeamsT1WinsTpl: "• {t1} wins: {n}.<br/>",
     h2hTeamsT2WinsTpl: "• {t2} wins: {n}.<br/>",
     h2hTeamsWinRateTitle: "<br/>Win rate when they face each other in this period:<br/>",
+    h2hNoVsTpl: "No direct head-to-head matches between <strong>{p1}</strong> and <strong>{p2}</strong> in this period ({period}).",
+    h2hTeamsNoVsTpl: "No direct head-to-head matches between <strong>{t1}</strong> and <strong>{t2}</strong> in this period ({period}).",
 // Extra / Missing translations
     registeredPlayers: "اللاعبون المسجّلون",
     notEnoughDataForYear: "لا توجد بيانات كافية لهذه السنة.",
@@ -1439,6 +1443,29 @@ thMap.forEach(([id,key])=>{
   try { updateChampionsLog(); } catch(e){}
   try { updatePlayerDetailsUI(); } catch(e){}
   try { updateHeadToHeadUI(false); } catch(e){}
+
+  // If H2H results are currently shown, re-run analysis to refresh translated output
+  try{
+    const out1 = document.getElementById("h2hSummary");
+    const hasHelp1 = out1 && out1.querySelector && out1.querySelector("#h2hHelp");
+    const p1 = document.getElementById("h2hP1")?.value;
+    const p2 = document.getElementById("h2hP2")?.value;
+    if(out1 && !hasHelp1 && p1 && p2 && typeof analyzeHeadToHead === "function"){
+      analyzeHeadToHead();
+    }
+  }catch(e){}
+
+  try{
+    const out2 = document.getElementById("h2hTeamsSummary");
+    const hasHelp2 = out2 && out2.querySelector && out2.querySelector("#h2hTeamsHelp");
+    const t1p1 = document.getElementById("h2hT1P1")?.value;
+    const t1p2 = document.getElementById("h2hT1P2")?.value;
+    const t2p1 = document.getElementById("h2hT2P1")?.value;
+    const t2p2 = document.getElementById("h2hT2P2")?.value;
+    if(out2 && !hasHelp2 && t1p1 && t1p2 && t2p1 && t2p2 && typeof analyzeTeamsHeadToHead === "function"){
+      analyzeTeamsHeadToHead();
+    }
+  }catch(e){}
 }
 
 function getTheme() {
@@ -3422,8 +3449,10 @@ function analyzeHeadToHead(){
       const label    = getFilterLabel(yearVal, monthVal);
 
       if(vs === 0){
-        out.innerHTML =
-          `لا توجد أي مواجهات مباشرة بين <strong>${t1Name}</strong> و <strong>${t2Name}</strong> في هذه الفترة (${label}).`;
+        out.innerHTML = T("h2hTeamsNoVsTpl")
+          .replace("{t1}", t1Name)
+          .replace("{t2}", t2Name)
+          .replace("{period}", label);
         return;
       }
 
