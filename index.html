@@ -794,7 +794,7 @@ const I18N = {
     // Champions log
     championsLogHint: "اختر سنة محددة لعرض سجل أبطال الشهور (مثل سجل الدوري الإنجليزي).",
     noCompletedMonths: "لا يوجد شهور مكتملة داخل الفترة المختارة.",
-    noCompletedMonthsInYear: T("noCompletedMonthsInYear"),
+    noCompletedMonthsInYear: "لا يوجد شهور مكتملة في هذه السنة لعرض سجل الأبطال.",
     championsLogTitleTpl: "سجل الأبطال لسنة {year} — يمكن إعادة الترتيب من رؤوس الأعمدة",
     first: "الأول",
     second: "الثاني",
@@ -849,6 +849,96 @@ const I18N = {
     exportSoon: "📤 تصدير البيانات (قريبًا)",
     resetWarning1: "زر مسح كل البيانات يمسح كل اللاعبين وكل الماتشات نهائيًا من قاعدة البيانات (للاستخدام بحذر شديد).",
     resetWarning2: "أزرار النسخ الاحتياطي والاستيراد والتصدير غير مفعّلة حاليًا، وهنفعّلها بعد ما نضبط منطق حفظ/استرجاع البيانات.",
+    // Extra / Missing translations
+    registeredPlayers: "اللاعبون المسجّلون",
+    notEnoughDataForYear: "لا توجد بيانات كافية لهذه السنة.",
+    confirmUnbanPlayer: "فك حظر اللاعب",
+    confirmBanPlayer: "حظر اللاعب",
+    banExplanation: "لن يظهر في تسجيل الماتشات من لحظة الحظر حتى فك الحظر.
+
+سيختفي أيضًا من الإحصائيات عندما تقع نهاية الفترة المختارة داخل فترة الحظر.",
+    errAddPlayer: "حصل خطأ أثناء إضافة اللاعب.",
+    errUpdateAvatar: "حصل خطأ أثناء تحديث صورة اللاعب.",
+    errEditPlayerName: "حصل خطأ أثناء تعديل اسم اللاعب.",
+    errDeleteMatch: "حصل خطأ أثناء حذف الماتش.",
+    errSaveMatch: "حصل خطأ أثناء حفظ الماتش.",
+    errResetData: "حصل خطأ أثناء مسح البيانات.",
+    confirmDeleteMatch: "هل تريد بالتأكيد حذف هذا الماتش؟",
+    confirmResetAll: "سيتم مسح كل اللاعبين والنتائج نهائيًا من قاعدة البيانات. متأكد؟",
+    samePlayerNotAllowed: "نفس اللاعب لا يمكن أن يكون في أكثر من مكان.",
+    chooseTwoPlayersFirst: "اختر لاعبين أولاً.",
+    chooseTeamsPlayersFirst: "اختر لاعبين لكل فريق أولًا.",
+    selectAllPlayers: "اختر كل اللاعبين.",
+    playerNotFound: "لم يتم العثور على أحد اللاعبين.",
+    noDate: "بدون تاريخ",
+    unknown: "غير معروف",
+    completedMonth: "شهر مكتمل",
+    completed: "المكتمل",
+    streak: "ستريك",
+    selectedRangeEnd: "نهاية الفترة المختارة",
+
+
+    enterPlayerNameFirst: "Enter the player name first.",
+    promptNewPlayerName: "Enter the new player name:",
+    nameCannotBeEmpty: "Name cannot be empty.",
+    needAtLeast4Players: "At least 4 players are required.",
+    samePlayerSelectedTwice: "You cannot select the same player twice.",
+    noMatchesInPeriod: "No matches recorded in this period.",
+    noResultsInPeriod: "No results yet in this period.",
+    idPrefix: "ID",
+    periodMonthYearTpl: "Period: {month} {year}",
+    periodYearTpl: "Period: Year {year}",
+    periodMonthAllYearsTpl: "Period: {month} (all years)",
+    periodAllTime: "Period: All time",
+    playerIdNotFound: "No player found with this ID.",
+    samePlayerSameTeam: "A player cannot occupy both Player 1 and Player 2 in the same team.",
+    samePlayerBothTeams: "A player cannot be on both teams in the same matchup.",
+    cannotCompareSameTeam: "You cannot compare a team against itself.",
+    enterPlayerNameFirst: "اكتب اسم اللاعب أولاً.",
+    promptNewPlayerName: "اكتب الاسم الجديد لللاعب:",
+    nameCannotBeEmpty: "الاسم لا يمكن أن يكون فارغ.",
+    needAtLeast4Players: "لازم يكون فيه على الأقل 4 لاعبين.",
+    samePlayerSelectedTwice: "لا يمكن اختيار نفس اللاعب مرتين.",
+    noMatchesInPeriod: "لا يوجد أي ماتشات مسجلة في هذه الفترة.",
+    noResultsInPeriod: "لا توجد نتائج بعد في هذه الفترة.",
+    idPrefix: "ID",
+    periodMonthYearTpl: "الفترة: {month} {year}",
+    periodYearTpl: "الفترة: سنة {year}",
+    periodMonthAllYearsTpl: "الفترة: شهر {month} في كل السنوات.",
+    periodAllTime: "الفترة: كل الوقت.",
+    playerIdNotFound: "لا يوجد لاعب بهذا المعرف.",
+    samePlayerSameTeam: "لاعب واحد لا يمكن أن يكون مكان لاعب 1 و 2 في نفس الفريق.",
+    samePlayerBothTeams: "لاعب واحد لا يمكن أن يلعب في الفريقين في نفس المواجهة.",
+    cannotCompareSameTeam: "لا يمكن مقارنة نفس الفريق بنفسه.",
+    // Extra / Missing translations
+    registeredPlayers: "Registered players",
+    notEnoughDataForYear: "Not enough data for this year.",
+    confirmUnbanPlayer: "Unban player",
+    confirmBanPlayer: "Ban player",
+    banExplanation: "They will not appear in match entry from the moment of ban until unbanned.
+
+They will also be hidden from analytics when the selected range end falls within the ban period.",
+    errAddPlayer: "An error occurred while adding the player.",
+    errUpdateAvatar: "An error occurred while updating the player photo.",
+    errEditPlayerName: "An error occurred while editing the player name.",
+    errDeleteMatch: "An error occurred while deleting the match.",
+    errSaveMatch: "An error occurred while saving the match.",
+    errResetData: "An error occurred while resetting the data.",
+    confirmDeleteMatch: "Are you sure you want to delete this match?",
+    confirmResetAll: "This will permanently delete all players and results from the database. Are you sure?",
+    samePlayerNotAllowed: "The same player cannot be selected in more than one place.",
+    chooseTwoPlayersFirst: "Choose two players first.",
+    chooseTeamsPlayersFirst: "Choose both teams' players first.",
+    selectAllPlayers: "Select all players.",
+    playerNotFound: "One of the players was not found.",
+    noDate: "No date",
+    unknown: "Unknown",
+    completedMonth: "Completed month",
+    completed: "Completed",
+    streak: "Streak",
+    selectedRangeEnd: "Selected range end",
+
+
 
     // Notes
     note1: "من غير تفعيل وضع المدير، البرنامج في وضع المشاهدة فقط.",
@@ -1206,7 +1296,7 @@ function toggleTheme() {
 
 
     // ===== BONUS (Streak Bonus) =====
-    // يظهر زر البونص فقط عندما يكون هناك احتمال "ستريك":
+    // يظهر زر البونص فقط عندما يكون هناك احتمال T("streak"):
     // آخر ماتش مسجل كان بنفس الأربع لاعبين + نفس تقسيمة الفريقين + نفس الفريق فاز.
     let bonusEligible = false;
     let bonusApplied  = false;
@@ -1575,7 +1665,7 @@ function toggleTheme() {
 
     function getPlayerNameById(id){
       const p = getPlayerById(id);
-      return p ? p.name : ("ID "+id);
+      return p ? p.name : (`${T("idPrefix")} $<built-in function id>`);
     }
 
 
@@ -1637,7 +1727,7 @@ function toggleTheme() {
       return max || now;
     }
 
-    // ✅ إظهار اللاعب في الإحصائيات يعتمد على "نهاية الفترة المختارة"
+    // ✅ إظهار اللاعب في الإحصائيات يعتمد على T("selectedRangeEnd")
     function shouldShowPlayerForSelectedRange(player, rangeEndDate){
       return !isDateInBanPeriods(rangeEndDate, player.banPeriods || []);
     }
@@ -1713,7 +1803,7 @@ function toggleTheme() {
         if(playersAll.length===0){
           info.textContent=T("noPlayersYet");
         } else {
-          info.textContent="اللاعبون المسجّلون: " + playersAll.map(p=>p.name).join("، ");
+          info.textContent = `${T("registeredPlayers")}: ` + playersAll.map(p=>p.name).join((getLang()==="en") ? ", " : "، ");
         }
       }
 
@@ -1809,10 +1899,12 @@ function toggleTheme() {
           banBtn.textContent = bannedNow ? T("unbanBtn") : T("banBtn");
           banBtn.addEventListener("click", async ()=>{
             if(bannedNow){
-              if(!confirm(`فك حظر اللاعب "${p.name}"؟`)) return;
+              if(!confirm(`${T("confirmUnbanPlayer")} "${p.name}"?`)) return;
               await unbanPlayer(p.id);
             } else {
-              if(!confirm(`حظر اللاعب "${p.name}"؟\n\nلن يظهر في تسجيل الماتشات الجديدة، ولن يظهر في الإحصائيات عندما تقع نهاية الفترة المختارة داخل فترة الحظر.`)) return;
+              if(!confirm(`${T("confirmBanPlayer")} "${p.name}"?
+
+${T("banExplanation")}`)) return;
               await banPlayer(p.id);
             }
           });
@@ -1843,7 +1935,7 @@ function toggleTheme() {
       const nameInput = $("playerName");
       const fileInput = $("playerAvatarFile");
       const name = nameInput.value.trim();
-      if(!name){ alert("اكتب اسم اللاعب أولاً."); return; }
+      if(!name){ alert(T("enterPlayerNameFirst")); return; }
 
       const finishAdd = (avatarData)=>{
         db.collection("players").add({
@@ -1855,7 +1947,7 @@ function toggleTheme() {
           fileInput.value="";
         }).catch(err=>{
           console.error(err);
-          alert("حصل خطأ أثناء إضافة اللاعب.");
+          alert(T("errAddPlayer"));
         });
       };
 
@@ -1871,17 +1963,17 @@ function toggleTheme() {
 
     function editPlayerName(playerId, currentName){
       if(!isAdmin || !db) return;
-      const newName = prompt("اكتب الاسم الجديد لللاعب:", currentName || "");
+      const newName = prompt(T("promptNewPlayerName"), currentName || "");
       if(newName === null) return; // المستخدم لغى
       const trimmed = newName.trim();
       if(!trimmed){
-        alert("الاسم لا يمكن أن يكون فارغ.");
+        alert(T("nameCannotBeEmpty"));
         return;
       }
       db.collection("players").doc(playerId).update({ name: trimmed })
         .catch(err=>{
           console.error(err);
-          alert("حصل خطأ أثناء تعديل اسم اللاعب.");
+          alert(T("errEditPlayerName"));
         });
     }
 
@@ -1893,7 +1985,7 @@ function toggleTheme() {
         db.collection("players").doc(playerId).update({ avatar: avatarData })
           .catch(err=>{
             console.error(err);
-            alert("حصل خطأ أثناء تحديث صورة اللاعب.");
+            alert(T("errUpdateAvatar"));
           });
       };
       reader.readAsDataURL(file);
@@ -1988,14 +2080,14 @@ function toggleTheme() {
     // ===== MATCHES =====
     function addMatch(){
       if(!isAdmin || !db) return;
-      if(state.players.length<4){ alert("لازم يكون فيه على الأقل 4 لاعبين."); return; }
+      if(state.players.length<4){ alert(T("needAtLeast4Players")); return; }
       const w1=$("winnerP1").value;
       const w2=$("winnerP2").value;
       const l1=$("loserP1").value;
       const l2=$("loserP2").value;
-      if(!w1||!w2||!l1||!l2){ alert("اختر كل اللاعبين."); return; }
+      if(!w1||!w2||!l1||!l2){ alert(T("selectAllPlayers")); return; }
       const chosen=[w1,w2,l1,l2];
-      if(new Set(chosen).size<4){ alert("نفس اللاعب لا يمكن أن يكون في أكثر من مكان."); return; }
+      if(new Set(chosen).size<4){ alert(T("samePlayerNotAllowed")); return; }
 
       // ✅ ممنوع تسجيل ماتش جديد لو أي لاعب محظور حاليًا
       const now = new Date();
@@ -2038,13 +2130,13 @@ function toggleTheme() {
         updateBonusEligibility();
       }).catch(err=>{
         console.error(err);
-        alert("حصل خطأ أثناء حفظ الماتش.");
+        alert(T("errSaveMatch"));
       });
     }
 
     function resetAll(){
       if(!isAdmin || !db) return;
-      if(!confirm("سيتم مسح كل اللاعبين والنتائج نهائيًا من قاعدة البيانات. متأكد؟")) return;
+      if(!confirm(T("confirmResetAll"))) return;
 
       // مسح كل الماتشات
       db.collection("matches").get().then(snap=>{
@@ -2059,16 +2151,16 @@ function toggleTheme() {
         return batch.commit();
       }).catch(err=>{
         console.error(err);
-        alert("حصل خطأ أثناء مسح البيانات.");
+        alert(T("errResetData"));
       });
     }
     // ===== MATCHES LOG (عرض + حذف) =====
     function deleteMatchById(id){
       if(!isAdmin || !db) return;
-      if(!confirm("هل تريد بالتأكيد حذف هذا الماتش؟")) return;
+      if(!confirm(T("confirmDeleteMatch"))) return;
       db.collection("matches").doc(id).delete().catch(err=>{
         console.error(err);
-        alert("حصل خطأ أثناء حذف الماتش.");
+        alert(T("errDeleteMatch"));
       });
     }
 
@@ -2162,7 +2254,7 @@ function toggleTheme() {
     return (a.name||"").localeCompare(b.name||"", "ar");
   }
 
-  // الشهر "المكتمل" = شهر انتهى في التقويم (مش الشهر الحالي)
+  // الشهر T("completed") = شهر انتهى في التقويم (مش الشهر الحالي)
   function isMonthCompleted(y, m){
     if(y < currentYear) return true;
     if(y > currentYear) return false;
@@ -2262,7 +2354,7 @@ function toggleTheme() {
     return rows[0]?.name || null;
   }
 
-  // 1) تحقق هل يوجد "شهر مكتمل" داخل السنة المختارة وله مباريات
+  // 1) تحقق هل يوجد T("completedMonth") داخل السنة المختارة وله مباريات
   const completedMonthsWithData = [];
     const maxMonthCutoff = (monthVal !== "all") ? Number(monthVal) : 12;
 
@@ -2281,7 +2373,7 @@ function toggleTheme() {
   wrapper.style.display = "block";
   const championsEmptyMessage = noCompletedMonths
     ? T("noCompletedMonthsInYear")
-    : (getLang()==="en" ? "Not enough data for this year." : "لا توجد بيانات كافية لهذه السنة.");
+    : T("notEnoughDataForYear");
 
   // العنوان
   title.textContent = T("championsLogTitleTpl").replace("{year}", year);
@@ -2501,7 +2593,7 @@ function updateMatchesLog(){
         const tr = document.createElement("tr");
         const td = document.createElement("td");
         td.colSpan = 5;
-        td.textContent = "لا يوجد أي ماتشات مسجلة في هذه الفترة.";
+        td.textContent = T("noMatchesInPeriod");
         tr.appendChild(td);
         tbody.appendChild(tr);
         return;
@@ -2527,7 +2619,7 @@ function updateMatchesLog(){
         const actionTd = document.createElement("td");
         if(isAdmin){
           const btn = document.createElement("button");
-          btn.textContent = "🗑 حذف";
+          btn.textContent = T("deleteBtn");
           btn.className = "danger btn-small";
           btn.addEventListener("click", ()=> deleteMatchById(m.id));
           actionTd.appendChild(btn);
@@ -2563,15 +2655,18 @@ function updateMatchesLog(){
     }
 
     function getFilterLabel(yearVal, monthVal){
-      const monthNames = ["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
+      // Localized period label
       if(yearVal !== "all" && monthVal !== "all"){
-        return "الفترة: " + monthNames[Number(monthVal)-1] + " " + yearVal;
+        return T("periodMonthYearTpl")
+          .replace("{month}", monthName(Number(monthVal)))
+          .replace("{year}", yearVal);
       } else if(yearVal !== "all"){
-        return "الفترة: سنة " + yearVal;
+        return T("periodYearTpl").replace("{year}", yearVal);
       } else if(monthVal !== "all"){
-        return "الفترة: شهر " + monthNames[Number(monthVal)-1] + " في كل السنوات.";
+        return T("periodMonthAllYearsTpl")
+          .replace("{month}", monthName(Number(monthVal)));
       }
-      return "الفترة: كل الوقت.";
+      return T("periodAllTime");
     }
 
     function getFilteredMatches(){
@@ -2602,7 +2697,7 @@ function updateMatchesLog(){
     function createPlayerCellTd(playerId){
       const td=document.createElement("td");
       const p=getPlayerById(playerId);
-      if(!p){ td.textContent="غير معروف"; return td; }
+      if(!p){ td.textContent=T("unknown"); return td; }
       const wrapper=document.createElement("div");
       wrapper.className="player-cell";
       if(p.avatar){
@@ -2632,7 +2727,7 @@ function updateMatchesLog(){
           wrapper.appendChild(img);
         }
         const span=document.createElement("span");
-        span.textContent=p ? p.name : ("ID "+id);
+        span.textContent=p ? p.name : (`${T("idPrefix")} $<built-in function id>`);
         wrapper.appendChild(span);
         td.appendChild(wrapper);
       });
@@ -2733,7 +2828,7 @@ function updateMatchesLog(){
         const tr = document.createElement("tr");
         const td = document.createElement("td");
         td.colSpan = cols.length;
-        td.textContent = "لا توجد نتائج بعد في هذه الفترة.";
+        td.textContent = T("noResultsInPeriod");
         tr.appendChild(td);
         tbody.appendChild(tr);
         return;
@@ -2775,7 +2870,7 @@ function updateMatchesLog(){
       const opponentWin  = new Map(), opponentLose  = new Map();
 
       matches.forEach(m=>{
-        const d = m.date || "بدون تاريخ";
+        const d = m.date || T("noDate");
         if(!dayMap.has(d)) dayMap.set(d,{w:0,l:0});
         const ds = dayMap.get(d);
 
@@ -2834,7 +2929,7 @@ function updateMatchesLog(){
             const p = getPlayerById(id);
             result.push({
               id,
-              name: p ? p.name : ("ID " + id),
+              name: p ? p.name : (T("idPrefix") + " " + id),
               count: c
             });
           }
@@ -2875,7 +2970,7 @@ function updateMatchesLog(){
       }
       const id=sel.value;
       const player=getPlayerById(id);
-      if(!player){summary.textContent="لا يوجد لاعب بهذا المعرف.";box.style.display="none";return;}
+      if(!player){summary.textContent = T("playerIdNotFound");box.style.display="none";return;}
 
       // ✅ لو اللاعب محظور حسب نهاية الفترة المختارة، نخفي التحليل
       if(!shouldShowPlayerForSelectedRange(player, getSelectedRangeEndDate())){
@@ -2961,20 +3056,20 @@ function analyzeHeadToHead(){
   const out   = $("h2hSummary");
 
   if(!p1Str || !p2Str){
-    out.textContent = "اختر لاعبين أولاً.";
+    out.textContent = T("chooseTwoPlayersFirst");
     return;
   }
 
   const p1 = p1Str, p2 = p2Str;
   if(p1 === p2){
-    out.textContent = "لا يمكن اختيار نفس اللاعب مرتين.";
+    out.textContent = T("samePlayerSelectedTwice");
     return;
   }
 
   const pl1 = getPlayerById(p1),
         pl2 = getPlayerById(p2);
   if(!pl1 || !pl2){
-    out.textContent = "لم يتم العثور على أحد اللاعبين.";
+    out.textContent = T("playerNotFound");
     return;
   }
 
@@ -3089,20 +3184,20 @@ function analyzeHeadToHead(){
 
       // تحقق من الاختيار
       if(!t1p1 || !t1p2 || !t2p1 || !t2p2){
-        out.textContent = "اختر لاعبين لكل فريق أولًا.";
+        out.textContent = T("chooseTeamsPlayersFirst");
         return;
       }
 
       // ممنوع نفس اللاعب يتكرر في نفس الفريق
       if(t1p1 === t1p2 || t2p1 === t2p2){
-        out.textContent = "لاعب واحد لا يمكن أن يكون مكان لاعب 1 و 2 في نفس الفريق.";
+        out.textContent = T("samePlayerSameTeam");
         return;
       }
 
       // لو حابب تمنع تكرار لاعب بين الفريقين:
       const all = [t1p1,t1p2,t2p1,t2p2];
       if(new Set(all).size < 4){
-        out.textContent = "لاعب واحد لا يمكن أن يلعب في الفريقين في نفس المواجهة.";
+        out.textContent = T("samePlayerBothTeams");
         return;
       }
 
@@ -3110,7 +3205,7 @@ function analyzeHeadToHead(){
       const team2Id = normalizeTeamId(t2p1, t2p2);
 
       if(team1Id === team2Id){
-        out.textContent = "لا يمكن مقارنة نفس الفريق بنفسه.";
+        out.textContent = T("cannotCompareSameTeam");
         return;
       }
 
@@ -3257,9 +3352,7 @@ function analyzeHeadToHead(){
       if(toggleViewBtn){
         toggleViewBtn.addEventListener("click", ()=>{
           leaderboardViewMode = (leaderboardViewMode === "compact") ? "detailed" : "compact";
-          toggleViewBtn.textContent = (leaderboardViewMode === "compact")
-            ? "📊 عرض تفصيلي"
-            : "📋 عرض مختصر";
+          toggleViewBtn.textContent = (leaderboardViewMode === "compact") ? T("detailedView") : T("compactView");
           updateLeaderboard();
           if($("playerDetailsSelect").value) updatePlayerDetailsUI();
           if($("h2hP1").value && $("h2hP2").value) analyzeHeadToHead(); 
