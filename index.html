@@ -263,6 +263,8 @@
   <!-- Firebase (CDN compat) -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+<link rel="icon" href="data:,">
 </head>
 <body>
   <header>
@@ -678,6 +680,24 @@
   </main>
 
   <script>
+// ===== GLOBAL SAFE TRANSLATOR (AVAILABLE IMMEDIATELY) =====
+window.T = window.T || function(key){
+  try{
+    var lang = (localStorage.getItem("dl_lang") || "ar");
+    var dict = (window.I18N && window.I18N[lang]) ? window.I18N[lang] : null;
+    if(dict && Object.prototype.hasOwnProperty.call(dict, key)) return dict[key];
+    // fallback to Arabic if exists
+    var ar = (window.I18N && window.I18N.ar) ? window.I18N.ar : null;
+    if(ar && Object.prototype.hasOwnProperty.call(ar, key)) return ar[key];
+    return key;
+  }catch(e){
+    return key;
+  }
+};
+// Backward-compat (some parts may still call t()/tr())
+window.tr = window.tr || window.T;
+window.t  = window.t  || window.T;
+
     const ADMIN_PIN = "1510"; // غيره لو حابب
 
     let isAdmin = false;
