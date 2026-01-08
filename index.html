@@ -1442,7 +1442,7 @@ function toggleTheme() {
 
 
       // استمع لأي تغييرات في اللاعبين
-      db.collection("players").onSnapshoT(snapshot => {
+      db.collection("players").onSnapshot(snapshot => {
         const players = [];
         snapshot.forEach(doc => {
           const data = doc.data();
@@ -1467,7 +1467,7 @@ function toggleTheme() {
       });
 
       // استمع لأي تغييرات في الماتشات
-      db.collection("matches").onSnapshoT(snapshot => {
+      db.collection("matches").onSnapshot(snapshot => {
         const matches = [];
         snapshot.forEach(doc => {
           const data = doc.data();
