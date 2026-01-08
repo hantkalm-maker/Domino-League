@@ -2174,20 +2174,6 @@ function toggleTheme() {
 
       // باقي الحالات (كل السنين/كل الوقت): نستخدم آخر تاريخ موجود في النتائج أو تاريخ اليوم
       const matches = getFilteredMatches();
-      // === Movement (today vs previous day) ===
-      const rangeEnd = getSelectedRangeEndDate(); // Date
-      const endYMD = toYMD(rangeEnd);
-      const prevEnd = new Date(rangeEnd.getTime());
-      prevEnd.setDate(prevEnd.getDate() - 1);
-      const prevYMD = toYMD(prevEnd);
-
-      const matchesToday = matches.filter(m => (!m.date) || (String(m.date) <= endYMD));
-      const matchesPrev  = matches.filter(m => (!m.date) || (String(m.date) <= prevYMD));
-
-      // Build standard ranking maps (based on default standings rules)
-      const rankMapToday = buildRankMap(matchesToday, rangeEnd);
-      const rankMapPrev  = buildRankMap(matchesPrev, prevEnd);
-
       let max = null;
       matches.forEach(m=>{
         if(!m.date) return;
@@ -3211,12 +3197,27 @@ function updateMatchesLog(){
       const monthVal = $("filterMonth").value;
       $("currentFilterLabel").textContent = getFilterLabel(yearVal, monthVal);
 
+      // === Movement (today vs previous day) within the selected filter range ===
+      const rangeEnd = getSelectedRangeEndDate(); // Date
+      const endYMD = toYMD(rangeEnd);
+      const prevEnd = new Date(rangeEnd.getTime());
+      prevEnd.setDate(prevEnd.getDate() - 1);
+      const prevYMD = toYMD(prevEnd);
+
+      const matchesToday = matches.filter(m => (!m.date) || (String(m.date) <= endYMD));
+      const matchesPrev  = matches.filter(m => (!m.date) || (String(m.date) <= prevYMD));
+
+      // Standard rank maps (based on finalPoints sorting)
+      const rankMapToday = buildRankMap(matchesToday, rangeEnd);
+      const rankMapPrev  = buildRankMap(matchesPrev, prevEnd);
+
       const rows = [];
+
 
       // نستخدم نفس منطق تحليل اللاعب الواحد لكل لاعب
       state.players.forEach(p => {
         // ✅ إخفاء اللاعب من الإحصائيات لو نهاية الفترة المختارة تقع داخل فترة الحظر
-        if(!shouldShowPlayerForSelectedRange(p, getSelectedRangeEndDate())) return;
+        if(!shouldShowPlayerForSelectedRange(p, rangeEnd)) return;
 
         const s = computePlayerFullStats(p.id, matchesToday);
 
