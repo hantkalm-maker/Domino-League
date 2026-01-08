@@ -231,15 +231,15 @@
     body.dark input[type="text"],
     body.dark input[type="date"],
     body.dark select {
-      background:#0f172a;
+      background:#242424;
       color:#e5e7eb;
       border:1px solid rgba(255,255,255,0.15);
     }
     body.dark table { color:#e5e7eb; }
-    body.dark th { background:#122042; border-bottom:1px solid rgba(255,255,255,0.08); }
+    body.dark th { background:#2a2a2a; border-bottom:1px solid rgba(255,255,255,0.08); }
     body.dark td { border-bottom:1px solid rgba(255,255,255,0.06); }
-    body.dark tr:nth-child(even) td { background:#0e1b35; }
-    body.dark .stat-box { background:#0f172a; }
+    body.dark tr:nth-child(even) td { background:#202020; }
+    body.dark .stat-box { background:#242424; }
     body.dark button.primary { background:#3b82f6; }
     body.dark button.primary:hover { background:#2563eb; }
     body.dark button.danger { background:#ef4444; }
@@ -590,9 +590,7 @@
           <label for="h2hP2">اللاعب الثاني</label>
           <select id="h2hP2"></select>
         </div>
-        <div class="field" style="align-self:flex-end;">
-          <button class="primary" id="h2hAnalyzeBtn">🔍 تحليل المواجهة</button>
-        </div>
+        
       </div>
       <div id="h2hSummary" class="small-text">
         <span id="h2hHelp">اختر لاعبين ثم اضغط "تحليل المواجهة".</span>
@@ -623,9 +621,7 @@
           <label for="h2hT2P2">الفريق الثاني - لاعب 2</label>
           <select id="h2hT2P2"></select>
         </div>
-        <div class="field" style="align-self:flex-end;">
-          <button class="primary" id="h2hTeamsAnalyzeBtn">🔍 تحليل المواجهة</button>
-        </div>
+        
       </div>
 
       <div id="h2hTeamsSummary" class="small-text">
@@ -3620,7 +3616,8 @@ function autoAnalyzeTeamsHeadToHeadIfReady(){
       $("bonusBtn").addEventListener("click",toggleBonus);
       $("resetAllBtn").addEventListener("click",resetAll);
       $("playerDetailsSelect").addEventListener("change",updatePlayerDetailsUI);
-      $("h2hAnalyzeBtn").addEventListener("click",analyzeHeadToHead);
+      const __h2hBtn = $("h2hAnalyzeBtn");
+      if(__h2hBtn){ __h2hBtn.addEventListener("click", analyzeHeadToHead); }
       // Auto-run when selecting players
       ["h2hP1","h2hP2"].forEach(id=>{
         const el = $(id);
