@@ -304,6 +304,7 @@
     </div>
 
     <div id="fbStatus" class="small-text" style="margin-top:6px;"></div>
+    <div id="appBuildVersion" class="small-text" style="margin-top:4px; opacity:0.8;"></div>
 
   </header>
 
@@ -756,6 +757,9 @@ window.t  = window.t  || window.T;
     };
 
 
+    const APP_BUILD_VERSION = "v48";
+
+
 // ===== UI Settings: Theme + Language =====
 const I18N = {
   ar: {
@@ -956,24 +960,24 @@ const I18N = {
     h2hTeamsNoVsTpl: "لا توجد أي مواجهات مباشرة بين <strong>{t1}</strong> and <strong>{t2}</strong> في هذه الفترة ({period}).",
 
     // Player analysis
-    totalWinsPeriod: "Total wins in selected period",
-    totalLossesPeriod: "Total losses in selected period",
-    totalMatchesPeriod: "Total matches in selected period",
-    bonusPlusLabel: "Bonus + (win)",
-    bonusMinusLabel: "Bonus − (loss)",
-    bonusNetLabel: "Net bonus",
-    playerDaysAnalysisTitle: "📆 Win/Loss days analysis in selected period",
-    playerBestMateTitle: "🤝 Best teammate in the same period",
-    bestMateWinLabel: "Most wins with",
-    bestMateLoseLabel: "Most losses with",
-    playerBestOppTitle: "👊 Favorite opponent in the same period",
-    bestOppWinLabel: "Most wins against",
-    bestOppLoseLabel: "Most losses against",
-    countTimesLabel: "Times:",
+    totalWinsPeriod: "إجمالي مرات الفوز في الفترة المحددة",
+    totalLossesPeriod: "إجمالي مرات الخسارة في الفترة المحددة",
+    totalMatchesPeriod: "إجمالي الماتشات في الفترة المحددة",
+    bonusPlusLabel: "بونص + (مكسب)",
+    bonusMinusLabel: "بونص − (خسارة)",
+    bonusNetLabel: "صافي البونص",
+    playerDaysAnalysisTitle: "📆 تحليل أيام الفوز والخسارة في الفترة المختارة",
+    playerBestMateTitle: "🤝 الشريك المفضل في نفس الفترة",
+    bestMateWinLabel: "أكتر واحد كسبت معاه",
+    bestMateLoseLabel: "أكتر واحد خسرّت معاه",
+    playerBestOppTitle: "👊 الخصم المفضل في نفس الفترة",
+    bestOppWinLabel: "أكتر واحد كسبت ضده",
+    bestOppLoseLabel: "أكتر واحد خسرت ضده",
+    countTimesLabel: "عدد المرات:",
 
     // Champions extra
-    lastYearChampionLabel: "🏆 Last year champion",
-    lastMonthChampionLabel: "🏅 Last month champion",
+    lastYearChampionLabel: "🏆 حامل لقب آخر سنة",
+    lastMonthChampionLabel: "🏅 حامل لقب آخر شهر",
 
     // Head-to-head (1v1)
     h2hReportTitleTpl: "Head-to-head analysis between {p1} and {p2} ({period}):<br/><br/>",
@@ -1206,12 +1210,12 @@ const I18N = {
     // Player analysis
     choosePlayer: "Choose Player",
     playerDetailsHelp: "Choose a player from the list to view their analysis.",
-    totalWinsPeriod: "Total wins in selected period",
-    totalLossesPeriod: "Total losses in selected period",
-    totalMatchesPeriod: "Total matches in selected period",
-    bonusPlusLabel: "Bonus + (win)",
-    bonusMinusLabel: "Bonus − (loss)",
-    bonusNetLabel: "Net bonus",
+    totalWinsPeriod: "إجمالي مرات الفوز في الفترة المحددة",
+    totalLossesPeriod: "إجمالي مرات الخسارة في الفترة المحددة",
+    totalMatchesPeriod: "إجمالي الماتشات في الفترة المحددة",
+    bonusPlusLabel: "بونص + (مكسب)",
+    bonusMinusLabel: "بونص − (خسارة)",
+    bonusNetLabel: "صافي البونص",
     daysWin2: "Days won exactly 2 times",
     daysWin3: "Days won exactly 3 times",
     daysWin4plus: "Days won 4+ times",
@@ -1252,13 +1256,13 @@ const I18N = {
     resetWarning1: "Reset All Data deletes all players and all matches permanently from the database (use with extreme caution).",
     resetWarning2: "Backup/Import/Export buttons are currently disabled and will be enabled after implementing reliable save/restore logic.",
     // Player analysis (best mate / opponent)
-    playerBestMateTitle: "🤝 Best teammate in the same period",
-    bestMateWinLabel: "Most wins with",
-    bestMateLoseLabel: "Most losses with",
-    playerBestOppTitle: "👊 Favorite opponent in the same period",
-    bestOppWinLabel: "Most wins against",
-    bestOppLoseLabel: "Most losses against",
-    countTimesLabel: "Times:",
+    playerBestMateTitle: "🤝 الشريك المفضل في نفس الفترة",
+    bestMateWinLabel: "أكتر واحد كسبت معاه",
+    bestMateLoseLabel: "أكتر واحد خسرّت معاه",
+    playerBestOppTitle: "👊 الخصم المفضل في نفس الفترة",
+    bestOppWinLabel: "أكتر واحد كسبت ضده",
+    bestOppLoseLabel: "أكتر واحد خسرت ضده",
+    countTimesLabel: "عدد المرات:",
     h2hTeamsReportTitleTpl: "Head-to-head analysis between Team {t1} and Team {t2} ({period}):<br/><br/>",
 
     h2hTeamsPlayedAgainstTpl: "• Played against each other in {n} full-ten match(es).<br/>",
@@ -1306,8 +1310,8 @@ window.I18N = I18N;
     // Hotfix: ensure EN has all required keys (some older edits removed them)
     Object.assign(window.I18N.en, {
       playerDaysAnalysisTitle: "📆 Win/Loss days analysis in the selected period",
-      lastYearChampionLabel: "🏆 Last year champion",
-      lastMonthChampionLabel: "🏅 Last month champion",
+      lastYearChampionLabel: "🏆 حامل لقب آخر سنة",
+      lastMonthChampionLabel: "🏅 حامل لقب آخر شهر",
 
       h2hReportTitleTpl: "Head-to-head analysis between {p1} and {p2} ({period}):<br/><br/>",
       h2hPlayedAgainstTpl: "• Played against each other in {n} full-ten match(es).<br/>",
@@ -1456,11 +1460,17 @@ function monthName(m){
 }
 
 function getLang() {
+  try{
+    const sel = document.getElementById("langSelect");
+    const v = sel && sel.value;
+    if(v === "ar" || v === "en") return v;
+  }catch(e){}
   const ls = localStorage.getItem("dl_lang");
   return (ls === "ar" || ls === "en") ? ls : "ar";
 }
 function setLang(lang) {
   localStorage.setItem("dl_lang", lang);
+  try{ const sel=document.getElementById("langSelect"); if(sel) sel.value=lang; }catch(e){}
   applyLang(lang);
 
   // Re-render dynamic sections so tables/headers/buttons update immediately
@@ -1488,7 +1498,7 @@ function setLang(lang) {
 
 function refreshPlayerAnalysisTexts(){
   try{
-    const pairs = [
+    const map = [
       ["playerDaysAnalysisTitle","playerDaysAnalysisTitle"],
       ["playerBestMateTitle","playerBestMateTitle"],
       ["playerBestOppTitle","playerBestOppTitle"],
@@ -1500,13 +1510,15 @@ function refreshPlayerAnalysisTexts(){
       ["lblCountTimes2","countTimesLabel"],
       ["lblCountTimes3","countTimesLabel"],
       ["lblCountTimes4","countTimesLabel"],
-      ["matchesLogIntro","matchesLogIntro"],
-      ["playerDetailsHelp","playerDetailsHelp"],
-      ["matchDateHintText","matchDateHint"],
-      ["matchNoteText","matchNote"]
+      ["lblTotalWins","totalWinsPeriod"],
+      ["lblTotalLosses","totalLossesPeriod"],
+      ["lblTotalMatches","totalMatchesPeriod"],
+      ["lblBonusPlus","bonusPlusLabel"],
+      ["lblBonusMinus","bonusMinusLabel"],
+      ["lblBonusNet","bonusNetLabel"],
     ];
-    pairs.forEach(([id,key])=>{
-      const el=document.getElementById(id);
+    map.forEach(([id,key])=>{
+      const el = document.getElementById(id);
       if(el) el.textContent = T(key);
     });
   }catch(e){}
@@ -1532,6 +1544,7 @@ function applyLang(lang) {
   document.title = T("pagetitle");
   const titleEl = document.getElementById("appTitle");
   if (titleEl) titleEl.textContent = T("headerTitle");
+  try{ const v=document.getElementById("appBuildVersion"); if(v) v.textContent = "Build: " + (window.APP_BUILD_VERSION || ""); }catch(e){}
 
   const sub = document.getElementById("subtitleRule");
   if (sub) sub.textContent = T("subtitleRule");
