@@ -1495,6 +1495,28 @@ function __old_T(key){
 }
 
 
+function refreshPlayerAnalysisTexts(){
+  try{
+    const pairs = [
+      ["playerDaysAnalysisTitle","playerDaysAnalysisTitle"],
+      ["playerBestMateTitle","playerBestMateTitle"],
+      ["playerBestOppTitle","playerBestOppTitle"],
+      ["lblBestMateWin","bestMateWinLabel"],
+      ["lblBestMateLose","bestMateLoseLabel"],
+      ["lblBestOppWin","bestOppWinLabel"],
+      ["lblBestOppLose","bestOppLoseLabel"],
+      ["lblCountTimes1","countTimesLabel"],
+      ["lblCountTimes2","countTimesLabel"],
+      ["lblCountTimes3","countTimesLabel"],
+      ["lblCountTimes4","countTimesLabel"]
+    ];
+    pairs.forEach(([id,key])=>{
+      const el = document.getElementById(id);
+      if(el) el.textContent = T(key);
+    });
+  }catch(e){}
+}
+
 function applyLang(lang) {
   const html = document.documentElement;
   html.lang = lang;
@@ -1523,35 +1545,9 @@ function applyLang(lang) {
   });
 
   // Player analysis sub-headings + labels (avoid sticky mixed language)
-  const textMap = [
-    ["playerDaysAnalysisTitle","playerDaysAnalysisTitle"],
-    ["playerBestMateTitle","playerBestMateTitle"],
-    ["playerBestOppTitle","playerBestOppTitle"],
-    ["lblBestMateWin","bestMateWinLabel"],
-    ["lblBestMateLose","bestMateLoseLabel"],
-    ["lblBestOppWin","bestOppWinLabel"],
-    ["lblBestOppLose","bestOppLoseLabel"],
-    ["lblCountTimes1","countTimesLabel"],
-    ["lblCountTimes2","countTimesLabel"],
-    ["lblCountTimes3","countTimesLabel"],
-    ["lblCountTimes4","countTimesLabel"],
-    ["lblTotalWins","totalWinsPeriod"],
-    ["lblTotalLosses","totalLossesPeriod"],
-    ["lblTotalMatches","totalMatchesPeriod"],
-    ["lblWinRatePeriod","winRatePeriod"],
-    ["lblBonusPlus","bonusPlusLabel"],
-    ["lblBonusMinus","bonusMinusLabel"],
-    ["lblBonusNet","bonusNetLabel"],
-    ["lblDaysWin2","daysWin2"],
-    ["lblDaysWin3","daysWin3"],
-    ["lblDaysWin4p","daysWin4plus"],
-    ["lblDaysLose2","daysLose2"],
-    ["lblDaysLose3","daysLose3"],
-    ["lblDaysLose4p","daysLose4plus"],
-  ];
-  textMap.forEach(([id,key])=>{
-    const el = document.getElementById(id);
-    if(el) el.textContent = T(key);
+  refreshPlayerAnalysisTexts();
+
+if(el) el.textContent = T(key);
   });
 
   // Labels
@@ -3625,7 +3621,10 @@ function updateMatchesLog(){
       }
 
       box.style.display="block";
-    }
+    
+  // Ensure analysis section labels follow current language
+  refreshPlayerAnalysisTexts();
+}
 
     // ===== H2H (بفترة الفلتر) =====
     function updateHeadToHeadUI(reset=true){
