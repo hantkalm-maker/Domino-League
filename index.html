@@ -796,7 +796,7 @@ function refreshToggleButtonsText(){
 
 
 
-    const APP_BUILD_VERSION = "v54";
+    const APP_BUILD_VERSION = "v55";
 
 
 // ===== UI Settings: Theme + Language =====
@@ -1513,7 +1513,15 @@ function setLang(lang) {
   applyLang(lang);
 
   
-  try{ refreshToggleButtonsText(); }catch(e){}
+  
+  // Re-render dynamic sections so their internal labels follow the new language
+  try{ updatePlayersUI(); }catch(e){}
+  try{ updateLeaderboard(); }catch(e){}
+  try{ updateMatchesLogUI(); }catch(e){}
+  try{ updateChampionsLog(); }catch(e){}
+  try{ updatePlayerDetailsUI(); }catch(e){}
+  try{ analyzeHeadToHead(); }catch(e){}
+try{ refreshToggleButtonsText(); }catch(e){}
 // Re-render dynamic sections so tables/headers/buttons update immediately
   const fns = [
     "updatePlayersUI",
@@ -1597,6 +1605,11 @@ function applyI18nToDom(){
     });
   }catch(e){}
 }
+
+// ===== Safe render aliases (v55) =====
+function updateMatchesLogUI(){ try{ if(typeof updateMatchesLog === "function") return updateMatchesLog(); }catch(e){} }
+function updateChampionsLog(){ try{ if(typeof updateChampionsLogUI === "function") return updateChampionsLogUI(); }catch(e){} }
+
 
 function applyLang(lang) {
   const html = document.documentElement;
