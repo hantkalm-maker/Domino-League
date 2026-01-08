@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <title>برنامج ترتيب الدومينو - العشرة (151)</title>
+  <title>دوري الأصدقاء Friendly League - العشرة (151)</title>
   <style>
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -222,11 +222,11 @@
   
     /* ===== UI Settings: Dark Mode ===== */
     body.dark {
-      background: #0b1220;
+      background: #1e1e1e;
       color: #e5e7eb;
     }
-    body.dark header { background:#0f172a; }
-    body.dark .card { background:#0b1a33; box-shadow:none; border:1px solid rgba(255,255,255,0.08); }
+    body.dark header { background:#202020; }
+    body.dark .card { background:#252525; box-shadow:none; border:1px solid rgba(255,255,255,0.08); }
     body.dark .small-text { color:#cbd5e1; }
     body.dark input[type="text"],
     body.dark input[type="date"],
@@ -268,7 +268,7 @@
 </head>
 <body>
   <header>
-    <h1 id="appTitle">برنامج ترتيب الدومينو الزوجي - العشرة (151)</h1>
+    <h1 id="appTitle">دوري الأصدقاء Friendly League الزوجي - العشرة (151)</h1>
     <div class="small-text" id="subtitleRule">
       كل ماتش (عشرة) = الفريق الكسبان +1 لكل لاعب / الخسران -1 لكل لاعب
     </div>
@@ -681,6 +681,34 @@
   </main>
 
   <script>
+
+// ===== Console Noise Guard (Browser Extensions) =====
+// This prevents noisy console errors often caused by Chrome/iOS extensions messaging:
+// "A listener indicated an asynchronous response by returning true, but the message channel closed..."
+(function(){
+  const EXT_MSG = "A listener indicated an asynchronous response by returning true, but the message channel closed";
+  window.addEventListener("unhandledrejection", function(e){
+    try{
+      const r = e && e.reason;
+      const msg = (typeof r === "string") ? r : (r && r.message) ? r.message : "";
+      if(msg && msg.indexOf(EXT_MSG) !== -1){
+        e.preventDefault();
+        // keep it quiet (optional): console.warn("[Ignored extension message noise]", msg);
+      }
+    }catch(_){}
+  });
+  window.addEventListener("error", function(e){
+    try{
+      const msg = (e && e.message) ? e.message : "";
+      if(msg && msg.indexOf(EXT_MSG) !== -1){
+        e.preventDefault && e.preventDefault();
+        return true;
+      }
+    }catch(_){}
+    return false;
+  });
+})();
+
 // ===== GLOBAL SAFE TRANSLATOR (AVAILABLE IMMEDIATELY) =====
 window.T = window.T || function(key){
   try{
@@ -716,8 +744,8 @@ window.t  = window.t  || window.T;
 const I18N = {
   ar: {
     // Header
-    pagetitle: "برنامج ترتيب الدومينو - العشرة (151)",
-    headerTitle: "برنامج ترتيب الدومينو الزوجي - العشرة (151)",
+    pagetitle: "دوري الأصدقاء Friendly League - العشرة (151)",
+    headerTitle: "دوري الأصدقاء Friendly League الزوجي - العشرة (151)",
     subtitleRule: "كل ماتش (عشرة) = الفريق الكسبان +1 لكل لاعب / الخسران -1 لكل لاعب",
     darkMode: "🌙 Dark Mode",
     lightMode: "☀️ Light Mode",
@@ -891,10 +919,10 @@ const I18N = {
     h2hSameTeamLoseTpl: "• خسارة معًا: {rate} ({losses} من {total} ماتشات)<br/>",
     h2hBonusTitle: "<br/><b>🎁 البونص (محسوب منفصل)</b><br/>",
     h2hBaseTitle: "<br/><b>🎯 النقاط الأساسية (بدون بونص)</b><br/>",
-    h2hP1GotBonusFromP2Tpl: "• حصل اللاعب 1 من اللاعب 2 على بونص: {n}<br/>",
-    h2hP2GotBonusFromP1Tpl: "• حصل اللاعب 2 من اللاعب 1 على بونص: {n}<br/>",
-    h2hP1GotBaseFromP2Tpl: "• حصل اللاعب 1 من اللاعب 2 على نقاط: {n}<br/>",
-    h2hP2GotBaseFromP1Tpl: "• حصل اللاعب 2 من اللاعب 1 على نقاط: {n}<br/>",
+    h2hP1GotBonusFromP2Tpl: "• حصل {p1} من {p2} على بونص: {n}<br/>",
+    h2hP2GotBonusFromP1Tpl: "• حصل {p2} من {p1} على بونص: {n}<br/>",
+    h2hP1GotBaseFromP2Tpl: "• حصل {p1} من {p2} على نقاط: {n}<br/>",
+    h2hP2GotBaseFromP1Tpl: "• حصل {p2} من {p1} على نقاط: {n}<br/>",
 
     // Head-to-head (2v2 teams)
     h2hTeamsReportTitleTpl: "تحليل المواجهات بين الفريق {t1} والفريق {t2} ({period}):<br/><br/>",
@@ -937,10 +965,10 @@ const I18N = {
     h2hSameTeamLoseTpl: "• Lose together: {rate} ({losses} of {total} matches)<br/>",
     h2hBonusTitle: "<br/><b>🎁 Bonus (calculated separately)</b><br/>",
     h2hBaseTitle: "<br/><b>🎯 Base points (without bonus)</b><br/>",
-    h2hP1GotBonusFromP2Tpl: "• Player 1 received bonus from Player 2: {n}<br/>",
-    h2hP2GotBonusFromP1Tpl: "• Player 2 received bonus from Player 1: {n}<br/>",
-    h2hP1GotBaseFromP2Tpl: "• Player 1 received points from Player 2: {n}<br/>",
-    h2hP2GotBaseFromP1Tpl: "• Player 2 received points from Player 1: {n}<br/>",
+    h2hP1GotBonusFromP2Tpl: "• حصل {p1} من {p2} على بونص: {n}<br/>",
+    h2hP2GotBonusFromP1Tpl: "• حصل {p2} من {p1} على بونص: {n}<br/>",
+    h2hP1GotBaseFromP2Tpl: "• حصل {p1} من {p2} على نقاط: {n}<br/>",
+    h2hP2GotBaseFromP1Tpl: "• حصل {p2} من {p1} على نقاط: {n}<br/>",
 
     // Head-to-head (2v2 teams)
     h2hTeamsReportTitleTpl: "Head-to-head analysis between Team {t1} and Team {t2} ({period}):<br/><br/>",
@@ -1044,8 +1072,8 @@ const I18N = {
   },
   en: {
     // Header
-    pagetitle: "Domino League - Tens (151)",
-    headerTitle: "Domino Doubles League - Tens (151)",
+    pagetitle: "Friendly League - Tens (151)",
+    headerTitle: "Friendly League - Tens (151)",
     subtitleRule: "Each match (Tens) = Winning team +1 per player / Losing team -1 per player",
     darkMode: "🌙 Dark Mode",
     lightMode: "☀️ Light Mode",
@@ -3384,14 +3412,53 @@ function analyzeHeadToHead(){
 
   // Bonus & base points
   html += T("h2hBonusTitle");
-  html += T("h2hP1GotBonusFromP2Tpl").replace("{n}", `<strong>${bonusNet}</strong>`);
-  html += T("h2hP2GotBonusFromP1Tpl").replace("{n}", `<strong>${-bonusNet}</strong>`);
+  html += T("h2hP1GotBonusFromP2Tpl")
+    .replace("{p1}", pl1.name)
+    .replace("{p2}", pl2.name)
+    .replace("{n}", `<strong>${bonusNet}</strong>`);
+  html += T("h2hP2GotBonusFromP1Tpl")
+    .replace("{p1}", pl1.name)
+    .replace("{p2}", pl2.name)
+    .replace("{n}", `<strong>${-bonusNet}</strong>`);
 
   html += T("h2hBaseTitle");
-  html += T("h2hP1GotBaseFromP2Tpl").replace("{n}", `<strong>${baseNet}</strong>`);
-  html += T("h2hP2GotBaseFromP1Tpl").replace("{n}", `<strong>${-baseNet}</strong>`);
+  html += T("h2hP1GotBaseFromP2Tpl")
+    .replace("{p1}", pl1.name)
+    .replace("{p2}", pl2.name)
+    .replace("{n}", `<strong>${baseNet}</strong>`);
+  html += T("h2hP2GotBaseFromP1Tpl")
+    .replace("{p1}", pl1.name)
+    .replace("{p2}", pl2.name)
+    .replace("{n}", `<strong>${-baseNet}</strong>`);
 
   out.innerHTML = html;
+}
+
+// Auto-run H2H analysis when both players are selected
+function autoAnalyzeHeadToHeadIfReady(){
+  const p1 = $("h2hP1")?.value || "";
+  const p2 = $("h2hP2")?.value || "";
+  if(p1 && p2 && p1 !== p2){
+    analyzeHeadToHead();
+  }else{
+    // Reset to help text (no errors while selecting)
+    const out = $("h2hSummary");
+    if(out) out.innerHTML = '<span id="h2hHelp">'+T("h2hHelp")+'</span>';
+  }
+}
+
+// Auto-run Teams H2H analysis when all 4 players are selected
+function autoAnalyzeTeamsHeadToHeadIfReady(){
+  const a1 = $("h2hT1P1")?.value || "";
+  const a2 = $("h2hT1P2")?.value || "";
+  const b1 = $("h2hT2P1")?.value || "";
+  const b2 = $("h2hT2P2")?.value || "";
+  if(a1 && a2 && b1 && b2){
+    analyzeTeamsHeadToHead();
+  }else{
+    const out = $("h2hTeamsSummary");
+    if(out) out.innerHTML = '<span id="h2hTeamsHelp">'+T("h2hTeamsHelp")+'</span>';
+  }
 }
 
 
@@ -3554,6 +3621,11 @@ function analyzeHeadToHead(){
       $("resetAllBtn").addEventListener("click",resetAll);
       $("playerDetailsSelect").addEventListener("change",updatePlayerDetailsUI);
       $("h2hAnalyzeBtn").addEventListener("click",analyzeHeadToHead);
+      // Auto-run when selecting players
+      ["h2hP1","h2hP2"].forEach(id=>{
+        const el = $(id);
+        if(el) el.addEventListener("change", autoAnalyzeHeadToHeadIfReady);
+      });
       $("enableAdminBtn").addEventListener("click",enableAdminMode);
       $("disableAdminBtn").addEventListener("click",disableAdminMode);
 
@@ -3562,6 +3634,11 @@ function analyzeHeadToHead(){
       if (h2hTeamsBtn){
         h2hTeamsBtn.addEventListener("click", analyzeTeamsHeadToHead);
       }
+      // Auto-run when selecting team players
+      ["h2hT1P1","h2hT1P2","h2hT2P1","h2hT2P2"].forEach(id=>{
+        const el = $(id);
+        if(el) el.addEventListener("change", autoAnalyzeTeamsHeadToHeadIfReady);
+      });
 
       $("filterYear").addEventListener("change",()=>{
         updatePlayersUI();
