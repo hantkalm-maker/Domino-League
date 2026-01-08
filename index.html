@@ -1512,6 +1512,8 @@ function refreshPlayerAnalysisTexts(){
     ];
     pairs.forEach(([id,key])=>{
       const el = document.getElementById(id);
+      if(el) el.textContent = T(key);
+    });
   }catch(e){}
 }
 
