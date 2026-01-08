@@ -2,6 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
+  <link rel="icon" href="data:,">
   <title>برنامج ترتيب الدومينو - العشرة (151)</title>
   <style>
     body {
@@ -344,22 +345,22 @@
 
       <div class="row">
         <div class="field">
-          <label>الفريق الكسبان - لاعب 1</label>
+          <label for="winnerP1">الفريق الكسبان - لاعب 1</label>
           <select id="winnerP1"></select>
         </div>
         <div class="field">
-          <label>الفريق الكسبان - لاعب 2</label>
+          <label for="winnerP2">الفريق الكسبان - لاعب 2</label>
           <select id="winnerP2"></select>
         </div>
       </div>
 
       <div class="row">
         <div class="field">
-          <label>الفريق الخسران - لاعب 1</label>
+          <label for="loserP1">الفريق الخسران - لاعب 1</label>
           <select id="loserP1"></select>
         </div>
         <div class="field">
-          <label>الفريق الخسران - لاعب 2</label>
+          <label for="loserP2">الفريق الخسران - لاعب 2</label>
           <select id="loserP2"></select>
         </div>
       </div>
@@ -774,7 +775,7 @@ const I18N = {
     // Champions log
     championsLogHint: "اختر سنة محددة لعرض سجل أبطال الشهور (مثل سجل الدوري الإنجليزي).",
     noCompletedMonths: "لا يوجد شهور مكتملة داخل الفترة المختارة.",
-    noCompletedMonthsInYear: t("noCompletedMonthsInYear"),
+    noCompletedMonthsInYear: "لا يوجد شهور مكتملة في هذه السنة لعرض سجل الأبطال.",
     championsLogTitleTpl: "سجل الأبطال لسنة {year} — يمكن إعادة الترتيب من رؤوس الأعمدة",
     first: "الأول",
     second: "الثاني",
@@ -1004,13 +1005,13 @@ function setLang(lang) {
   }
 }
 
-function tr(key) {
+function t(key) {
   const lang = getLang();
   return (I18N[lang] && I18N[lang][key]) || (I18N.ar[key] || key);
 }
 
 function t(key){
-  return tr(key);
+  return t(key);
 }
 
 
@@ -1038,13 +1039,13 @@ function applyLang(lang) {
   ];
   sectionIds.forEach(id=>{
     const el = document.getElementById(id);
-    if(el) el.textContent = tr(id);
+    if(el) el.textContent = t(id);
   });
 
   // Labels
   const setLabel = (forId, key) => {
     const el = document.querySelector(`label[for="${forId}"]`);
-    if (el) el.textContent = tr(key);
+    if (el) el.textContent = t(key);
   };
   setLabel("playerName", "newPlayerName");
   setLabel("playerAvatarFile", "playerAvatar");
@@ -1110,7 +1111,7 @@ if (lbToggleBtn) lbToggleBtn.textContent = (leaderboardViewMode === "compact") ?
   ];
   idTextKeys.forEach(([id,key])=>{
     const el = document.getElementById(id);
-    if(el) el.textContent = tr(key);
+    if(el) el.textContent = t(key);
   });
 
 // Matches log table headers
@@ -1124,7 +1125,7 @@ const thMap = [
 ];
 thMap.forEach(([id,key])=>{
   const el=document.getElementById(id);
-  if(el) el.textContent = tr(key);
+  if(el) el.textContent = t(key);
 });
 
   // Filter dropdown static options
@@ -1460,11 +1461,7 @@ function toggleTheme() {
             createdAt: data.createdAt || null,
             bonusApplied: data.bonusApplied || false,
             bonusValue: Number(data.bonusValue || 0)
-                }, (err)=>{
-        console.error("matches onSnapshot error:", err);
-        const s = document.getElementById("fbStatus");
-        if(s) s.textContent = "Firebase error (matches): " + (err?.message || err);
-      });
+          });
         });
         state.matches = matches;
         updateFilterYearOptions();
@@ -1473,6 +1470,10 @@ function toggleTheme() {
         updateHeadToHeadUI(false);
         updateMatchesLog();
         updateChampionsLog();
+      }, (err)=>{
+        console.error("matches onSnapshot error:", err);
+        const s = document.getElementById("fbStatus");
+        if(s) s.textContent = "Firebase error (matches): " + (err?.message || err);
       });
     }
 
