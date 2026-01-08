@@ -1014,14 +1014,24 @@ function getLang() {
 function setLang(lang) {
   localStorage.setItem("dl_lang", lang);
   applyLang(lang);
-  // Re-render dynamic sections that include text
-  if (typeof reloadAllDataAndRender === "function") {
-    // In your code this might be heavy; we just re-render visible sections
-    try { renderAll(); } catch(e) {}
-    try { updateChampionsLog(); } catch(e) {}
-  } else {
-    try { updateChampionsLog(); } catch(e) {}
-  }
+
+  // Re-render dynamic sections so tables/headers/buttons update immediately
+  const fns = [
+    "updatePlayersUI",
+    "updatePlayerDetailsUI",
+    "updateLeaderboard",
+    "updateChampionsLog",
+    "updateMatchesLog",
+    "updateHeadToHeadUI",
+    "updateAdminUI",
+    "updateFilterYearOptions",
+    "updateBonusEligibility"
+  ];
+  fns.forEach(name=>{
+    try{
+      if (typeof window[name] === "function") window[name]();
+    }catch(e){}
+  });
 }
 
 function __old_T(key) {
