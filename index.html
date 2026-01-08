@@ -1399,6 +1399,19 @@ function toYMD(d){
     return "";
   }
 }
+
+function normalizeDateYMD(v){
+  try{
+    if(!v) return "";
+    if(typeof v === "string") return v.slice(0,10);
+    if(v instanceof Date) return toYMD(v);
+    if(typeof v === "object" && typeof v.toDate === "function") return toYMD(v.toDate()); // Firestore Timestamp
+    return String(v).slice(0,10);
+  }catch(e){
+    return "";
+  }
+}
+
 function _standingsSort(a,b){
   const ap = (a.finalPoints ?? 0), bp = (b.finalPoints ?? 0);
   if(bp !== ap) return bp - ap;
@@ -3176,6 +3189,29 @@ function updateMatchesLog(){
       return filtered;
     }
 
+    // Returns matches within current Year/Month filters + a localized period label
+    function getMatchesInSelectedPeriod(){
+      const filteredMatches = getFilteredMatches();
+      const yearVal = $("filterYear")?.value || "all";
+      const monthVal = $("filterMonth")?.value || "all";
+      let periodLabel = "";
+
+      if(yearVal !== "all" && monthVal !== "all"){
+        periodLabel = T("periodMonthYearTpl")
+          .replace("{month}", monthName(Number(monthVal)))
+          .replace("{year}", String(yearVal));
+      }else if(yearVal !== "all" && monthVal === "all"){
+        periodLabel = T("periodYearTpl").replace("{year}", String(yearVal));
+      }else if(yearVal === "all" && monthVal !== "all"){
+        periodLabel = T("periodMonthAllYearsTpl").replace("{month}", monthName(Number(monthVal)));
+      }else{
+        periodLabel = T("periodAllTime");
+      }
+      return { filteredMatches, periodLabel };
+    }
+
+
+
     function createCell(text){
       const td=document.createElement("td");
       td.textContent=text;
@@ -3230,14 +3266,23 @@ function updateMatchesLog(){
       $("currentFilterLabel").textContent = getFilterLabel(yearVal, monthVal);
 
       // === Movement (today vs previous day) within the selected filter range ===
-      const rangeEnd = getSelectedRangeEndDate(); // Date
-      const endYMD = toYMD(rangeEnd);
-      const prevEnd = new Date(rangeEnd.getTime());
+      const rangeEnd = getSelectedRangeEndDate(); // Date end of selected filters
+      const _today = new Date();
+      const movementEnd = (_today.getTime() < rangeEnd.getTime()) ? _today : rangeEnd; // don't go beyond filter end
+      const endYMD = toYMD(movementEnd);
+      const prevEnd = new Date(movementEnd.getTime());
       prevEnd.setDate(prevEnd.getDate() - 1);
       const prevYMD = toYMD(prevEnd);
 
-      const matchesToday = matches.filter(m => (!m.date) || (String(m.date) <= endYMD));
-      const matchesPrev  = matches.filter(m => (!m.date) || (String(m.date) <= prevYMD));
+      const matchesToday = matches.filter(m => {
+        const y = normalizeDateYMD(m.date);
+        return (!y) || (y <= endYMD);
+      });
+      const matchesPrev  = matches.filter(m => {
+        const y = normalizeDateYMD(m.date);
+        return (!y) || (y <= prevYMD);
+      });
+
 
       // Standard rank maps (based on finalPoints sorting)
       const rankMapToday = buildRankMap(matchesToday, rangeEnd);
