@@ -976,7 +976,7 @@ const I18N = {
     h2hNoVsTpl: "No direct head-to-head matches between <strong>{p1}</strong> and <strong>{p2}</strong> in this period ({period}).",
     h2hTeamsNoVsTpl: "No direct head-to-head matches between <strong>{t1}</strong> and <strong>{t2}</strong> in this period ({period}).",
 // Extra / Missing translations
-    registeredPlayers: "اللاعبون المسجّلون",
+    registeredPlayers: "اللاعبون المسجّلون"registeredPlayersLabel"></span>",
     notEnoughDataForYear: "لا توجد بيانات كافية لهذه السنة.",
     confirmUnbanPlayer: "فك حظر اللاعب",
     confirmBanPlayer: "حظر اللاعب",
@@ -1035,7 +1035,7 @@ const I18N = {
     samePlayerBothTeams: "لاعب واحد لا يمكن أن يلعب في الفريقين في نفس المواجهة.",
     cannotCompareSameTeam: "لا يمكن مقارنة نفس الفريق بنفسه.",
     // Extra / Missing translations
-    registeredPlayers: "Registered players",
+    registeredPlayers: "Registered Players",
     notEnoughDataForYear: "Not enough data for this year.",
     confirmUnbanPlayer: "Unban player",
     confirmBanPlayer: "Ban player",
@@ -1351,7 +1351,7 @@ window.I18N = I18N;
 // ===== HOTFIX: Ensure Arabic dictionary does not get overridden by stray English duplicates =====
 try{
   if(window.I18N && window.I18N.ar){
-    Object.assign(window.I18N.ar, {"darkMode": "🌙 الوضع الليلي", "lightMode": "☀️ الوضع النهاري", "totalWinsPeriod": "إجمالي مرات الفوز في الفترة المحددة", "totalLossesPeriod": "إجمالي مرات الخسارة في الفترة المحددة", "totalMatchesPeriod": "إجمالي الماتشات في الفترة المحددة", "bonusPlusLabel": "بونص + (مكسب)", "bonusMinusLabel": "بونص − (خسارة)", "bonusNetLabel": "صافي البونص", "playerDaysAnalysisTitle": "📆 تحليل أيام الفوز والخسارة في الفترة المختارة", "playerBestMateTitle": "🤝 الشريك المفضل في نفس الفترة", "bestMateWinLabel": "أكتر واحد كسبت معاه", "bestMateLoseLabel": "أكتر واحد خسرّت معاه", "playerBestOppTitle": "👊 الخصم المفضل في نفس الفترة", "bestOppWinLabel": "أكتر واحد كسبت ضده", "bestOppLoseLabel": "أكتر واحد خسرت ضده", "countTimesLabel": "عدد المرات:", "lastYearChampionLabel": "🏆 حامل لقب آخر سنة", "lastMonthChampionLabel": "🏅 حامل لقب آخر شهر", "registeredPlayers": "اللاعبون المسجّلون", "notEnoughDataForYear": "لا توجد بيانات كافية لهذه السنة.", "confirmUnbanPlayer": "فك حظر اللاعب", "confirmBanPlayer": "حظر اللاعب", "banExplanation": "لن يظهر في تسجيل الماتشات من لحظة الحظر حتى فك الحظر.\n\nوسيختفي أيضًا من الإحصائيات عندما تقع نهاية الفترة المختارة داخل فترة الحظر.", "errAddPlayer": "حصل خطأ أثناء إضافة اللاعب.", "errUpdateAvatar": "حصل خطأ أثناء تحديث صورة اللاعب.", "errEditPlayerName": "حصل خطأ أثناء تعديل اسم اللاعب.", "errDeleteMatch": "حصل خطأ أثناء حذف الماتش.", "errSaveMatch": "حصل خطأ أثناء حفظ الماتش.", "errResetData": "حصل خطأ أثناء مسح البيانات.", "confirmDeleteMatch": "هل تريد بالتأكيد حذف هذا الماتش؟", "confirmResetAll": "سيتم مسح كل اللاعبين والنتائج نهائيًا من قاعدة البيانات. متأكد؟", "samePlayerNotAllowed": "نفس اللاعب لا يمكن أن يكون في أكثر من مكان.", "chooseTwoPlayersFirst": "اختر لاعبين أولاً.", "chooseTeamsPlayersFirst": "اختر لاعبين لكل فريق أولًا.", "selectAllPlayers": "اختر كل اللاعبين.", "playerNotFound": "لم يتم العثور على أحد اللاعبين.", "noDate": "بدون تاريخ", "unknown": "غير معروف", "completedMonth": "شهر مكتمل", "completed": "المكتمل", "streak": "ستريك", "selectedRangeEnd": "نهاية الفترة المختارة", "enterPlayerNameFirst": "اكتب اسم اللاعب أولاً.", "promptNewPlayerName": "اكتب الاسم الجديد لللاعب:", "nameCannotBeEmpty": "الاسم لا يمكن أن يكون فارغًا.", "needAtLeast4Players": "لازم يكون فيه على الأقل 4 لاعبين.", "samePlayerSelectedTwice": "لا يمكن اختيار نفس اللاعب مرتين.", "noMatchesInPeriod": "لا يوجد أي ماتشات مسجلة في هذه الفترة.", "noResultsInPeriod": "لا توجد نتائج بعد في هذه الفترة.", "idPrefix": "ID", "periodMonthYearTpl": "الفترة: {month} {year}", "periodYearTpl": "الفترة: سنة {year}", "periodMonthAllYearsTpl": "الفترة: شهر {month} في كل السنوات.", "periodAllTime": "الفترة: كل الوقت.", "playerIdNotFound": "لا يوجد لاعب بهذا المعرف.", "samePlayerSameTeam": "لاعب واحد لا يمكن أن يكون مكان لاعب 1 and 2 في نفس الفريق.", "samePlayerBothTeams": "لاعب واحد لا يمكن أن يلعب في الفريقين في نفس المواجهة.", "cannotCompareSameTeam": "لا يمكن مقارنة نفس الفريق بنفسه."});
+    Object.assign(window.I18N.ar, {"darkMode": "🌙 الوضع الليلي", "lightMode": "☀️ الوضع النهاري", "totalWinsPeriod": "إجمالي مرات الفوز في الفترة المحددة", "totalLossesPeriod": "إجمالي مرات الخسارة في الفترة المحددة", "totalMatchesPeriod": "إجمالي الماتشات في الفترة المحددة", "bonusPlusLabel": "بونص + (مكسب)", "bonusMinusLabel": "بونص − (خسارة)", "bonusNetLabel": "صافي البونص", "playerDaysAnalysisTitle": "📆 تحليل أيام الفوز والخسارة في الفترة المختارة", "playerBestMateTitle": "🤝 الشريك المفضل في نفس الفترة", "bestMateWinLabel": "أكتر واحد كسبت معاه", "bestMateLoseLabel": "أكتر واحد خسرّت معاه", "playerBestOppTitle": "👊 الخصم المفضل في نفس الفترة", "bestOppWinLabel": "أكتر واحد كسبت ضده", "bestOppLoseLabel": "أكتر واحد خسرت ضده", "countTimesLabel": "عدد المرات:", "lastYearChampionLabel": "🏆 حامل لقب آخر سنة", "lastMonthChampionLabel": "🏅 حامل لقب آخر شهر", "registeredPlayers": "<span id="registeredPlayersLabel"></span>", "notEnoughDataForYear": "لا توجد بيانات كافية لهذه السنة.", "confirmUnbanPlayer": "فك حظر اللاعب", "confirmBanPlayer": "حظر اللاعب", "banExplanation": "لن يظهر في تسجيل الماتشات من لحظة الحظر حتى فك الحظر.\n\nوسيختفي أيضًا من الإحصائيات عندما تقع نهاية الفترة المختارة داخل فترة الحظر.", "errAddPlayer": "حصل خطأ أثناء إضافة اللاعب.", "errUpdateAvatar": "حصل خطأ أثناء تحديث صورة اللاعب.", "errEditPlayerName": "حصل خطأ أثناء تعديل اسم اللاعب.", "errDeleteMatch": "حصل خطأ أثناء حذف الماتش.", "errSaveMatch": "حصل خطأ أثناء حفظ الماتش.", "errResetData": "حصل خطأ أثناء مسح البيانات.", "confirmDeleteMatch": "هل تريد بالتأكيد حذف هذا الماتش؟", "confirmResetAll": "سيتم مسح كل اللاعبين والنتائج نهائيًا من قاعدة البيانات. متأكد؟", "samePlayerNotAllowed": "نفس اللاعب لا يمكن أن يكون في أكثر من مكان.", "chooseTwoPlayersFirst": "اختر لاعبين أولاً.", "chooseTeamsPlayersFirst": "اختر لاعبين لكل فريق أولًا.", "selectAllPlayers": "اختر كل اللاعبين.", "playerNotFound": "لم يتم العثور على أحد اللاعبين.", "noDate": "بدون تاريخ", "unknown": "غير معروف", "completedMonth": "شهر مكتمل", "completed": "المكتمل", "streak": "ستريك", "selectedRangeEnd": "نهاية الفترة المختارة", "enterPlayerNameFirst": "اكتب اسم اللاعب أولاً.", "promptNewPlayerName": "اكتب الاسم الجديد لللاعب:", "nameCannotBeEmpty": "الاسم لا يمكن أن يكون فارغًا.", "needAtLeast4Players": "لازم يكون فيه على الأقل 4 لاعبين.", "samePlayerSelectedTwice": "لا يمكن اختيار نفس اللاعب مرتين.", "noMatchesInPeriod": "لا يوجد أي ماتشات مسجلة في هذه الفترة.", "noResultsInPeriod": "لا توجد نتائج بعد في هذه الفترة.", "idPrefix": "ID", "periodMonthYearTpl": "الفترة: {month} {year}", "periodYearTpl": "الفترة: سنة {year}", "periodMonthAllYearsTpl": "الفترة: شهر {month} في كل السنوات.", "periodAllTime": "الفترة: كل الوقت.", "playerIdNotFound": "لا يوجد لاعب بهذا المعرف.", "samePlayerSameTeam": "لاعب واحد لا يمكن أن يكون مكان لاعب 1 and 2 في نفس الفريق.", "samePlayerBothTeams": "لاعب واحد لا يمكن أن يلعب في الفريقين في نفس المواجهة.", "cannotCompareSameTeam": "لا يمكن مقارنة نفس الفريق بنفسه."});
   }
 }catch(e){}
 
@@ -1542,7 +1542,8 @@ if (lbToggleBtn) lbToggleBtn.textContent = (leaderboardViewMode === "compact") ?
 
     ["note1","note1"],
     ["note2","note2"],
-    ["note3","note3"]
+    ["note3","note3"],
+    ["registeredPlayersLabel","registeredPlayers"]
   ];
   idTextKeys.forEach(([id,key])=>{
     const el = document.getElementById(id);
@@ -3504,24 +3505,15 @@ function analyzeHeadToHead(){
 
   // Bonus & base points
   html += T("h2hBonusTitle");
-  html += T("h2hP1GotBonusFromP2Tpl")
-    .replace("{p1}", pl1.name)
-    .replace("{p2}", pl2.name)
-    .replace("{n}", `<strong>${bonusNet}</strong>`);
-  html += T("h2hP2GotBonusFromP1Tpl")
-    .replace("{p1}", pl1.name)
-    .replace("{p2}", pl2.name)
-    .replace("{n}", `<strong>${-bonusNet}</strong>`);
-
   html += T("h2hBaseTitle");
-  html += T("h2hP1GotBaseFromP2Tpl")
-    .replace("{p1}", pl1.name)
-    .replace("{p2}", pl2.name)
-    .replace("{n}", `<strong>${baseNet}</strong>`);
-  html += T("h2hP2GotBaseFromP1Tpl")
-    .replace("{p1}", pl1.name)
-    .replace("{p2}", pl2.name)
-    .replace("{n}", `<strong>${-baseNet}</strong>`);
+  html += T("receivedPointsByNamesTpl")
+    .replace("{to}", `<strong>${p1Name}</strong>`)
+    .replace("{from}", `<strong>${p2Name}</strong>`)
+    .replace("{n}", `<strong>${p1FromP2Base}</strong>`);
+  html += T("receivedPointsByNamesTpl")
+    .replace("{to}", `<strong>${p2Name}</strong>`)
+    .replace("{from}", `<strong>${p1Name}</strong>`)
+    .replace("{n}", `<strong>${p2FromP1Base}</strong>`);
 
   out.innerHTML = html;
 }
