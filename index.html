@@ -3392,6 +3392,11 @@ function updateMatchesLog(){
 
 
 function analyzeHeadToHead(){
+
+  // Resolve selected player names (for reports)
+  const p1Name = (document.getElementById('h2hPlayer1')?.selectedOptions?.[0]?.textContent || '').trim();
+  const p2Name = (document.getElementById('h2hPlayer2')?.selectedOptions?.[0]?.textContent || '').trim();
+
   const p1Str = $("h2hP1").value;
   const p2Str = $("h2hP2").value;
   const out   = $("h2hSummary");
