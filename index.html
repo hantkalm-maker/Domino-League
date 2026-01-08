@@ -1485,15 +1485,6 @@ function setLang(lang) {
   try{ autoAnalyzeTeamsIfReady && autoAnalyzeTeamsIfReady(true); }catch(e){}
 }
 
-function __old_T(key) {
-  const lang = getLang();
-  return (I18N[lang] && I18N[lang][key]) || (I18N.ar[key] || key);
-}
-
-function __old_T(key){
-  return T(key);
-}
-
 
 function refreshPlayerAnalysisTexts(){
   try{
@@ -1508,13 +1499,29 @@ function refreshPlayerAnalysisTexts(){
       ["lblCountTimes1","countTimesLabel"],
       ["lblCountTimes2","countTimesLabel"],
       ["lblCountTimes3","countTimesLabel"],
-      ["lblCountTimes4","countTimesLabel"]
+      ["lblCountTimes4","countTimesLabel"],
+      ["matchesLogIntro","matchesLogIntro"],
+      ["playerDetailsHelp","playerDetailsHelp"],
+      ["matchDateHintText","matchDateHint"],
+      ["matchNoteText","matchNote"]
     ];
     pairs.forEach(([id,key])=>{
-      const el = document.getElementById(id);
+      const el=document.getElementById(id);
       if(el) el.textContent = T(key);
     });
   }catch(e){}
+}
+
+
+function __old_T(key) {
+  const lang = getLang();
+  return (I18N[lang] && I18N[lang][key]) || (I18N.ar[key] || key);
+}
+
+function __old_T(key){
+  return T(key);
+}
+
 
 function applyLang(lang) {
   const html = document.documentElement;
@@ -1544,8 +1551,39 @@ function applyLang(lang) {
   });
 
   // Player analysis sub-headings + labels (avoid sticky mixed language)
-  refreshPlayerAnalysisTexts();
+  const textMap = [
+    ["playerDaysAnalysisTitle","playerDaysAnalysisTitle"],
+    ["playerBestMateTitle","playerBestMateTitle"],
+    ["playerBestOppTitle","playerBestOppTitle"],
+    ["lblBestMateWin","bestMateWinLabel"],
+    ["lblBestMateLose","bestMateLoseLabel"],
+    ["lblBestOppWin","bestOppWinLabel"],
+    ["lblBestOppLose","bestOppLoseLabel"],
+    ["lblCountTimes1","countTimesLabel"],
+    ["lblCountTimes2","countTimesLabel"],
+    ["lblCountTimes3","countTimesLabel"],
+    ["lblCountTimes4","countTimesLabel"],
+    ["lblTotalWins","totalWinsPeriod"],
+    ["lblTotalLosses","totalLossesPeriod"],
+    ["lblTotalMatches","totalMatchesPeriod"],
+    ["lblWinRatePeriod","winRatePeriod"],
+    ["lblBonusPlus","bonusPlusLabel"],
+    ["lblBonusMinus","bonusMinusLabel"],
+    ["lblBonusNet","bonusNetLabel"],
+    ["lblDaysWin2","daysWin2"],
+    ["lblDaysWin3","daysWin3"],
+    ["lblDaysWin4p","daysWin4plus"],
+    ["lblDaysLose2","daysLose2"],
+    ["lblDaysLose3","daysLose3"],
+    ["lblDaysLose4p","daysLose4plus"],
+  ];
+  textMap.forEach(([id,key])=>{
+    const el = document.getElementById(id);
+    if(el) el.textContent = T(key);
+  });
 
+  // Player analysis dynamic labels
+  refreshPlayerAnalysisTexts();
 
   // Labels
   const setLabel = (forId, key) => {
@@ -1660,6 +1698,8 @@ if (lbToggleBtn) lbToggleBtn.textContent = (leaderboardViewMode === "compact") ?
   ];
   idTextKeys.forEach(([id,key])=>{
     const el = document.getElementById(id);
+    if(el) el.textContent = T(key);
+  });
 
 // Matches log table headers
 const thMap = [
@@ -1672,6 +1712,8 @@ const thMap = [
 ];
 thMap.forEach(([id,key])=>{
   const el=document.getElementById(id);
+  if(el) el.textContent = T(key);
+});
 
   // Filter dropdown static options
   const fy = document.getElementById("filterYear");
@@ -1766,6 +1808,7 @@ try{
       analyzeTeamsHeadToHead();
     }
   }catch(e){}
+}
 
 function getTheme() {
   return localStorage.getItem("dl_theme") || "light";
