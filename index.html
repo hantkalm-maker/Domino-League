@@ -1509,6 +1509,38 @@ function applyLang(lang) {
     if(el) el.textContent = T(id);
   });
 
+  // Player analysis sub-headings + labels (avoid sticky mixed language)
+  const textMap = [
+    ["playerDaysAnalysisTitle","playerDaysAnalysisTitle"],
+    ["playerBestMateTitle","playerBestMateTitle"],
+    ["playerBestOppTitle","playerBestOppTitle"],
+    ["lblBestMateWin","bestMateWinLabel"],
+    ["lblBestMateLose","bestMateLoseLabel"],
+    ["lblBestOppWin","bestOppWinLabel"],
+    ["lblBestOppLose","bestOppLoseLabel"],
+    ["lblCountTimes1","countTimesLabel"],
+    ["lblCountTimes2","countTimesLabel"],
+    ["lblCountTimes3","countTimesLabel"],
+    ["lblCountTimes4","countTimesLabel"],
+    ["lblTotalWins","totalWinsPeriod"],
+    ["lblTotalLosses","totalLossesPeriod"],
+    ["lblTotalMatches","totalMatchesPeriod"],
+    ["lblWinRatePeriod","winRatePeriod"],
+    ["lblBonusPlus","bonusPlusLabel"],
+    ["lblBonusMinus","bonusMinusLabel"],
+    ["lblBonusNet","bonusNetLabel"],
+    ["lblDaysWin2","daysWin2"],
+    ["lblDaysWin3","daysWin3"],
+    ["lblDaysWin4p","daysWin4plus"],
+    ["lblDaysLose2","daysLose2"],
+    ["lblDaysLose3","daysLose3"],
+    ["lblDaysLose4p","daysLose4plus"],
+  ];
+  textMap.forEach(([id,key])=>{
+    const el = document.getElementById(id);
+    if(el) el.textContent = T(key);
+  });
+
   // Labels
   const setLabel = (forId, key) => {
     const el = document.querySelector(`label[for="${forId}"]`);
@@ -3557,104 +3589,99 @@ function updateMatchesLog(){
 
 
 function analyzeHeadToHead(){
+  const p1Id = $("h2hP1")?.value || "";
+  const p2Id = $("h2hP2")?.value || "";
+  const out  = $("h2hSummary");
 
-
-  // Resolve selected player names (for reports)
-  const p1Name = ($("h2hP1")?.selectedOptions?.[0]?.textContent || "").trim();
-  const p2Name = ($("h2hP2")?.selectedOptions?.[0]?.textContent || "").trim();
-
-  
-  // Safe defaults (avoid ReferenceError if logic changes)
-  let p1FromP2Bonus = 0, p2FromP1Bonus = 0, p1FromP2Base = 0, p2FromP1Base = 0;
-const p1Str = $("h2hP1").value;
-  const p2Str = $("h2hP2").value;
-  const out   = $("h2hSummary");
-  // Fallback in case option text is not available
-  const __p1Name = p1Name || (state.players.find(p => p.id === p1Str)?.name || "");
-  const __p2Name = p2Name || (state.players.find(p => p.id === p2Str)?.name || "");
-
-
-  if(!p1Str || !p2Str){
-    out.textContent = T("chooseTwoPlayersFirst");
+  if(!p1Id || !p2Id){
+    out.innerHTML = `<span id="h2hHelp">${T("h2hHelp")}</span>`;
+    return;
+  }
+  if(p1Id === p2Id){
+    out.innerHTML = `<span>${T("samePlayerSelectedTwice")}</span>`;
     return;
   }
 
-  const p1 = p1Str, p2 = p2Str;
-  if(p1 === p2){
-    out.textContent = T("samePlayerSelectedTwice");
-    return;
-  }
-
-  const pl1 = getPlayerById(p1),
-        pl2 = getPlayerById(p2);
+  const pl1 = state.players.find(p => p.id === p1Id);
+  const pl2 = state.players.find(p => p.id === p2Id);
   if(!pl1 || !pl2){
-    out.textContent = T("playerNotFound");
+    out.innerHTML = `<span>${T("playerNotFound")}</span>`;
     return;
   }
 
-  const matches = getFilteredMatches();
+  // Names for templates (fallback-safe)
+  const p1Name = ( $("h2hP1")?.selectedOptions?.[0]?.textContent || pl1.name || "" ).trim();
+  const p2Name = ( $("h2hP2")?.selectedOptions?.[0]?.textContent || pl2.name || "" ).trim();
 
-  // vs: ضد بعض – p1W / p2W
-  // team: مع بعض – teamWins / teamLosses
-  let vs = 0, p1W = 0, p2W = 0;
+  const { filteredMatches, periodLabel } = getMatchesInSelectedPeriod();
+
+  // Stats
+  let vs = 0;
+  let p1W = 0, p2W = 0;
   let team = 0, teamWins = 0, teamLosses = 0;
 
-  // 🆕 transfers
-  let baseNet = 0;   // + يعني اللاعب 1 حصل على نقاط من اللاعب 2
-  let bonusNet = 0;  // + يعني اللاعب 1 حصل على بونص من اللاعب 2
+  // Directional base/bonus (what user wants in "تفاصيل حساب البونص")
+  let p1FromP2Base = 0, p2FromP1Base = 0;
+  let p1FromP2Bonus = 0, p2FromP1Bonus = 0;
 
-  matches.forEach(m=>{
+  filteredMatches.forEach(m=>{
     const w = m.winners || [];
     const l = m.losers  || [];
 
-    const p1Win  = w.includes(p1);
-    const p1Lose = l.includes(p1);
-    const p2Win  = w.includes(p2);
-    const p2Lose = l.includes(p2);
+    const p1Win = w.includes(p1Id);
+    const p2Win = w.includes(p2Id);
+    const p1Lose = l.includes(p1Id);
+    const p2Lose = l.includes(p2Id);
 
-    // مع بعض في نفس الفريق
+    const b = (m.bonusApplied ? Number(m.bonusValue || 0) : 0);
+
+    // Same team case
     if( (p1Win && p2Win) || (p1Lose && p2Lose) ){
       team++;
-      if(p1Win && p2Win)  teamWins++;
+      if(p1Win && p2Win) teamWins++;
       if(p1Lose && p2Lose) teamLosses++;
       return;
     }
 
-    // ضد بعض
+    // Against each other
     if( (p1Win && p2Lose) || (p2Win && p1Lose) ){
       vs++;
-      const b = (m.bonusApplied ? Number(m.bonusValue||0) : 0);
-
       if(p1Win && p2Lose){
         p1W++;
-        baseNet += 1;
-        bonusNet += b;
-      }
-      if(p2Win && p1Lose){
+        p1FromP2Base += 1;
+        p1FromP2Bonus += b;
+      }else if(p2Win && p1Lose){
         p2W++;
-        baseNet -= 1;
-        bonusNet -= b;
+        p2FromP1Base += 1;
+        p2FromP1Bonus += b;
       }
     }
   });
 
-  const yearVal  = $("filterYear").value;
-  const monthVal = $("filterMonth").value;
-  const label    = getFilterLabel(yearVal, monthVal);
+  // Build report
+  let html = "";
+  html += T("h2hReportTitleTpl")
+    .replace("{p1}", `<strong>${p1Name}</strong>`)
+    .replace("{p2}", `<strong>${p2Name}</strong>`)
+    .replace("{period}", `<strong>${periodLabel}</strong>`);
 
-  let html = T("h2hReportTitleTpl")
-    .replace("{p1}", `<strong>${pl1.name}</strong>`)
-    .replace("{p2}", `<strong>${pl2.name}</strong>`)
-    .replace("{period}", label);
+  if(vs === 0 && team === 0){
+    html = T("h2hNoVsTpl")
+      .replace("{p1}", p1Name)
+      .replace("{p2}", p2Name)
+      .replace("{period}", periodLabel);
+    out.innerHTML = html;
+    return;
+  }
 
   html += T("h2hPlayedAgainstTpl").replace("{n}", `<strong>${vs}</strong>`);
   html += T("h2hP1BeatP2Tpl")
-    .replace("{p1}", `<strong>${pl1.name}</strong>`)
-    .replace("{p2}", pl2.name)
+    .replace("{p1}", `<strong>${p1Name}</strong>`)
+    .replace("{p2}", p2Name)
     .replace("{n}", `<strong>${p1W}</strong>`);
   html += T("h2hP2BeatP1Tpl")
-    .replace("{p2}", `<strong>${pl2.name}</strong>`)
-    .replace("{p1}", pl1.name)
+    .replace("{p2}", `<strong>${p2Name}</strong>`)
+    .replace("{p1}", p1Name)
     .replace("{n}", `<strong>${p2W}</strong>`);
   html += T("h2hPlayedSameTeamTpl").replace("{n}", `<strong>${team}</strong>`);
 
@@ -3662,13 +3689,12 @@ const p1Str = $("h2hP1").value;
     const r1 = (p1W / vs) * 100;
     const r2 = (p2W / vs) * 100;
     html += T("h2hWinRateVsTitle");
-    html += `• ${pl1.name}: <strong>${r1.toFixed(1)}%</strong><br/>`;
-    html += `• ${pl2.name}: <strong>${r2.toFixed(1)}%</strong><br/>`;
+    html += `• ${p1Name}: <strong>${r1.toFixed(1)}%</strong><br/>`;
+    html += `• ${p2Name}: <strong>${r2.toFixed(1)}%</strong><br/>`;
   }
 
-  // Same team results
   if(team > 0){
-    const teamWinRate  = (teamWins   / team) * 100;
+    const teamWinRate  = (teamWins / team) * 100;
     const teamLoseRate = (teamLosses / team) * 100;
     html += T("h2hSameTeamRateTitle");
     html += T("h2hSameTeamWinTpl")
@@ -3681,16 +3707,26 @@ const p1Str = $("h2hP1").value;
       .replace("{total}", team);
   }
 
-  // Bonus & base points
+  // Bonus details
   html += T("h2hBonusTitle");
+  html += T("receivedBonusByNamesTpl")
+    .replace("{to}", `<strong>${p1Name}</strong>`)
+    .replace("{from}", `<strong>${p2Name}</strong>`)
+    .replace("{n}", `<strong>${p1FromP2Bonus}</strong>`);
+  html += T("receivedBonusByNamesTpl")
+    .replace("{to}", `<strong>${p2Name}</strong>`)
+    .replace("{from}", `<strong>${p1Name}</strong>`)
+    .replace("{n}", `<strong>${p2FromP1Bonus}</strong>`);
+
+  // Base points details (no bonus)
   html += T("h2hBaseTitle");
   html += T("receivedPointsByNamesTpl")
-    .replace("{to}", `<strong>${__p1Name}</strong>`)
-    .replace("{from}", `<strong>${__p2Name}</strong>`)
+    .replace("{to}", `<strong>${p1Name}</strong>`)
+    .replace("{from}", `<strong>${p2Name}</strong>`)
     .replace("{n}", `<strong>${p1FromP2Base}</strong>`);
   html += T("receivedPointsByNamesTpl")
-    .replace("{to}", `<strong>${__p2Name}</strong>`)
-    .replace("{from}", `<strong>${__p1Name}</strong>`)
+    .replace("{to}", `<strong>${p2Name}</strong>`)
+    .replace("{from}", `<strong>${p1Name}</strong>`)
     .replace("{n}", `<strong>${p2FromP1Base}</strong>`);
 
   out.innerHTML = html;
