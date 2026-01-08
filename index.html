@@ -1200,6 +1200,38 @@ const I18N = {
 };
 // expose i18n to global translator
 window.I18N = I18N;
+// ===== I18N Hotfix: ensure Arabic H2H templates are Arabic (avoid duplicate-key override) =====
+(function(){
+  try{
+    if(!window.I18N || !window.I18N.ar) return;
+    Object.assign(window.I18N.ar, {
+      // Head-to-head (1v1)
+      h2hReportTitleTpl: "تحليل المواجهات بين {p1} و {p2} ({period}):<br/><br/>",
+      h2hPlayedAgainstTpl: "• لعبوا ضد بعض في {n} ماتش(ات) عشرة.<br/>",
+      h2hP1BeatP2Tpl: "• مرات فاز فيها {p1} على {p2}: {n} مرة.<br/>",
+      h2hP2BeatP1Tpl: "• مرات فاز فيها {p2} على {p1}: {n} مرة.<br/>",
+      h2hPlayedSameTeamTpl: "• لعبوا معًا في نفس الفريق في {n} ماتش(ات) عشرة.<br/>",
+      h2hWinRateVsTitle: "<br/>نسبة الفوز عندما يتقابلان ضد بعض في هذه الفترة:<br/>",
+      h2hSameTeamRateTitle: "<br/>نسبة النتائج عندما يلعبان معًا في نفس الفريق في هذه الفترة:<br/>",
+      h2hSameTeamWinTpl: "• فوز معًا: {rate} ({wins} من {total} ماتشات)<br/>",
+      h2hSameTeamLoseTpl: "• خسارة معًا: {rate} ({losses} من {total} ماتشات)<br/>",
+      h2hBonusTitle: "<br/><b>🎁 البونص (محسوب منفصل)</b><br/>",
+      h2hBaseTitle: "<br/><b>🎯 النقاط الأساسية (بدون بونص)</b><br/>",
+      h2hP1GotBonusFromP2Tpl: "• حصل اللاعب 1 من اللاعب 2 على بونص: {n}<br/>",
+      h2hP2GotBonusFromP1Tpl: "• حصل اللاعب 2 من اللاعب 1 على بونص: {n}<br/>",
+      h2hP1GotBaseFromP2Tpl: "• حصل اللاعب 1 من اللاعب 2 على نقاط: {n}<br/>",
+      h2hP2GotBaseFromP1Tpl: "• حصل اللاعب 2 من اللاعب 1 على نقاط: {n}<br/>",
+
+      // Head-to-head (2v2 teams)
+      h2hTeamsReportTitleTpl: "تحليل المواجهات بين الفريق {t1} والفريق {t2} ({period}):<br/><br/>",
+      h2hTeamsPlayedAgainstTpl: "• لعبوا ضد بعض في {n} ماتش(ات) عشرة.<br/>",
+      h2hTeamsT1WinsTpl: "• مرات فاز فيها {t1}: {n} مرة.<br/>",
+      h2hTeamsT2WinsTpl: "• مرات فاز فيها {t2}: {n} مرة.<br/>",
+      h2hTeamsWinRateTitle: "<br/>نسبة الفوز عندما يتقابلان في هذه الفترة:<br/>"
+    });
+  }catch(e){}
+})();
+
 // ===== HOTFIX: Ensure Arabic dictionary does not get overridden by stray English duplicates =====
 try{
   if(window.I18N && window.I18N.ar){
