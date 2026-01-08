@@ -2,7 +2,6 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" href="data:,">
   <title>برنامج ترتيب الدومينو - العشرة (151)</title>
   <style>
     body {
@@ -120,7 +119,7 @@
       cursor: not-allowed;
     }
 
-    button:active:not(:disabled) {
+    button:active:noT(:disabled) {
       transform: scale(0.97);
     }
 
@@ -153,7 +152,7 @@
 
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      grid-template-columns: repeaT(auto-fit, minmax(140px, 1fr));
       gap: 8px;
       margin-top: 8px;
     }
@@ -345,22 +344,22 @@
 
       <div class="row">
         <div class="field">
-          <label for="winnerP1">الفريق الكسبان - لاعب 1</label>
+          <label>الفريق الكسبان - لاعب 1</label>
           <select id="winnerP1"></select>
         </div>
         <div class="field">
-          <label for="winnerP2">الفريق الكسبان - لاعب 2</label>
+          <label>الفريق الكسبان - لاعب 2</label>
           <select id="winnerP2"></select>
         </div>
       </div>
 
       <div class="row">
         <div class="field">
-          <label for="loserP1">الفريق الخسران - لاعب 1</label>
+          <label>الفريق الخسران - لاعب 1</label>
           <select id="loserP1"></select>
         </div>
         <div class="field">
-          <label for="loserP2">الفريق الخسران - لاعب 2</label>
+          <label>الفريق الخسران - لاعب 2</label>
           <select id="loserP2"></select>
         </div>
       </div>
@@ -775,7 +774,7 @@ const I18N = {
     // Champions log
     championsLogHint: "اختر سنة محددة لعرض سجل أبطال الشهور (مثل سجل الدوري الإنجليزي).",
     noCompletedMonths: "لا يوجد شهور مكتملة داخل الفترة المختارة.",
-    noCompletedMonthsInYear: "لا يوجد شهور مكتملة في هذه السنة لعرض سجل الأبطال.",
+    noCompletedMonthsInYear: T("noCompletedMonthsInYear"),
     championsLogTitleTpl: "سجل الأبطال لسنة {year} — يمكن إعادة الترتيب من رؤوس الأعمدة",
     first: "الأول",
     second: "الثاني",
@@ -1005,13 +1004,13 @@ function setLang(lang) {
   }
 }
 
-function t(key) {
+function __old_T(key) {
   const lang = getLang();
   return (I18N[lang] && I18N[lang][key]) || (I18N.ar[key] || key);
 }
 
-function t(key){
-  return t(key);
+function __old_T(key){
+  return T(key);
 }
 
 
@@ -1021,15 +1020,15 @@ function applyLang(lang) {
   html.dir = (lang === "ar") ? "rtl" : "ltr";
 
   // Page title + header
-  document.title = t("pageTitle");
+  document.title = T("pageTitle");
   const titleEl = document.getElementById("appTitle");
-  if (titleEl) titleEl.textContent = t("headerTitle");
+  if (titleEl) titleEl.textContent = T("headerTitle");
 
   const sub = document.getElementById("subtitleRule");
-  if (sub) sub.textContent = t("subtitleRule");
+  if (sub) sub.textContent = T("subtitleRule");
 
   const langLabel = document.getElementById("languageLabel");
-  if (langLabel) langLabel.textContent = t("languageLabel");
+  if (langLabel) langLabel.textContent = T("languageLabel");
 
   // Section headings
   const sectionIds = [
@@ -1039,13 +1038,13 @@ function applyLang(lang) {
   ];
   sectionIds.forEach(id=>{
     const el = document.getElementById(id);
-    if(el) el.textContent = t(id);
+    if(el) el.textContent = T(id);
   });
 
   // Labels
   const setLabel = (forId, key) => {
     const el = document.querySelector(`label[for="${forId}"]`);
-    if (el) el.textContent = t(key);
+    if (el) el.textContent = T(key);
   };
   setLabel("playerName", "newPlayerName");
   setLabel("playerAvatarFile", "playerAvatar");
@@ -1062,42 +1061,42 @@ function applyLang(lang) {
 
   // Inputs/buttons
   const playerNameInput = document.getElementById("playerName");
-  if (playerNameInput) playerNameInput.placeholder = t("newPlayerNamePh");
+  if (playerNameInput) playerNameInput.placeholder = T("newPlayerNamePh");
 
   const addPlayerBtn = document.getElementById("addPlayerBtn");
-  if (addPlayerBtn) addPlayerBtn.textContent = t("addPlayer");
+  if (addPlayerBtn) addPlayerBtn.textContent = T("addPlayer");
 
   const togglePlayersBtn = document.getElementById("togglePlayersListBtn");
-  if (togglePlayersBtn) togglePlayersBtn.textContent = (playersListVisible ? t("hidePlayersList") : t("showPlayersList"));
+  if (togglePlayersBtn) togglePlayersBtn.textContent = (playersListVisible ? T("hidePlayersList") : T("showPlayersList"));
 
   const addMatchBtn = document.getElementById("addMatchBtn");
-  if (addMatchBtn) addMatchBtn.textContent = t("saveMatch");
+  if (addMatchBtn) addMatchBtn.textContent = T("saveMatch");
 
   const toggleMatchesBtn = document.getElementById("toggleMatchesLogBtn");
-  if (toggleMatchesBtn) toggleMatchesBtn.textContent = (matchesLogVisible ? t("hideLog") : t("showLog"));
+  if (toggleMatchesBtn) toggleMatchesBtn.textContent = (matchesLogVisible ? T("hideLog") : T("showLog"));
 
 const lbToggleBtn = document.getElementById("leaderboardToggleViewBtn");
-if (lbToggleBtn) lbToggleBtn.textContent = (leaderboardViewMode === "compact") ? t("detailedView") : t("compactView");
+if (lbToggleBtn) lbToggleBtn.textContent = (leaderboardViewMode === "compact") ? T("detailedView") : T("compactView");
 
   const h2hBtn = document.getElementById("h2hAnalyzeBtn");
-  if (h2hBtn) h2hBtn.textContent = t("analyze");
+  if (h2hBtn) h2hBtn.textContent = T("analyze");
 
   const h2hTeamsBtn = document.getElementById("h2hTeamsAnalyzeBtn");
-  if (h2hTeamsBtn) h2hTeamsBtn.textContent = t("analyze");
+  if (h2hTeamsBtn) h2hTeamsBtn.textContent = T("analyze");
 
   const enableAdminBtn = document.getElementById("enableAdminBtn");
-  if (enableAdminBtn) enableAdminBtn.textContent = t("enableAdmin");
+  if (enableAdminBtn) enableAdminBtn.textContent = T("enableAdmin");
   const disableAdminBtn = document.getElementById("disableAdminBtn");
-  if (disableAdminBtn) disableAdminBtn.textContent = t("disableAdmin");
+  if (disableAdminBtn) disableAdminBtn.textContent = T("disableAdmin");
 
   const resetAllBtn = document.getElementById("resetAllBtn");
-  if (resetAllBtn) resetAllBtn.textContent = t("resetAll");
+  if (resetAllBtn) resetAllBtn.textContent = T("resetAll");
   const backupBtn = document.getElementById("backupBtn");
-  if (backupBtn) backupBtn.textContent = t("backupSoon");
+  if (backupBtn) backupBtn.textContent = T("backupSoon");
   const importBtn = document.getElementById("importBtn");
-  if (importBtn) importBtn.textContent = t("importSoon");
+  if (importBtn) importBtn.textContent = T("importSoon");
   const exportBtn = document.getElementById("exportBtn");
-  if (exportBtn) exportBtn.textContent = t("exportSoon");
+  if (exportBtn) exportBtn.textContent = T("exportSoon");
 
   // Static helper texts by id
   const idTextKeys = [
@@ -1111,7 +1110,7 @@ if (lbToggleBtn) lbToggleBtn.textContent = (leaderboardViewMode === "compact") ?
   ];
   idTextKeys.forEach(([id,key])=>{
     const el = document.getElementById(id);
-    if(el) el.textContent = t(key);
+    if(el) el.textContent = T(key);
   });
 
 // Matches log table headers
@@ -1125,19 +1124,19 @@ const thMap = [
 ];
 thMap.forEach(([id,key])=>{
   const el=document.getElementById(id);
-  if(el) el.textContent = t(key);
+  if(el) el.textContent = T(key);
 });
 
   // Filter dropdown static options
   const fy = document.getElementById("filterYear");
   if (fy){
     const optAll = fy.querySelector('option[value="all"]');
-    if (optAll) optAll.textContent = t("allYears");
+    if (optAll) optAll.textContent = T("allYears");
   }
   const fm = document.getElementById("filterMonth");
   if (fm){
     const optAll = fm.querySelector('option[value="all"]');
-    if (optAll) optAll.textContent = t("allMonths");
+    if (optAll) optAll.textContent = T("allMonths");
     // month options 1..12
     for(let m=1;m<=12;m++){
       const opt = fm.querySelector(`option[value="${m}"]`);
@@ -1147,7 +1146,7 @@ thMap.forEach(([id,key])=>{
 
   // Champions hint
   const champHint = document.getElementById("championsLogHint");
-  if (champHint) champHint.textContent = t("championsLogHint");
+  if (champHint) champHint.textContent = T("championsLogHint");
 
   // Re-render any dynamic sections that have language-dependent labels
   try { updatePlayersUI(); } catch(e){}
@@ -1164,7 +1163,7 @@ function getTheme() {
 function applyTheme(theme) {
   document.body.classList.toggle("dark", theme === "dark");
   const btn = document.getElementById("themeToggleBtn");
-  if (btn) btn.textContent = (theme === "dark") ? t("lightMode") : t("darkMode");
+  if (btn) btn.textContent = (theme === "dark") ? T("lightMode") : T("darkMode");
 }
 function toggleTheme() {
   const next = (getTheme() === "dark") ? "light" : "dark";
@@ -1182,7 +1181,7 @@ function toggleTheme() {
     let bonusSuggested = 0;
 
     function normTeam(arr){
-      return (arr || []).slice().sort();
+      return (arr || []).slice().sorT();
     }
     function teamsEqual(a,b){
       if(a.length !== b.length) return false;
@@ -1192,7 +1191,7 @@ function toggleTheme() {
 
     function getLatestMatch(){
       if(!state.matches || state.matches.length===0) return null;
-      const sorted = [...state.matches].sort((a,b)=>{
+      const sorted = [...state.matches].sorT((a,b)=>{
         const ta = a.createdAt && a.createdAt.seconds ? a.createdAt.seconds : 0;
         const tb = b.createdAt && b.createdAt.seconds ? b.createdAt.seconds : 0;
         if(tb !== ta) return tb - ta;
@@ -1215,7 +1214,7 @@ function toggleTheme() {
         bonusValue = 0;
         btn.disabled = true;
         btn.classList.remove("bonus-ready");
-        btn.textContent = t("bonusUnavailable");
+        btn.textContent = T("bonusUnavailable");
         return;
       }
 
@@ -1229,17 +1228,17 @@ function toggleTheme() {
         bonusValue = 0;
         btn.disabled = true;
         btn.classList.remove("bonus-ready");
-        btn.textContent = t("bonusUnavailable");
+        btn.textContent = T("bonusUnavailable");
         return;
       }
 
       const chosen=[w1,w2,l1,l2];
-      if(new Set(chosen).size < 4){
+      if(new SeT(chosen).size < 4){
         bonusApplied = false;
         bonusValue = 0;
         btn.disabled = true;
         btn.classList.remove("bonus-ready");
-        btn.textContent = t("bonusUnavailable");
+        btn.textContent = T("bonusUnavailable");
         return;
       }
 
@@ -1249,7 +1248,7 @@ function toggleTheme() {
         bonusValue = 0;
         btn.disabled = true;
         btn.classList.remove("bonus-ready");
-        btn.textContent = t("bonusUnavailable");
+        btn.textContent = T("bonusUnavailable");
         return;
       }
 
@@ -1271,7 +1270,7 @@ function toggleTheme() {
         bonusValue = 0;
         btn.disabled = true;
         btn.classList.remove("bonus-ready");
-        btn.textContent = t("bonusUnavailable");
+        btn.textContent = T("bonusUnavailable");
         return;
       }
 
@@ -1281,9 +1280,9 @@ function toggleTheme() {
 
       // لو لسه مش متفعل، نعرض القيمة المقترحة
       if(!bonusApplied){
-        btn.textContent = `${t("bonusAdd")} (+${bonusSuggested})`;
+        btn.textContent = `${T("bonusAdd")} (+${bonusSuggested})`;
       }else{
-        btn.textContent = `${t("bonusEnabled")} (+${bonusValue})`;
+        btn.textContent = `${T("bonusEnabled")} (+${bonusValue})`;
       }
     }
 
@@ -1311,37 +1310,37 @@ function toggleTheme() {
     function getLeaderboardColumns(){
       if(leaderboardViewMode === "compact"){
         return [
-          {key:"rank",   label:t("rank")},
-          {key:"name",   label:t("player")},
-          {key:"points", label:t("points")},
-          {key:"bonusNet", label:t("bonus")},
-          {key:"wins",   label:t("wins")},
-          {key:"losses", label:t("losses")},
-          {key:"matches",label:t("matches")},
-          {key:"rate",   label:t("winRate")}
+          {key:"rank",   label:T("rank")},
+          {key:"name",   label:T("player")},
+          {key:"points", label:T("points")},
+          {key:"bonusNet", label:T("bonus")},
+          {key:"wins",   label:T("wins")},
+          {key:"losses", label:T("losses")},
+          {key:"matches",label:T("matches")},
+          {key:"rate",   label:T("winRate")}
         ];
       } else {
         return [
-          {key:"rank",   label:t("rank")},
-          {key:"name",   label:t("player")},
-          {key:"points", label:t("points")},
-          {key:"bonusNet", label:t("bonus")},
-          {key:"wins",   label:t("wins")},
-          {key:"losses", label:t("losses")},
-          {key:"matches",label:t("matches")},
-          {key:"rate",   label:t("winRate")},
-          {key:"w2",     label:t("w2")},
-          {key:"w3",     label:t("w3")},
-          {key:"w4",     label:t("w4")},
-          {key:"l2",     label:t("l2")},
-          {key:"l3",     label:t("l3")},
-          {key:"l4",     label:t("l4")}
+          {key:"rank",   label:T("rank")},
+          {key:"name",   label:T("player")},
+          {key:"points", label:T("points")},
+          {key:"bonusNet", label:T("bonus")},
+          {key:"wins",   label:T("wins")},
+          {key:"losses", label:T("losses")},
+          {key:"matches",label:T("matches")},
+          {key:"rate",   label:T("winRate")},
+          {key:"w2",     label:T("w2")},
+          {key:"w3",     label:T("w3")},
+          {key:"w4",     label:T("w4")},
+          {key:"l2",     label:T("l2")},
+          {key:"l3",     label:T("l3")},
+          {key:"l4",     label:T("l4")}
         ];
       }
     }
 
     
-    function applyLeaderboardSort(rows){
+    function applyLeaderboardSorT(rows){
       const col = leaderboardSort.column;
       const dir = leaderboardSort.direction === "asc" ? 1 : -1;
 
@@ -1369,7 +1368,7 @@ function toggleTheme() {
 
       // لو المستخدم بيعمل فرز على النقاط/الترتيب -> نطبق القاعدة الأساسية
       if(col === "points" || col === "rank"){
-        rows.sort(sortByFinalPoints);
+        rows.sorT(sortByFinalPoints);
         if(dir === -1){
           // desc (الافتراضي): لا شيء
         } else {
@@ -1381,12 +1380,12 @@ function toggleTheme() {
 
       // فرز حسب الاسم
       if(col === "name"){
-        rows.sort((a,b)=> dir * a.name.localeCompare(b.name,"ar"));
+        rows.sorT((a,b)=> dir * a.name.localeCompare(b.name,"ar"));
         return;
       }
 
       // باقي الأعمدة الرقمية: فرز بالعمود ثم الاسم
-      rows.sort((a,b)=>{
+      rows.sorT((a,b)=>{
         const av = a[col] ?? 0;
         const bv = b[col] ?? 0;
         if(av < bv) return -1 * dir;
@@ -1423,7 +1422,7 @@ function toggleTheme() {
 
 
       // استمع لأي تغييرات في اللاعبين
-      db.collection("players").onSnapshot(snapshot => {
+      db.collection("players").onSnapshoT(snapshot => {
         const players = [];
         snapshot.forEach(doc => {
           const data = doc.data();
@@ -1448,7 +1447,7 @@ function toggleTheme() {
       });
 
       // استمع لأي تغييرات في الماتشات
-      db.collection("matches").onSnapshot(snapshot => {
+      db.collection("matches").onSnapshoT(snapshot => {
         const matches = [];
         snapshot.forEach(doc => {
           const data = doc.data();
@@ -1461,7 +1460,11 @@ function toggleTheme() {
             createdAt: data.createdAt || null,
             bonusApplied: data.bonusApplied || false,
             bonusValue: Number(data.bonusValue || 0)
-          });
+                }, (err)=>{
+        console.error("matches onSnapshot error:", err);
+        const s = document.getElementById("fbStatus");
+        if(s) s.textContent = "Firebase error (matches): " + (err?.message || err);
+      });
         });
         state.matches = matches;
         updateFilterYearOptions();
@@ -1470,10 +1473,6 @@ function toggleTheme() {
         updateHeadToHeadUI(false);
         updateMatchesLog();
         updateChampionsLog();
-      }, (err)=>{
-        console.error("matches onSnapshot error:", err);
-        const s = document.getElementById("fbStatus");
-        if(s) s.textContent = "Firebase error (matches): " + (err?.message || err);
       });
     }
 
@@ -1492,7 +1491,7 @@ function toggleTheme() {
 
       $("enableAdminBtn").style.display = isAdmin ? "none" : "inline-block";
       $("disableAdminBtn").style.display = isAdmin ? "inline-block" : "none";
-      $("adminStatusText").textContent = isAdmin ? t("adminEnabled") : t("adminViewOnly");
+      $("adminStatusText").textContent = isAdmin ? T("adminEnabled") : T("adminViewOnly");
 
       // علشان أزرار تعديل اللاعبين تظهر/تختفي حسب وضع المدير
       updateMatchesLog();
@@ -1501,13 +1500,13 @@ function toggleTheme() {
     }
 
     function enableAdminMode(){
-      const pin = prompt((getLang()==="en") ? "Enter admin PIN:" : "أدخل كود المدير:");
+      const pin = prompT((getLang()==="en") ? "Enter admin PIN:" : "أدخل كود المدير:");
       if(pin === null) return;
       if(pin === ADMIN_PIN){
         isAdmin = true;
-        alert((getLang()==="en") ? "Admin mode enabled." : "تم تفعيل وضع المدير.");
+        alerT((getLang()==="en") ? "Admin mode enabled." : "تم تفعيل وضع المدير.");
       } else {
-        alert((getLang()==="en") ? "Incorrect PIN." : "كود غير صحيح.");
+        alerT((getLang()==="en") ? "Incorrect PIN." : "كود غير صحيح.");
       }
       updateAdminUI();
     }
@@ -1524,16 +1523,16 @@ function toggleTheme() {
       if(!wrapper || !btn) return;
       matchesLogVisible = !matchesLogVisible;
       wrapper.style.display = matchesLogVisible ? "" : "none";
-      btn.textContent = matchesLogVisible ? t("hideLog") : t("showLog");
+      btn.textContent = matchesLogVisible ? T("hideLog") : T("showLog");
     }
 
-    function togglePlayersList(){
+    function togglePlayersLisT(){
       const wrapper = $("playersListWrapper");
       const btn = $("togglePlayersListBtn");
       if(!wrapper || !btn) return;
       playersListVisible = !playersListVisible;
       wrapper.style.display = playersListVisible ? "" : "none";
-      btn.textContent = playersListVisible ? t("hidePlayersList") : t("showPlayersList");
+      btn.textContent = playersListVisible ? T("hidePlayersList") : T("showPlayersList");
       }
 
     // ===== PLAYERS =====
@@ -1614,7 +1613,7 @@ function toggleTheme() {
     
     function updatePlayersUI(){
       // ترتيب اللاعبين أبجديًا بالاسم
-      const playersAll = [...state.players].sort((a,b)=> a.name.localeCompare(b.name,"ar"));
+      const playersAll = [...state.players].sorT((a,b)=> a.name.localeCompare(b.name,"ar"));
 
       // ✅ تسجيل ماتشات جديدة: ممنوع اللاعب المحظور حاليًا
       const playersForMatch = playersAll.filter(p => !isPlayerCurrentlyBanned(p));
@@ -1639,12 +1638,12 @@ function toggleTheme() {
         const sel=$(id); if(!sel) return;
         const current = sel.value;
         sel.innerHTML="";
-        const opt=document.createElement("option");
-        opt.value=""; opt.textContent=t("selectPlayer");
+        const opt=document.createElemenT("option");
+        opt.value=""; opt.textContent=T("selectPlayer");
         sel.appendChild(opt);
 
         playersForMatch.forEach(p=>{
-          const o=document.createElement("option");
+          const o=document.createElemenT("option");
           o.value=p.id; o.textContent=p.name;
           sel.appendChild(o);
         });
@@ -1658,12 +1657,12 @@ function toggleTheme() {
         const sel=$(id); if(!sel) return;
         const current = sel.value;
         sel.innerHTML="";
-        const opt=document.createElement("option");
-        opt.value=""; opt.textContent=t("selectPlayer");
+        const opt=document.createElemenT("option");
+        opt.value=""; opt.textContent=T("selectPlayer");
         sel.appendChild(opt);
 
         playersForAnalytics.forEach(p=>{
-          const o=document.createElement("option");
+          const o=document.createElemenT("option");
           o.value=p.id; o.textContent=p.name;
           sel.appendChild(o);
         });
@@ -1679,7 +1678,7 @@ function toggleTheme() {
       const info = $("playersListInfo");
       if(info){
         if(playersAll.length===0){
-          info.textContent=t("noPlayersYet");
+          info.textContent=T("noPlayersYet");
         } else {
           info.textContent="اللاعبون المسجّلون: " + playersAll.map(p=>p.name).join("، ");
         }
@@ -1691,70 +1690,70 @@ function toggleTheme() {
       tbody.innerHTML = "";
 
       if(playersAll.length===0){
-        const tr = document.createElement("tr");
-        const td = document.createElement("td");
+        const tr = document.createElemenT("tr");
+        const td = document.createElemenT("td");
         td.colSpan = 3;
-        td.textContent = t("noPlayersYetShort");
+        td.textContent = T("noPlayersYetShort");
         tr.appendChild(td);
         tbody.appendChild(tr);
         return;
       }
 
       playersAll.forEach((p, idx)=>{
-        const tr = document.createElement("tr");
+        const tr = document.createElemenT("tr");
 
         // رقم
-        const tdIndex = document.createElement("td");
+        const tdIndex = document.createElemenT("td");
         tdIndex.textContent = idx + 1;
         tr.appendChild(tdIndex);
 
         // اللاعب (صورة + اسم + حالة الحظر)
-        const tdPlayer = document.createElement("td");
-        const wrapper = document.createElement("div");
+        const tdPlayer = document.createElemenT("td");
+        const wrapper = document.createElemenT("div");
         wrapper.className = "player-cell";
 
         if(p.avatar){
-          const img = document.createElement("img");
+          const img = document.createElemenT("img");
           img.src = p.avatar;
           img.className = "player-avatar";
           wrapper.appendChild(img);
         }
 
-        const span = document.createElement("span");
+        const span = document.createElemenT("span");
         span.textContent = p.name;
         wrapper.appendChild(span);
 
         // Badge للحالة
         const bannedNow = isPlayerCurrentlyBanned(p);
-        const badge = document.createElement("span");
+        const badge = document.createElemenT("span");
         badge.style.fontSize = "0.75rem";
         badge.style.padding = "2px 6px";
         badge.style.borderRadius = "999px";
         badge.style.border = "1px solid #ddd";
         badge.style.marginRight = "6px";
-        badge.textContent = bannedNow ? t("statusBanned") : t("statusActive");
+        badge.textContent = bannedNow ? T("statusBanned") : T("statusActive");
         wrapper.appendChild(badge);
 
         tdPlayer.appendChild(wrapper);
         tr.appendChild(tdPlayer);
 
         // الإجراءات
-        const tdActions = document.createElement("td");
+        const tdActions = document.createElemenT("td");
         if(isAdmin){
           // تعديل الاسم
-          const editBtn = document.createElement("button");
-          editBtn.textContent = t("editName");
+          const editBtn = document.createElemenT("button");
+          editBtn.textContent = T("editName");
           editBtn.className = "btn-small";
           editBtn.addEventListener("click", ()=>editPlayerName(p.id, p.name));
           tdActions.appendChild(editBtn);
 
           // تعديل الصورة
-          const imgBtn = document.createElement("button");
-          imgBtn.textContent = t("avatarBtn");
+          const imgBtn = document.createElemenT("button");
+          imgBtn.textContent = T("avatarBtn");
           imgBtn.className = "btn-small";
           imgBtn.style.marginRight = "4px";
 
-          const fileInput = document.createElement("input");
+          const fileInput = document.createElemenT("input");
           fileInput.type = "file";
           fileInput.accept = "image/*";
           fileInput.style.display = "none";
@@ -1771,10 +1770,10 @@ function toggleTheme() {
           tdActions.appendChild(fileInput);
 
           // حظر / فك الحظر
-          const banBtn = document.createElement("button");
+          const banBtn = document.createElemenT("button");
           banBtn.className = "btn-small";
           banBtn.style.marginRight = "4px";
-          banBtn.textContent = bannedNow ? t("unbanBtn") : t("banBtn");
+          banBtn.textContent = bannedNow ? T("unbanBtn") : T("banBtn");
           banBtn.addEventListener("click", async ()=>{
             if(bannedNow){
               if(!confirm(`فك حظر اللاعب "${p.name}"؟`)) return;
@@ -1787,14 +1786,14 @@ function toggleTheme() {
           tdActions.appendChild(banBtn);
 
           // حذف لاعب (نهائي)
-          const delBtn = document.createElement("button");
-          delBtn.textContent = t("deleteBtn");
+          const delBtn = document.createElemenT("button");
+          delBtn.textContent = T("deleteBtn");
           delBtn.className = "danger btn-small";
           delBtn.addEventListener("click", ()=> deletePlayerAndMatches(p.id, p.name));
           tdActions.appendChild(delBtn);
 
         } else {
-          tdActions.textContent = t("noneDash");
+          tdActions.textContent = T("noneDash");
         }
 
         tr.appendChild(tdActions);
@@ -1811,7 +1810,7 @@ function toggleTheme() {
       const nameInput = $("playerName");
       const fileInput = $("playerAvatarFile");
       const name = nameInput.value.trim();
-      if(!name){ alert("اكتب اسم اللاعب أولاً."); return; }
+      if(!name){ alerT("اكتب اسم اللاعب أولاً."); return; }
 
       const finishAdd = (avatarData)=>{
         db.collection("players").add({
@@ -1823,7 +1822,7 @@ function toggleTheme() {
           fileInput.value="";
         }).catch(err=>{
           console.error(err);
-          alert("حصل خطأ أثناء إضافة اللاعب.");
+          alerT("حصل خطأ أثناء إضافة اللاعب.");
         });
       };
 
@@ -1839,17 +1838,17 @@ function toggleTheme() {
 
     function editPlayerName(playerId, currentName){
       if(!isAdmin || !db) return;
-      const newName = prompt("اكتب الاسم الجديد لللاعب:", currentName || "");
+      const newName = prompT("اكتب الاسم الجديد لللاعب:", currentName || "");
       if(newName === null) return; // المستخدم لغى
       const trimmed = newName.trim();
       if(!trimmed){
-        alert("الاسم لا يمكن أن يكون فارغ.");
+        alerT("الاسم لا يمكن أن يكون فارغ.");
         return;
       }
       db.collection("players").doc(playerId).update({ name: trimmed })
         .catch(err=>{
           console.error(err);
-          alert("حصل خطأ أثناء تعديل اسم اللاعب.");
+          alerT("حصل خطأ أثناء تعديل اسم اللاعب.");
         });
     }
 
@@ -1861,7 +1860,7 @@ function toggleTheme() {
         db.collection("players").doc(playerId).update({ avatar: avatarData })
           .catch(err=>{
             console.error(err);
-            alert("حصل خطأ أثناء تحديث صورة اللاعب.");
+            alerT("حصل خطأ أثناء تحديث صورة اللاعب.");
           });
       };
       reader.readAsDataURL(file);
@@ -1871,16 +1870,16 @@ function toggleTheme() {
     async function deletePlayerAndMatches(playerId, playerName){
       if(!isAdmin || !db) return;
 
-      const typed = prompt(
+      const typed = prompT(
         `⚠️ حذف لاعب نهائي\n\nاللاعب: ${playerName}\nسيتم حذف اللاعب + حذف كل الماتشات التي شارك فيها بأثر رجعي.\n\nاكتب DELETE للتأكيد:`
       );
       if(typed !== "DELETE") return;
 
-      const typedName = prompt(`اكتب اسم اللاعب بالضبط للتأكيد:\n${playerName}`);
+      const typedName = prompT(`اكتب اسم اللاعب بالضبط للتأكيد:\n${playerName}`);
       if(typedName !== playerName) return;
 
       // نجمع كل الماتشات التي شارك فيها اللاعب (حتى لو الدوكيومنتات القديمة لا تحتوي players[])
-      const snap = await db.collection("matches").get();
+      const snap = await db.collection("matches").geT();
       const toDelete = [];
       snap.forEach(doc=>{
         const d = doc.data() || {};
@@ -1897,14 +1896,14 @@ function toggleTheme() {
       for(let i=0;i<toDelete.length;i+=400){
         const batch = db.batch();
         toDelete.slice(i,i+400).forEach(ref=> batch.delete(ref));
-        await batch.commit();
+        await batch.commiT();
         deletedCount += Math.min(400, toDelete.length - i);
       }
 
       // حذف اللاعب
       await db.collection("players").doc(playerId).delete();
 
-      alert(`✅ تم حذف اللاعب "${playerName}" وحذف ${deletedCount} ماتش(ات) مرتبطة به.`);
+      alerT(`✅ تم حذف اللاعب "${playerName}" وحذف ${deletedCount} ماتش(ات) مرتبطة به.`);
       // الـ onSnapshot هيتولى التحديث
     }
 
@@ -1915,7 +1914,7 @@ function toggleTheme() {
       const now = firebase.firestore.Timestamp.now();
 
       await db.runTransaction(async (tx)=>{
-        const doc = await tx.get(ref);
+        const doc = await tx.geT(ref);
         if(!doc.exists) return;
         const data = doc.data() || {};
         const periods = (data.banPeriods || []).slice();
@@ -1934,7 +1933,7 @@ function toggleTheme() {
       const now = firebase.firestore.Timestamp.now();
 
       await db.runTransaction(async (tx)=>{
-        const doc = await tx.get(ref);
+        const doc = await tx.geT(ref);
         if(!doc.exists) return;
         const data = doc.data() || {};
         const periods = (data.banPeriods || []).slice();
@@ -1956,21 +1955,21 @@ function toggleTheme() {
     // ===== MATCHES =====
     function addMatch(){
       if(!isAdmin || !db) return;
-      if(state.players.length<4){ alert("لازم يكون فيه على الأقل 4 لاعبين."); return; }
+      if(state.players.length<4){ alerT("لازم يكون فيه على الأقل 4 لاعبين."); return; }
       const w1=$("winnerP1").value;
       const w2=$("winnerP2").value;
       const l1=$("loserP1").value;
       const l2=$("loserP2").value;
-      if(!w1||!w2||!l1||!l2){ alert("اختر كل اللاعبين."); return; }
+      if(!w1||!w2||!l1||!l2){ alerT("اختر كل اللاعبين."); return; }
       const chosen=[w1,w2,l1,l2];
-      if(new Set(chosen).size<4){ alert("نفس اللاعب لا يمكن أن يكون في أكثر من مكان."); return; }
+      if(new SeT(chosen).size<4){ alerT("نفس اللاعب لا يمكن أن يكون في أكثر من مكان."); return; }
 
       // ✅ ممنوع تسجيل ماتش جديد لو أي لاعب محظور حاليًا
       const now = new Date();
       for(const pid of chosen){
         const pl = getPlayerById(pid);
         if(pl && isPlayerCurrentlyBanned(pl)){
-          alert(`لا يمكن تسجيل الماتش لأن اللاعب "${pl.name}" محظور حاليًا.`);
+          alerT(`لا يمكن تسجيل الماتش لأن اللاعب "${pl.name}" محظور حاليًا.`);
           return;
         }
       }
@@ -1985,8 +1984,8 @@ function toggleTheme() {
       if(!dateStr){
         const now=new Date();
         const y=now.getFullYear();
-        const m=String(now.getMonth()+1).padStart(2,"0");
-        const d=String(now.getDate()).padStart(2,"0");
+        const m=String(now.getMonth()+1).padStarT(2,"0");
+        const d=String(now.getDate()).padStarT(2,"0");
         dateStr=`${y}-${m}-${d}`;
       }
 
@@ -2006,7 +2005,7 @@ function toggleTheme() {
         updateBonusEligibility();
       }).catch(err=>{
         console.error(err);
-        alert("حصل خطأ أثناء حفظ الماتش.");
+        alerT("حصل خطأ أثناء حفظ الماتش.");
       });
     }
 
@@ -2015,19 +2014,19 @@ function toggleTheme() {
       if(!confirm("سيتم مسح كل اللاعبين والنتائج نهائيًا من قاعدة البيانات. متأكد؟")) return;
 
       // مسح كل الماتشات
-      db.collection("matches").get().then(snap=>{
+      db.collection("matches").geT().then(snap=>{
         const batch = db.batch();
         snap.forEach(doc=>batch.delete(doc.ref));
-        return batch.commit();
+        return batch.commiT();
       }).then(()=>{
-        return db.collection("players").get();
+        return db.collection("players").geT();
       }).then(snap=>{
         const batch = db.batch();
         snap.forEach(doc=>batch.delete(doc.ref));
-        return batch.commit();
+        return batch.commiT();
       }).catch(err=>{
         console.error(err);
-        alert("حصل خطأ أثناء مسح البيانات.");
+        alerT("حصل خطأ أثناء مسح البيانات.");
       });
     }
     // ===== MATCHES LOG (عرض + حذف) =====
@@ -2036,7 +2035,7 @@ function toggleTheme() {
       if(!confirm("هل تريد بالتأكيد حذف هذا الماتش؟")) return;
       db.collection("matches").doc(id).delete().catch(err=>{
         console.error(err);
-        alert("حصل خطأ أثناء حذف الماتش.");
+        alerT("حصل خطأ أثناء حذف الماتش.");
       });
     }
 
@@ -2192,7 +2191,7 @@ function toggleTheme() {
     });
     if(rows.length === 0) return null;
 
-    rows.sort(compareMonthlyStanding);
+    rows.sorT(compareMonthlyStanding);
 
     return rows[0]?.name || null;
   }
@@ -2225,7 +2224,7 @@ function toggleTheme() {
     });
     if(rows.length === 0) return null;
 
-    rows.sort(compareMonthlyStanding);
+    rows.sorT(compareMonthlyStanding);
 
     return rows[0]?.name || null;
   }
@@ -2248,16 +2247,16 @@ function toggleTheme() {
   hint.style.display = "none";
   wrapper.style.display = "block";
   const championsEmptyMessage = noCompletedMonths
-    ? t("noCompletedMonthsInYear")
+    ? T("noCompletedMonthsInYear")
     : (getLang()==="en" ? "Not enough data for this year." : "لا توجد بيانات كافية لهذه السنة.");
 
   // العنوان
-  title.textContent = t("championsLogTitleTpl").replace("{year}", year);
+  title.textContent = T("championsLogTitleTpl").replace("{year}", year);
 
   // 2) تجميع بيانات الأبطال + (أفضل/أسوأ مركز) بطريقة دقيقة
   const byId = new Map();
   state.players.forEach(p=>{
-    byId.set(p.id, {
+    byId.seT(p.id, {
       id: p.id,
       name: p.name,
       first: 0,
@@ -2293,11 +2292,11 @@ function toggleTheme() {
     });
     if(rows.length === 0) continue;
 
-    rows.sort(compareMonthlyStanding);
+    rows.sorT(compareMonthlyStanding);
 
     // حفظ الرانك الشهري لكل لاعب
     rows.forEach((r, i)=>{
-      const rec = byId.get(r.id);
+      const rec = byId.geT(r.id);
       if(!rec) return;
       rec.ranks.push(i+1);
     });
@@ -2306,9 +2305,9 @@ function toggleTheme() {
     const top1 = rows[0]?.id || null;
     const top2 = rows[1]?.id || null;
     const top3 = rows[2]?.id || null;
-    if(top1 && byId.get(top1)) byId.get(top1).first += 1;
-    if(top2 && byId.get(top2)) byId.get(top2).second += 1;
-    if(top3 && byId.get(top3)) byId.get(top3).third += 1;
+    if(top1 && byId.geT(top1)) byId.geT(top1).first += 1;
+    if(top2 && byId.geT(top2)) byId.geT(top2).second += 1;
+    if(top3 && byId.geT(top3)) byId.geT(top3).third += 1;
   }
 
   // build summary
@@ -2335,13 +2334,13 @@ function toggleTheme() {
     window.championsSort = { column: "first", direction: "desc" };
   }
 
-  function applyChampionsSort(arr){
+  function applyChampionsSorT(arr){
     const col = window.championsSort.column;
     const dir = window.championsSort.direction === "asc" ? 1 : -1;
 
     const num = (v, fallback)=> (typeof v === "number" && !Number.isNaN(v)) ? v : fallback;
 
-    arr.sort((a,b)=>{
+    arr.sorT((a,b)=>{
       // best: الأصغر أفضل، worst: الأكبر أسوأ (لكن نسمح بعكسه حسب السهم)
       if(col === "best"){
         const av = num(a.best, 9999);
@@ -2372,32 +2371,32 @@ function toggleTheme() {
     });
   }
 
-  applyChampionsSort(summary);
+  applyChampionsSorT(summary);
 
   // ===== Render Table =====
   head.innerHTML = "";
   body.innerHTML = "";
 
   const columns = [
-    {label: t("rank"),      key:"rank",  sortable:false},
-    {label: t("player"),    key:"name",  sortable:false},
-    {label: t("first"),     key:"first", sortable:true},
-    {label: t("second"),    key:"second",sortable:true},
-    {label: t("third"),     key:"third", sortable:true},
-    {label: t("bestRank"),  key:"best",  sortable:true},
-    {label: t("worstRank"), key:"worst", sortable:true}
+    {label: T("rank"),      key:"rank",  sortable:false},
+    {label: T("player"),    key:"name",  sortable:false},
+    {label: T("first"),     key:"first", sortable:true},
+    {label: T("second"),    key:"second",sortable:true},
+    {label: T("third"),     key:"third", sortable:true},
+    {label: T("bestRank"),  key:"best",  sortable:true},
+    {label: T("worstRank"), key:"worst", sortable:true}
   ];
 
-  const trh = document.createElement("tr");
+  const trh = document.createElemenT("tr");
   columns.forEach(c=>{
-    const th = document.createElement("th");
+    const th = document.createElemenT("th");
     th.textContent = c.label;
 
     if(c.sortable){
       th.classList.add("sortable");
       th.dataset.col = c.key;
 
-      const arrow = document.createElement("span");
+      const arrow = document.createElemenT("span");
       arrow.className = "sort-arrow";
       const isActive = (window.championsSort.column === c.key);
       arrow.textContent = isActive ? (window.championsSort.direction === "asc" ? "▲" : "▼") : "↕";
@@ -2422,15 +2421,15 @@ function toggleTheme() {
   head.appendChild(trh);
 
   if(summary.length === 0){
-    const tr = document.createElement("tr");
-    const td = document.createElement("td");
+    const tr = document.createElemenT("tr");
+    const td = document.createElemenT("td");
     td.colSpan = columns.length;
     td.textContent = championsEmptyMessage;
     tr.appendChild(td);
     body.appendChild(tr);
   } else {
     summary.forEach((r, idx)=>{
-      const tr = document.createElement("tr");
+      const tr = document.createElemenT("tr");
       tr.appendChild(createCell(idx+1));
       tr.appendChild(createCell(r.name || "-"));
       tr.appendChild(createCell(r.first || 0));
@@ -2466,8 +2465,8 @@ function updateMatchesLog(){
       const matches = getFilteredMatches();
 
       if(matches.length === 0){
-        const tr = document.createElement("tr");
-        const td = document.createElement("td");
+        const tr = document.createElemenT("tr");
+        const td = document.createElemenT("td");
         td.colSpan = 5;
         td.textContent = "لا يوجد أي ماتشات مسجلة في هذه الفترة.";
         tr.appendChild(td);
@@ -2476,7 +2475,7 @@ function updateMatchesLog(){
       }
 
       // أحدث ماتش في الأعلى داخل الفترة المحددة
-      const sorted = [...matches].sort((a,b)=>{
+      const sorted = [...matches].sorT((a,b)=>{
         const ta = a.createdAt && a.createdAt.seconds ? a.createdAt.seconds : 0;
         const tb = b.createdAt && b.createdAt.seconds ? b.createdAt.seconds : 0;
         if(tb !== ta) return tb - ta;
@@ -2484,7 +2483,7 @@ function updateMatchesLog(){
       });
 
       sorted.forEach((m,idx)=>{
-        const tr = document.createElement("tr");
+        const tr = document.createElemenT("tr");
 
         tr.appendChild(createCell(idx + 1));
         const dateText = (m.date || "-") + (m.bonusApplied ? ` 🎁+${Number(m.bonusValue||0)}` : "");
@@ -2492,9 +2491,9 @@ function updateMatchesLog(){
         tr.appendChild(createPlayersListCell(m.winners || []));
         tr.appendChild(createPlayersListCell(m.losers || []));
 
-        const actionTd = document.createElement("td");
+        const actionTd = document.createElemenT("td");
         if(isAdmin){
-          const btn = document.createElement("button");
+          const btn = document.createElemenT("button");
           btn.textContent = "🗑 حذف";
           btn.className = "danger btn-small";
           btn.addEventListener("click", ()=> deleteMatchById(m.id));
@@ -2512,17 +2511,17 @@ function updateMatchesLog(){
     function updateFilterYearOptions(){
       const sel = $("filterYear");
       if(!sel) return;
-      const yearsSet = new Set();
+      const yearsSet = new SeT();
       state.matches.forEach(m=>{
         if(m.date) yearsSet.add(m.date.slice(0,4));
       });
       const current = sel.value || "all";
       sel.innerHTML = "";
-      const optAll = document.createElement("option");
+      const optAll = document.createElemenT("option");
       optAll.value="all"; optAll.textContent="كل السنوات";
       sel.appendChild(optAll);
-      Array.from(yearsSet).sort().forEach(y=>{
-        const o=document.createElement("option");
+      Array.from(yearsSet).sorT().forEach(y=>{
+        const o=document.createElemenT("option");
         o.value=y; o.textContent=y;
         sel.appendChild(o);
       });
@@ -2562,24 +2561,24 @@ function updateMatchesLog(){
     }
 
     function createCell(text){
-      const td=document.createElement("td");
+      const td=document.createElemenT("td");
       td.textContent=text;
       return td;
     }
 
     function createPlayerCellTd(playerId){
-      const td=document.createElement("td");
+      const td=document.createElemenT("td");
       const p=getPlayerById(playerId);
       if(!p){ td.textContent="غير معروف"; return td; }
-      const wrapper=document.createElement("div");
+      const wrapper=document.createElemenT("div");
       wrapper.className="player-cell";
       if(p.avatar){
-        const img=document.createElement("img");
+        const img=document.createElemenT("img");
         img.src=p.avatar;
         img.className="player-avatar";
         wrapper.appendChild(img);
       }
-      const span=document.createElement("span");
+      const span=document.createElemenT("span");
       span.textContent=p.name;
       wrapper.appendChild(span);
       td.appendChild(wrapper);
@@ -2587,19 +2586,19 @@ function updateMatchesLog(){
     }
 
     function createPlayersListCell(ids){
-      const td=document.createElement("td");
+      const td=document.createElemenT("td");
       ids.forEach((id,idx)=>{
         if(idx>0) td.appendChild(document.createTextNode(" + "));
         const p=getPlayerById(id);
-        const wrapper=document.createElement("span");
+        const wrapper=document.createElemenT("span");
         wrapper.className="player-cell";
         if(p && p.avatar){
-          const img=document.createElement("img");
+          const img=document.createElemenT("img");
           img.src=p.avatar;
           img.className="player-avatar";
           wrapper.appendChild(img);
         }
-        const span=document.createElement("span");
+        const span=document.createElemenT("span");
         span.textContent=p ? p.name : ("ID "+id);
         wrapper.appendChild(span);
         td.appendChild(wrapper);
@@ -2653,20 +2652,20 @@ function updateMatchesLog(){
       const cols = getLeaderboardColumns();
 
       // نطبّق إعدادات الفرز الحالية
-      applyLeaderboardSort(rows);
+      applyLeaderboardSorT(rows);
 
       // رأس الجدول
       const thead = $("leaderboardHead");
       thead.innerHTML = "";
-      const headerTr = document.createElement("tr");
+      const headerTr = document.createElemenT("tr");
 
       cols.forEach(col => {
-        const th = document.createElement("th");
+        const th = document.createElemenT("th");
         th.textContent = col.label;
         th.classList.add("sortable");
         th.dataset.col = col.key;
 
-        const arrow = document.createElement("span");
+        const arrow = document.createElemenT("span");
         arrow.className = "sort-arrow";
         if (leaderboardSort.column === col.key) {
           arrow.textContent = leaderboardSort.direction === "asc" ? "▲" : "▼";
@@ -2698,8 +2697,8 @@ function updateMatchesLog(){
       tbody.innerHTML = "";
 
       if (rows.length === 0) {
-        const tr = document.createElement("tr");
-        const td = document.createElement("td");
+        const tr = document.createElemenT("tr");
+        const td = document.createElemenT("td");
         td.colSpan = cols.length;
         td.textContent = "لا توجد نتائج بعد في هذه الفترة.";
         tr.appendChild(td);
@@ -2708,7 +2707,7 @@ function updateMatchesLog(){
       }
 
       rows.forEach((r, idx) => {
-        const tr = document.createElement("tr");
+        const tr = document.createElemenT("tr");
         r.rank = idx + 1; // ترتيب اللاعب بعد الفرز
 
         cols.forEach(col => {
@@ -2744,8 +2743,8 @@ function updateMatchesLog(){
 
       matches.forEach(m=>{
         const d = m.date || "بدون تاريخ";
-        if(!dayMap.has(d)) dayMap.set(d,{w:0,l:0});
-        const ds = dayMap.get(d);
+        if(!dayMap.has(d)) dayMap.seT(d,{w:0,l:0});
+        const ds = dayMap.geT(d);
 
         const isW = (m.winners || []).includes(playerId);
         const isL = (m.losers  || []).includes(playerId);
@@ -2757,12 +2756,12 @@ function updateMatchesLog(){
           // زملاء الفوز
           (m.winners || []).forEach(pid=>{
             if(pid!==playerId)
-              teammateWin.set(pid,(teammateWin.get(pid)||0)+1);
+              teammateWin.seT(pid,(teammateWin.geT(pid)||0)+1);
           });
 
           // الخصوم اللي خسروا مني
           (m.losers || []).forEach(pid=>{
-            opponentWin.set(pid,(opponentWin.get(pid)||0)+1);
+            opponentWin.seT(pid,(opponentWin.geT(pid)||0)+1);
           });
         }
 
@@ -2773,12 +2772,12 @@ function updateMatchesLog(){
           // زملاء الخسارة
           (m.losers || []).forEach(pid=>{
             if(pid!==playerId)
-              teammateLose.set(pid,(teammateLose.get(pid)||0)+1);
+              teammateLose.seT(pid,(teammateLose.geT(pid)||0)+1);
           });
 
           // الخصوم اللي كسبوا عليّ
           (m.winners || []).forEach(pid=>{
-            opponentLose.set(pid,(opponentLose.get(pid)||0)+1);
+            opponentLose.seT(pid,(opponentLose.geT(pid)||0)+1);
           });
         }
       });
@@ -2792,7 +2791,7 @@ function updateMatchesLog(){
         if(ds.l===2)dL2++; else if(ds.l===3)dL3++; else if(ds.l>=4)dL4++;
       });
 
-      function best(map){
+      function besT(map){
         let bestCount = 0;
         map.forEach((c)=>{ if(c > bestCount) bestCount = c; });
         if(bestCount === 0) return [];
@@ -2826,10 +2825,10 @@ function updateMatchesLog(){
         daysLose3: dL3,
         daysLose4plus: dL4,
 
-        bestTeammateWin:  best(teammateWin),
-        bestTeammateLose: best(teammateLose),
-        bestOpponentWin:  best(opponentWin),
-        bestOpponentLose: best(opponentLose)
+        bestTeammateWin:  besT(teammateWin),
+        bestTeammateLose: besT(teammateLose),
+        bestOpponentWin:  besT(opponentWin),
+        bestOpponentLose: besT(opponentLose)
       };
     }
 
@@ -2838,7 +2837,7 @@ function updateMatchesLog(){
       const summary=$("playerDetailsSummary");
       const box=$("playerDetailsStats");
       if(!sel || !sel.value){
-        summary.textContent = t("selectPlayerAnalysis");
+        summary.textContent = T("selectPlayerAnalysis");
         box.style.display="none"; return;
       }
       const id=sel.value;
@@ -3069,7 +3068,7 @@ function analyzeHeadToHead(){
 
       // لو حابب تمنع تكرار لاعب بين الفريقين:
       const all = [t1p1,t1p2,t2p1,t2p2];
-      if(new Set(all).size < 4){
+      if(new SeT(all).size < 4){
         out.textContent = "لاعب واحد لا يمكن أن يلعب في الفريقين في نفس المواجهة.";
         return;
       }
@@ -3138,7 +3137,7 @@ function analyzeHeadToHead(){
     }
 
     // ===== INIT =====
-    function init(){
+    function iniT(){
       initFirebase();
       updateAdminUI();
       updateBonusEligibility();
@@ -3160,7 +3159,7 @@ function analyzeHeadToHead(){
       if(fy){
         let yearOpt = Array.from(fy.options).find(o => o.value === currentYear);
         if(!yearOpt){
-          yearOpt = document.createElement("option");
+          yearOpt = document.createElemenT("option");
           yearOpt.value = currentYear;
           yearOpt.textContent = currentYear;
           fy.appendChild(yearOpt);
