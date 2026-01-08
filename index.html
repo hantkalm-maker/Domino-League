@@ -1253,7 +1253,33 @@ window.I18N = I18N;
       h2hTeamsT2WinsTpl: "• مرات فاز فيها {t2}: {n} مرة.<br/>",
       h2hTeamsWinRateTitle: "<br/>نسبة الفوز عندما يتقابلان في هذه الفترة:<br/>"
     });
-  }catch(e){}
+  
+    // Hotfix: ensure EN has all required keys (some older edits removed them)
+    Object.assign(window.I18N.en, {
+      playerDaysAnalysisTitle: "📆 Win/Loss days analysis in the selected period",
+      lastYearChampionLabel: "🏆 Last year champion",
+      lastMonthChampionLabel: "🏅 Last month champion",
+
+      h2hReportTitleTpl: "Head-to-head analysis between {p1} and {p2} ({period}):<br/><br/>",
+      h2hPlayedAgainstTpl: "• Played against each other in {n} full-ten match(es).<br/>",
+      h2hP1BeatP2Tpl: "• {p1} beat {p2}: {n} time(s).<br/>",
+      h2hP2BeatP1Tpl: "• {p2} beat {p1}: {n} time(s).<br/>",
+      h2hPlayedTogetherTpl: "• Played together on the same team in {n} full-ten match(es).<br/><br/>",
+
+      h2hWinRateTitle: "<strong>Win rate when they face each other in this period:</strong><br/>",
+      h2hBonusTitle: "<strong>🎁 Bonus (calculated separately)</strong><br/>",
+      h2hBasePointsTitle: "<strong>🎯 Base points (without bonus)</strong><br/>",
+
+      receivedBonusByNamesTpl: "• {to} received bonus from {from}: {n}<br/>",
+      receivedPointsByNamesTpl: "• {to} received points from {from}: {n}<br/>",
+
+      h2hTeamsReportTitleTpl: "Head-to-head analysis between Team {t1} and Team {t2} ({period}):<br/><br/>",
+      h2hTeamsPlayedAgainstTpl: "• Played against each other in {n} full-ten match(es).<br/>",
+      h2hTeam1WinsTpl: "• {t1} wins: {n}.<br/>",
+      h2hTeam2WinsTpl: "• {t2} wins: {n}.<br/>",
+      h2hTeamsWinRateTitle: "<strong>Win rate when they face each other in this period:</strong><br/>"
+    });
+}catch(e){}
 })();
 
 // ===== I18N Hotfix: ensure Arabic H2H templates are Arabic (avoid duplicate-key override) =====
@@ -2856,8 +2882,8 @@ ${T("banExplanation")}`)) return;
 
   if(extra){
     extra.innerHTML = `
-      <div>${T("lastYearChampionLabel")} (<b>${prevYear}</b>): <b>${prevYearChampion || "-"}</b></div>
-      <div>${T("lastMonthChampionLabel")} (<b>${monthName(prev.m)}</b> ${prev.y}): <b>${prevMonthChampion || "-"}</b></div>
+      <div>${T("lastYearChampion")} (<b>${prevYear}</b>): <b>${prevYearChampion || "-"}</b></div>
+      <div>${T("lastMonthChampion")} (<b>${monthName(prev.m)}</b> ${prev.y}): <b>${prevMonthChampion || "-"}</b></div>
     `;
   }
 }
