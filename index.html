@@ -858,6 +858,14 @@ const I18N = {
     bonusPlusLabel: "بونص + (مكسب)",
     bonusMinusLabel: "بونص − (خسارة)",
     bonusNetLabel: "صافي البونص",
+    daysWin2: "أيام كسب فيها مرتين",
+    daysWin3: "أيام كسب فيها 3 مرات",
+    daysWin4plus: "أيام كسب فيها 4 مرات أو أكثر",
+    daysLose2: "أيام خسر فيها مرتين",
+    daysLose3: "أيام خسر فيها 3 مرات",
+    daysLose4plus: "أيام خسر فيها 4 مرات أو أكثر",
+    playerAnalysisTitleTpl: "تحليل اللاعب {name} ({period})",
+    playerBannedInPeriodTpl: "اللاعب \"{name}\" محظور في هذه الفترة حسب نهاية الفلتر.",
     playerDaysAnalysisTitle: "📆 تحليل أيام الفوز والخسارة في الفترة المختارة",
     playerBestMateTitle: "🤝 الشريك المفضل في نفس الفترة",
     bestMateWinLabel: "أكتر واحد كسبت معاه",
@@ -1134,6 +1142,20 @@ const I18N = {
     // Player analysis
     choosePlayer: "Choose Player",
     playerDetailsHelp: "Choose a player from the list to view their analysis.",
+    totalWinsPeriod: "Total wins in selected period",
+    totalLossesPeriod: "Total losses in selected period",
+    totalMatchesPeriod: "Total matches in selected period",
+    bonusPlusLabel: "Bonus + (win)",
+    bonusMinusLabel: "Bonus − (loss)",
+    bonusNetLabel: "Net bonus",
+    daysWin2: "Days won exactly 2 times",
+    daysWin3: "Days won exactly 3 times",
+    daysWin4plus: "Days won 4+ times",
+    daysLose2: "Days lost exactly 2 times",
+    daysLose3: "Days lost exactly 3 times",
+    daysLose4plus: "Days lost 4+ times",
+    playerAnalysisTitleTpl: "Player analysis for {name} ({period})",
+    playerBannedInPeriodTpl: "Player \"{name}\" is banned in this period based on the filter end date.",
     totalWins: "Total wins in the selected period",
     totalLosses: "Total losses in the selected period",
     totalMatches: "Total matches in the selected period",
@@ -3097,7 +3119,7 @@ function updateMatchesLog(){
       const summary=$("playerDetailsSummary");
       const box=$("playerDetailsStats");
       if(!sel || !sel.value){
-        summary.textContent = T("selectPlayerAnalysis");
+                summary.textContent = T("selectPlayerAnalysis");
         box.style.display="none"; return;
       }
       const id=sel.value;
@@ -3106,7 +3128,7 @@ function updateMatchesLog(){
 
       // ✅ لو اللاعب محظور حسب نهاية الفترة المختارة، نخفي التحليل
       if(!shouldShowPlayerForSelectedRange(player, getSelectedRangeEndDate())){
-        summary.textContent = `اللاعب "${player.name}" محظور في هذه الفترة حسب نهاية الفلتر.`;
+                summary.textContent = T("playerBannedInPeriodTpl").replace("{name}", player.name);
         box.style.display = "none";
         return;
       }
@@ -3118,7 +3140,7 @@ function updateMatchesLog(){
       const monthVal = $("filterMonth").value;
       const label = getFilterLabel(yearVal, monthVal);
 
-      summary.innerHTML=`تحليل اللاعب <strong>${player.name}</strong> (${label})`;
+            summary.innerHTML = T("playerAnalysisTitleTpl").replace("{name}", `<strong>${player.name}</strong>`).replace("{period}", label);
 
       $("pTotalWins").textContent=s.wins;
       $("pTotalLosses").textContent=s.losses;
