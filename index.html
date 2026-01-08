@@ -268,7 +268,7 @@
 </head>
 <body>
   <header>
-    <h1 id="appTitle">دوري الأصدقاء الزوجي - </h1>
+    <h1 id="appTitle">دوري الأصدقاء - </h1>
     <div class="small-text" id="subtitleRule">
       كل ماتش = الفريق الكسبان +1 لكل لاعب / الخسران -1 لكل لاعب
     </div>
@@ -742,7 +742,7 @@ const I18N = {
 
     // Header
     pagetitle: "دوري الأصدقاء",
-    headerTitle: "دوري الأصدقاء الزوجي - ",
+    headerTitle: "دوري الأصدقاء - ",
     subtitleRule: "كل ماتش = الفريق الكسبان +1 لكل لاعب / الخسران -1 لكل لاعب",
     darkMode: "🌙 Dark Mode",
     lightMode: "☀️ Light Mode",
@@ -1234,6 +1234,28 @@ const I18N = {
 };
 // expose i18n to global translator
 window.I18N = I18N;
+
+// ===== I18N_OVERRIDE_PATCH (fix duplicated/mixed keys) =====
+(function(){
+  try{
+    if(!window.I18N) return;
+    // Force Arabic templates (some files had duplicated keys overriding Arabic with English)
+    Object.assign(window.I18N.ar, {
+      periodMonthYearTpl: "الفترة: {month} {year}",
+      periodYearTpl: "الفترة: سنة {year}",
+      periodMonthAllYearsTpl: "الفترة: شهر {month} في كل السنوات.",
+      periodAllTime: "الفترة: كل الوقت.",
+      lastYearChampionLabel: "🏆 حامل لقب آخر سنة",
+      lastMonthChampionLabel: "🏅 حامل لقب آخر شهر",
+      h2hTeamsReportTitleTpl: "تحليل المواجهات بين الفريق {t1} والفريق {t2} ({period}):<br/><br/>",
+      h2hTeamsPlayedAgainstTpl: "• لعبوا ضد بعض في {n} ماتش(ات) عشرة.<br/>",
+      h2hTeamsT1WinsTpl: "• مرات فاز فيها {t1}: {n} مرة.<br/>",
+      h2hTeamsT2WinsTpl: "• مرات فاز فيها {t2}: {n} مرة.<br/>",
+      h2hTeamsWinRateTitle: "<br/>نسبة الفوز عندما يتقابلان في هذه الفترة:<br/>"
+    });
+  }catch(e){}
+})();
+
 // ===== I18N Hotfix: ensure Arabic H2H templates are Arabic (avoid duplicate-key override) =====
 (function(){
   try{
@@ -1286,8 +1308,6 @@ function monthName(m){
 }
 
 function getLang() {
-  const dom = (document.documentElement && document.documentElement.lang) ? document.documentElement.lang : "";
-  if(dom === "ar" || dom === "en") return dom;
   const ls = localStorage.getItem("dl_lang");
   return (ls === "ar" || ls === "en") ? ls : "ar";
 }
@@ -2837,7 +2857,7 @@ ${T("banExplanation")}`)) return;
   if(extra){
     extra.innerHTML = `
       <div>${T("lastYearChampionLabel")} (<b>${prevYear}</b>): <b>${prevYearChampion || "-"}</b></div>
-      <div>${T("lastMonthChampionLabel")} (<b>${monthNames[prev.m-1]}</b> ${prev.y}): <b>${prevMonthChampion || "-"}</b></div>
+      <div>${T("lastMonthChampionLabel")} (<b>${monthName(prev.m)}</b> ${prev.y}): <b>${prevMonthChampion || "-"}</b></div>
     `;
   }
 }
