@@ -215,6 +215,24 @@
       opacity: 0.5;
     }
 
+    
+    /* ===== Leaderboard position movement (vs previous day) ===== */
+    .pos-move {
+      font-weight: 800;
+      font-size: 0.95rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      min-width: 32px;
+      white-space: nowrap;
+    }
+    .pos-move.up { color: #22c55e; }
+    .pos-move.down { color: #ef4444; }
+    .pos-move.same { color: #94a3b8; }
+    .pos-move.new { color: #a855f7; }
+    body.dark .pos-move.same { color: #9ca3af; }
+
     @media (max-width: 600px) {
       th, td {
         font-size: 0.8rem;
@@ -270,7 +288,7 @@
 </head>
 <body>
   <header>
-    <h1 id="appTitle">دوري الأصدقاء - </h1>
+    <h1 id="appTitle">دوري الأصدقاء </h1>
     <div class="small-text" id="subtitleRule">
       كل ماتش = الفريق الكسبان +1 لكل لاعب / الخسران -1 لكل لاعب
     </div>
@@ -744,7 +762,7 @@ const I18N = {
 
     // Header
     pagetitle: "دوري الأصدقاء",
-    headerTitle: "دوري الأصدقاء - ",
+    headerTitle: "دوري الأصدقاء ",
     subtitleRule: "كل ماتش = الفريق الكسبان +1 لكل لاعب / الخسران -1 لكل لاعب",
     darkMode: "🌙 Dark Mode",
     lightMode: "☀️ Light Mode",
@@ -805,6 +823,11 @@ const I18N = {
     detailedView: "📊 عرض تفصيلي",
     compactView: "📊 عرض مختصر",
     rank: "الترتيب",
+    move: "",
+    movedUpTpl: "طلع {n} مركز",
+    movedDownTpl: "نزل {n} مركز",
+    movedSame: "مفيش تغيير",
+    movedNew: "لاعب جديد في الترتيب"
     player: "اللاعب",
     points: "النقاط",
     bonus: "بونص",
@@ -1138,6 +1161,11 @@ const I18N = {
     detailedView: "📊 Detailed View",
     compactView: "📊 Compact View",
     rank: "Rank",
+    move: "",
+    movedUpTpl: "Up {n}",
+    movedDownTpl: "Down {n}",
+    movedSame: "No change",
+    movedNew: "New in table"
     player: "Player",
     points: "Points",
     bonus: "Bonus",
@@ -1359,6 +1387,51 @@ try{
     });
   }
 }catch(e){}
+
+function toYMD(d){
+  try{
+    const dt = (d instanceof Date) ? d : new Date(d);
+    const y = dt.getFullYear();
+    const m = String(dt.getMonth()+1).padStart(2,'0');
+    const day = String(dt.getDate()).padStart(2,'0');
+    return `${y}-${m}-${day}`;
+  }catch(e){
+    return "";
+  }
+}
+function _standingsSort(a,b){
+  const ap = (a.finalPoints ?? 0), bp = (b.finalPoints ?? 0);
+  if(bp !== ap) return bp - ap;
+  const ar = (a.rate ?? 0), br = (b.rate ?? 0);
+  if(br !== ar) return br - ar;
+  const aw = (a.wins ?? 0), bw = (b.wins ?? 0);
+  if(bw !== aw) return bw - aw;
+  const am = (a.matches ?? 0), bm = (b.matches ?? 0);
+  if(bm !== am) return bm - am;
+  return String(a.name||"").localeCompare(String(b.name||""), undefined, {sensitivity:"base"});
+}
+function buildRankMap(matchesSubset, endDateForBan){
+  const rows = [];
+  state.players.forEach(p=>{
+    if(!shouldShowPlayerForSelectedRange(p, endDateForBan)) return;
+    const s = computePlayerFullStats(p.id, matchesSubset);
+    if(!s || !s.totalMatches) return;
+    rows.push({
+      id: p.id,
+      name: p.name,
+      wins: s.wins,
+      losses: s.losses,
+      matches: s.totalMatches,
+      rate: s.winRate,
+      finalPoints: (s.wins - s.losses) + (s.bonusNet || 0)
+    });
+  });
+  rows.sort(_standingsSort);
+  const map = new Map();
+  rows.forEach((r,i)=> map.set(r.id, i+1));
+  return map;
+}
+
 const MONTHS = {
   ar: ["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"],
   en: ["January","February","March","April","May","June","July","August","September","October","November","December"]
@@ -1610,7 +1683,45 @@ thMap.forEach(([id,key])=>{
     }
   }catch(e){}
 
-  try{
+  
+  // --- Ensure Player Analysis static labels switch language correctly ---
+  (function(){
+    const textMap = {
+      lblTotalWins: "totalWins",
+      lblTotalLosses: "totalLosses",
+      lblTotalMatches: "totalMatches",
+      lblWinRatePeriod: "winRatePeriod",
+      lblBonusPlus: "bonusPlus",
+      lblBonusMinus: "bonusMinus",
+      lblBonusNet: "bonusNet",
+
+      playerDaysAnalysisTitle: "playerDaysAnalysisTitle",
+      lblDaysWin2: "daysWin2",
+      lblDaysWin3: "daysWin3",
+      lblDaysWin4p: "daysWin4plus",
+      lblDaysLose2: "daysLose2",
+      lblDaysLose3: "daysLose3",
+      lblDaysLose4p: "daysLose4plus",
+
+      playerBestMateTitle: "playerBestMateTitle",
+      lblBestMateWin: "bestMateWinLabel",
+      lblBestMateLose: "bestMateLoseLabel",
+
+      playerBestOppTitle: "playerBestOppTitle",
+      lblBestOppWin: "bestOppWinLabel",
+      lblBestOppLose: "bestOppLoseLabel"
+    };
+    Object.keys(textMap).forEach(id=>{
+      const el = document.getElementById(id);
+      if(el) el.textContent = T(textMap[id]);
+    });
+    ["lblCountTimes1","lblCountTimes2","lblCountTimes3","lblCountTimes4"].forEach(id=>{
+      const el = document.getElementById(id);
+      if(el) el.textContent = T("countTimesLabel");
+    });
+  })();
+
+try{
     const out2 = document.getElementById("h2hTeamsSummary");
     const hasHelp2 = out2 && out2.querySelector && out2.querySelector("#h2hTeamsHelp");
     const t1p1 = document.getElementById("h2hT1P1")?.value;
@@ -1777,6 +1888,7 @@ function toggleTheme() {
       if(leaderboardViewMode === "compact"){
         return [
           {key:"rank",   label:T("rank")},
+          {key:"move",   label:T("move")},
           {key:"name",   label:T("player")},
           {key:"points", label:T("points")},
           {key:"bonusNet", label:T("bonus")},
@@ -1788,6 +1900,7 @@ function toggleTheme() {
       } else {
         return [
           {key:"rank",   label:T("rank")},
+          {key:"move",   label:T("move")},
           {key:"name",   label:T("player")},
           {key:"points", label:T("points")},
           {key:"bonusNet", label:T("bonus")},
@@ -2061,6 +2174,20 @@ function toggleTheme() {
 
       // باقي الحالات (كل السنين/كل الوقت): نستخدم آخر تاريخ موجود في النتائج أو تاريخ اليوم
       const matches = getFilteredMatches();
+      // === Movement (today vs previous day) ===
+      const rangeEnd = getSelectedRangeEndDate(); // Date
+      const endYMD = toYMD(rangeEnd);
+      const prevEnd = new Date(rangeEnd.getTime());
+      prevEnd.setDate(prevEnd.getDate() - 1);
+      const prevYMD = toYMD(prevEnd);
+
+      const matchesToday = matches.filter(m => (!m.date) || (String(m.date) <= endYMD));
+      const matchesPrev  = matches.filter(m => (!m.date) || (String(m.date) <= prevYMD));
+
+      // Build standard ranking maps (based on default standings rules)
+      const rankMapToday = buildRankMap(matchesToday, rangeEnd);
+      const rankMapPrev  = buildRankMap(matchesPrev, prevEnd);
+
       let max = null;
       matches.forEach(m=>{
         if(!m.date) return;
@@ -3091,7 +3218,7 @@ function updateMatchesLog(){
         // ✅ إخفاء اللاعب من الإحصائيات لو نهاية الفترة المختارة تقع داخل فترة الحظر
         if(!shouldShowPlayerForSelectedRange(p, getSelectedRangeEndDate())) return;
 
-        const s = computePlayerFullStats(p.id, matches);
+        const s = computePlayerFullStats(p.id, matchesToday);
 
         // لو اللاعب ما لعبش ولا ماتش في الفترة دي، بنخفّيه من الجدول
         if(s.totalMatches === 0) return;
@@ -3180,6 +3307,17 @@ function updateMatchesLog(){
       rows.forEach((r, idx) => {
         const tr = document.createElement("tr");
         r.rank = idx + 1; // ترتيب اللاعب بعد الفرز
+        // Movement based on standard standings (today vs previous day within selected range end)
+        const currStd = rankMapToday.get(r.id);
+        const prevStd = rankMapPrev.get(r.id);
+        if(typeof currStd === "number" && typeof prevStd === "number"){
+          r.moveDelta = prevStd - currStd; // + => moved up
+        }else if(typeof currStd === "number" && typeof prevStd !== "number"){
+          r.moveDelta = null; // new
+        }else{
+          r.moveDelta = 0;
+        }
+
 
         cols.forEach(col => {
           if (col.key === "name") {
@@ -3187,7 +3325,31 @@ function updateMatchesLog(){
             tr.appendChild(createPlayerCellTd(r.id));
           } else {
             let value;
-            if (col.key === "rate") {
+            if (col.key === "move") {
+              const td = document.createElement("td");
+              const span = document.createElement("span");
+              span.className = "pos-move";
+              if(r.moveDelta === null){
+                span.classList.add("new");
+                span.textContent = "●";
+                span.title = T("movedNew");
+              }else if((r.moveDelta||0) > 0){
+                span.classList.add("up");
+                span.textContent = "▲ " + r.moveDelta;
+                span.title = T("movedUpTpl").replace("{n}", r.moveDelta);
+              }else if((r.moveDelta||0) < 0){
+                span.classList.add("down");
+                span.textContent = "▼ " + Math.abs(r.moveDelta);
+                span.title = T("movedDownTpl").replace("{n}", Math.abs(r.moveDelta));
+              }else{
+                span.classList.add("same");
+                span.textContent = "–";
+                span.title = T("movedSame");
+              }
+              td.appendChild(span);
+              tr.appendChild(td);
+              return;
+            } else if (col.key === "rate") {
               value = r.rate.toFixed(1) + " ٪";
             } else if (col.key === "rank") {
               value = r.rank;
@@ -3397,8 +3559,8 @@ function analyzeHeadToHead(){
 
 
   // Resolve selected player names (for reports)
-  const p1Name = (document.getElementById('h2hPlayer1')?.selectedOptions?.[0]?.textContent || '').trim();
-  const p2Name = (document.getElementById('h2hPlayer2')?.selectedOptions?.[0]?.textContent || '').trim();
+  const p1Name = ($("h2hP1")?.selectedOptions?.[0]?.textContent || "").trim();
+  const p2Name = ($("h2hP2")?.selectedOptions?.[0]?.textContent || "").trim();
 
   
   // Safe defaults (avoid ReferenceError if logic changes)
@@ -3406,6 +3568,10 @@ function analyzeHeadToHead(){
 const p1Str = $("h2hP1").value;
   const p2Str = $("h2hP2").value;
   const out   = $("h2hSummary");
+  // Fallback in case option text is not available
+  const __p1Name = p1Name || (state.players.find(p => p.id === p1Str)?.name || "");
+  const __p2Name = p2Name || (state.players.find(p => p.id === p2Str)?.name || "");
+
 
   if(!p1Str || !p2Str){
     out.textContent = T("chooseTwoPlayersFirst");
@@ -3518,12 +3684,12 @@ const p1Str = $("h2hP1").value;
   html += T("h2hBonusTitle");
   html += T("h2hBaseTitle");
   html += T("receivedPointsByNamesTpl")
-    .replace("{to}", `<strong>${p1Name}</strong>`)
-    .replace("{from}", `<strong>${p2Name}</strong>`)
+    .replace("{to}", `<strong>${__p1Name}</strong>`)
+    .replace("{from}", `<strong>${__p2Name}</strong>`)
     .replace("{n}", `<strong>${p1FromP2Base}</strong>`);
   html += T("receivedPointsByNamesTpl")
-    .replace("{to}", `<strong>${p2Name}</strong>`)
-    .replace("{from}", `<strong>${p1Name}</strong>`)
+    .replace("{to}", `<strong>${__p2Name}</strong>`)
+    .replace("{from}", `<strong>${__p1Name}</strong>`)
     .replace("{n}", `<strong>${p2FromP1Base}</strong>`);
 
   out.innerHTML = html;
