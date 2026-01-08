@@ -3393,11 +3393,15 @@ function updateMatchesLog(){
 
 function analyzeHeadToHead(){
 
+
   // Resolve selected player names (for reports)
   const p1Name = (document.getElementById('h2hPlayer1')?.selectedOptions?.[0]?.textContent || '').trim();
   const p2Name = (document.getElementById('h2hPlayer2')?.selectedOptions?.[0]?.textContent || '').trim();
 
-  const p1Str = $("h2hP1").value;
+  
+  // Safe defaults (avoid ReferenceError if logic changes)
+  let p1FromP2Bonus = 0, p2FromP1Bonus = 0, p1FromP2Base = 0, p2FromP1Base = 0;
+const p1Str = $("h2hP1").value;
   const p2Str = $("h2hP2").value;
   const out   = $("h2hSummary");
 
