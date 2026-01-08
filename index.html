@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <title>دوري الأصدقاء Friendly League - العشرة (151)</title>
+  <title>دوري الأصدقاء</title>
   <style>
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -268,9 +268,9 @@
 </head>
 <body>
   <header>
-    <h1 id="appTitle">دوري الأصدقاء Friendly League الزوجي - العشرة (151)</h1>
+    <h1 id="appTitle">دوري الأصدقاء الزوجي - </h1>
     <div class="small-text" id="subtitleRule">
-      كل ماتش (عشرة) = الفريق الكسبان +1 لكل لاعب / الخسران -1 لكل لاعب
+      كل ماتش = الفريق الكسبان +1 لكل لاعب / الخسران -1 لكل لاعب
     </div>
   
     <div class="settings-bar">
@@ -739,10 +739,11 @@ window.t  = window.t  || window.T;
 // ===== UI Settings: Theme + Language =====
 const I18N = {
   ar: {
+
     // Header
-    pagetitle: "دوري الأصدقاء Friendly League - العشرة (151)",
-    headerTitle: "دوري الأصدقاء Friendly League الزوجي - العشرة (151)",
-    subtitleRule: "كل ماتش (عشرة) = الفريق الكسبان +1 لكل لاعب / الخسران -1 لكل لاعب",
+    pagetitle: "دوري الأصدقاء",
+    headerTitle: "دوري الأصدقاء الزوجي - ",
+    subtitleRule: "كل ماتش = الفريق الكسبان +1 لكل لاعب / الخسران -1 لكل لاعب",
     darkMode: "🌙 Dark Mode",
     lightMode: "☀️ Light Mode",
     languageLabel: "اللغة:",
@@ -979,7 +980,9 @@ const I18N = {
     notEnoughDataForYear: "لا توجد بيانات كافية لهذه السنة.",
     confirmUnbanPlayer: "فك حظر اللاعب",
     confirmBanPlayer: "حظر اللاعب",
-    banExplanation: "لن يظهر في تسجيل الماتشات من لحظة الحظر حتى فك الحظر.\n\nسيختفي أيضًا من الإحصائيات عندما تقع نهاية الفترة المختارة داخل فترة الحظر.",
+    banExplanation: "لن يظهر في تسجيل الماتشات من لحظة الحظر حتى فك الحظر.
+
+سيختفي أيضًا من الإحصائيات عندما تقع نهاية الفترة المختارة داخل فترة الحظر.",
     errAddPlayer: "حصل خطأ أثناء إضافة اللاعب.",
     errUpdateAvatar: "حصل خطأ أثناء تحديث صورة اللاعب.",
     errEditPlayerName: "حصل خطأ أثناء تعديل اسم اللاعب.",
@@ -1038,7 +1041,9 @@ const I18N = {
     notEnoughDataForYear: "Not enough data for this year.",
     confirmUnbanPlayer: "Unban player",
     confirmBanPlayer: "Ban player",
-    banExplanation: "They will not appear in match entry from the moment of ban until unbanned.\n\nThey will also be hidden from analytics when the selected range end falls within the ban period.",
+    banExplanation: "They will not appear in match entry from the moment of ban until unbanned.
+
+They will also be hidden from analytics when the selected range end falls within the ban period.",
     errAddPlayer: "An error occurred while adding the player.",
     errUpdateAvatar: "An error occurred while updating the player photo.",
     errEditPlayerName: "An error occurred while editing the player name.",
@@ -1065,12 +1070,17 @@ const I18N = {
     note1: "من غير تفعيل وضع المدير، البرنامج في وضع المشاهدة فقط.",
     note2: "كل البيانات محفوظة أونلاين في Firebase Firestore، تقدر تفتح من أي جهاز.",
     note3: "استخدم فلتر السنة والشهر للتحكم في فترة الإحصائيات للتـرتيب والتحليل والمواجهات."
+    // H2H (by names)
+    receivedBonusByNamesTpl: "• حصل {to} من {from} على بونص: {n}<br/>",
+    receivedPointsByNamesTpl: "• حصل {to} من {from} على نقاط: {n}<br/>",
+
   },
   en: {
+
     // Header
-    pagetitle: "Friendly League - Tens (151)",
-    headerTitle: "Friendly League - Tens (151)",
-    subtitleRule: "Each match (Tens) = Winning team +1 per player / Losing team -1 per player",
+    pagetitle: "Friendly League",
+    headerTitle: "Friendly League",
+    subtitleRule: "Each match = Winning team +1 per player / Losing team -1 per player",
     darkMode: "🌙 Dark Mode",
     lightMode: "☀️ Light Mode",
     languageLabel: "Language:",
@@ -1220,6 +1230,10 @@ const I18N = {
     note1: "Without admin mode, the app is view-only.",
     note2: "All data is stored online in Firebase Firestore; you can open it from any device.",
     note3: "Use the Year/Month filters to control the stats period for leaderboard, analysis, and head-to-head."
+    // H2H (by names)
+    receivedBonusByNamesTpl: "• {to} received bonus from {from}: {n}<br/>",
+    receivedPointsByNamesTpl: "• {to} received points from {from}: {n}<br/>",
+
   }
 };
 // expose i18n to global translator
@@ -1276,7 +1290,10 @@ function monthName(m){
 }
 
 function getLang() {
-  return localStorage.getItem("dl_lang") || "ar";
+  const dom = (document.documentElement && document.documentElement.lang) ? document.documentElement.lang : "";
+  if(dom === "ar" || dom === "en") return dom;
+  const ls = localStorage.getItem("dl_lang");
+  return (ls === "ar" || ls === "en") ? ls : "ar";
 }
 function setLang(lang) {
   localStorage.setItem("dl_lang", lang);
@@ -1299,6 +1316,9 @@ function setLang(lang) {
       if (typeof window[name] === "function") window[name]();
     }catch(e){}
   });
+  // Refresh any already-visible H2H reports in the new language
+  try{ autoAnalyzeHeadToHeadIfReady && autoAnalyzeHeadToHeadIfReady(true); }catch(e){}
+  try{ autoAnalyzeTeamsIfReady && autoAnalyzeTeamsIfReady(true); }catch(e){}
 }
 
 function __old_T(key) {
@@ -3431,7 +3451,7 @@ function analyzeHeadToHead(){
 }
 
 // Auto-run H2H analysis when both players are selected
-function autoAnalyzeHeadToHeadIfReady(){
+function autoAnalyzeHeadToHeadIfReady(force){
   const p1 = $("h2hP1")?.value || "";
   const p2 = $("h2hP2")?.value || "";
   if(p1 && p2 && p1 !== p2){
