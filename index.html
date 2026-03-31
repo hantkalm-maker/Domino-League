@@ -796,7 +796,7 @@ function refreshToggleButtonsText(){
 
 
 
-    const APP_BUILD_VERSION = "v56";
+    const APP_BUILD_VERSION = "v57";
 
 
 // ===== UI Settings: Theme + Language =====
@@ -1455,17 +1455,155 @@ function normalizeDateYMD(v){
   }
 }
 
-function _standingsSort(a,b){
-  const ap = (a.finalPoints ?? 0), bp = (b.finalPoints ?? 0);
-  if(bp !== ap) return bp - ap;
-  const ar = (a.rate ?? 0), br = (b.rate ?? 0);
-  if(br !== ar) return br - ar;
-  const aw = (a.wins ?? 0), bw = (b.wins ?? 0);
-  if(bw !== aw) return bw - aw;
-  const am = (a.matches ?? 0), bm = (b.matches ?? 0);
-  if(bm !== am) return bm - am;
+// ===== Standings tie-break rules =====
+// Base ranking remains by final points.
+// When points are equal, the order becomes:
+// 1) More wins in the selected period
+// 2) Better direct head-to-head result inside the tie group
+// 3) Better record against lower-ranked players starting from the last place upward
+// 4) Name as final fallback
+function _standingsNameCompare(a,b){
   return String(a.name||"").localeCompare(String(b.name||""), undefined, {sensitivity:"base"});
 }
+
+function countWinsAgainstOpponent(playerId, opponentId, matchesSubset){
+  let wins = 0;
+  (matchesSubset || []).forEach(m=>{
+    const winners = Array.isArray(m.winners) ? m.winners : [];
+    const losers  = Array.isArray(m.losers)  ? m.losers  : [];
+    if(winners.includes(playerId) && losers.includes(opponentId)) wins++;
+  });
+  return wins;
+}
+
+function getHeadToHeadPairWins(playerAId, playerBId, matchesSubset){
+  let aWins = 0, bWins = 0;
+  (matchesSubset || []).forEach(m=>{
+    const winners = Array.isArray(m.winners) ? m.winners : [];
+    const losers  = Array.isArray(m.losers)  ? m.losers  : [];
+    if(winners.includes(playerAId) && losers.includes(playerBId)) aWins++;
+    else if(winners.includes(playerBId) && losers.includes(playerAId)) bWins++;
+  });
+  return { aWins, bWins };
+}
+
+function getMiniHeadToHeadWins(playerId, tieIds, matchesSubset){
+  let wins = 0;
+  (matchesSubset || []).forEach(m=>{
+    const winners = Array.isArray(m.winners) ? m.winners : [];
+    const losers  = Array.isArray(m.losers)  ? m.losers  : [];
+    if(!winners.includes(playerId)) return;
+    if(losers.some(id => tieIds.has(id))) wins++;
+  });
+  return wins;
+}
+
+function compareAgainstLowerRankedPlayers(a, b, orderedRows, excludedIds, matchesSubset){
+  const lowerRankedOpponents = (orderedRows || [])
+    .filter(r => r && !excludedIds.has(r.id))
+    .slice()
+    .reverse();
+
+  for(const opp of lowerRankedOpponents){
+    const aw = countWinsAgainstOpponent(a.id, opp.id, matchesSubset);
+    const bw = countWinsAgainstOpponent(b.id, opp.id, matchesSubset);
+    if(bw !== aw) return bw - aw;
+  }
+
+  return _standingsNameCompare(a,b);
+}
+
+function resolveSameWinsTieGroup(groupRows, orderedRows, matchesSubset){
+  if(!Array.isArray(groupRows) || groupRows.length <= 1) return (groupRows || []).slice();
+
+  const tieIds = new Set(groupRows.map(r => r.id));
+  const withMiniTable = groupRows.map(r => ({
+    ...r,
+    __miniH2H: getMiniHeadToHeadWins(r.id, tieIds, matchesSubset)
+  }));
+
+  withMiniTable.sort((a,b)=>{
+    const ah = a.__miniH2H ?? 0;
+    const bh = b.__miniH2H ?? 0;
+    if(bh !== ah) return bh - ah;
+    return _standingsNameCompare(a,b);
+  });
+
+  const resolved = [];
+  let i = 0;
+  while(i < withMiniTable.length){
+    let j = i + 1;
+    const sameMini = withMiniTable[i].__miniH2H ?? 0;
+    while(j < withMiniTable.length && ((withMiniTable[j].__miniH2H ?? 0) === sameMini)) j++;
+
+    let miniGroup = withMiniTable.slice(i, j).map(({__miniH2H, ...rest}) => rest);
+
+    if(miniGroup.length === 2){
+      const h2h = getHeadToHeadPairWins(miniGroup[0].id, miniGroup[1].id, matchesSubset);
+      if(h2h.aWins !== h2h.bWins){
+        if(h2h.bWins > h2h.aWins) miniGroup.reverse();
+      } else {
+        const miniIds = new Set(miniGroup.map(r => r.id));
+        miniGroup.sort((a,b)=> compareAgainstLowerRankedPlayers(a, b, orderedRows, miniIds, matchesSubset));
+      }
+    } else if(miniGroup.length > 2){
+      const miniIds = new Set(miniGroup.map(r => r.id));
+      miniGroup.sort((a,b)=> compareAgainstLowerRankedPlayers(a, b, orderedRows, miniIds, matchesSubset));
+    }
+
+    resolved.push(...miniGroup);
+    i = j;
+  }
+
+  return resolved;
+}
+
+function sortStandingsRows(rows, matchesSubset){
+  if(!Array.isArray(rows) || rows.length <= 1) return rows;
+
+  const baseList = rows.slice().sort((a,b)=>{
+    const ap = a.finalPoints ?? 0;
+    const bp = b.finalPoints ?? 0;
+    if(bp !== ap) return bp - ap;
+    return _standingsNameCompare(a,b);
+  });
+
+  const result = [];
+  let i = 0;
+  while(i < baseList.length){
+    let j = i + 1;
+    const samePoints = baseList[i].finalPoints ?? 0;
+    while(j < baseList.length && ((baseList[j].finalPoints ?? 0) === samePoints)) j++;
+
+    const pointGroup = baseList.slice(i, j).sort((a,b)=>{
+      const aw = a.wins ?? 0;
+      const bw = b.wins ?? 0;
+      if(bw !== aw) return bw - aw;
+      return _standingsNameCompare(a,b);
+    });
+
+    const resolvedPointGroup = [];
+    let k = 0;
+    while(k < pointGroup.length){
+      let l = k + 1;
+      const sameWins = pointGroup[k].wins ?? 0;
+      while(l < pointGroup.length && ((pointGroup[l].wins ?? 0) === sameWins)) l++;
+
+      const sameWinsGroup = pointGroup.slice(k, l);
+      const provisionalOrderedRows = [...result, ...pointGroup, ...baseList.slice(j)];
+      const resolvedSameWins = resolveSameWinsTieGroup(sameWinsGroup, provisionalOrderedRows, matchesSubset);
+      resolvedPointGroup.push(...resolvedSameWins);
+      k = l;
+    }
+
+    result.push(...resolvedPointGroup);
+    i = j;
+  }
+
+  rows.splice(0, rows.length, ...result);
+  return rows;
+}
+
 function buildRankMap(matchesSubset, endDateForBan){
   const rows = [];
   state.players.forEach(p=>{
@@ -1482,7 +1620,7 @@ function buildRankMap(matchesSubset, endDateForBan){
       finalPoints: (s.wins - s.losses) + (s.bonusNet || 0)
     });
   });
-  rows.sort(_standingsSort);
+  sortStandingsRows(rows, matchesSubset);
   const map = new Map();
   rows.forEach((r,i)=> map.set(r.id, i+1));
   return map;
@@ -2090,57 +2228,32 @@ function toggleTheme() {
     }
 
     
-    function applyLeaderboardSort(rows){
+    function applyLeaderboardSort(rows, matchesSubset){
       const col = leaderboardSort.column;
       const dir = leaderboardSort.direction === "asc" ? 1 : -1;
 
-      // ✅ قاعدة الترتيب الأساسية المطلوبة:
-      // 1) النقاط النهائية (Points + Bonus)
-      // 2) نسبة الفوز (WinRate) في حال تساوي النقاط
-      // 3) عدد مرات الفوز
-      // 4) عدد الماتشات
-      // 5) الاسم
-      function sortByFinalPoints(a,b){
-        const ap = (a.finalPoints ?? 0), bp = (b.finalPoints ?? 0);
-        if(bp !== ap) return bp - ap;
-
-        const ar = (a.rate ?? 0), br = (b.rate ?? 0);
-        if(br !== ar) return br - ar;
-
-        const aw = (a.wins ?? 0), bw = (b.wins ?? 0);
-        if(bw !== aw) return bw - aw;
-
-        const am = (a.matches ?? 0), bm = (b.matches ?? 0);
-        if(bm !== am) return bm - am;
-
-        return a.name.localeCompare(b.name,"ar");
-      }
-
-      // لو المستخدم بيعمل فرز على النقاط/الترتيب -> نطبق القاعدة الأساسية
+      // قاعدة فصل التعادل الجديدة عند ترتيب النقاط/الترتيب:
+      // 1) النقاط النهائية
+      // 2) الأكثر فوزًا في الفترة المحددة
+      // 3) المواجهات المباشرة
+      // 4) النتائج ضد الأقل ترتيبًا بدءًا من الأخير
+      // 5) الاسم كحل أخير
       if(col === "points" || col === "rank"){
-        rows.sort(sortByFinalPoints);
-        if(dir === -1){
-          // desc (الافتراضي): لا شيء
-        } else {
-          // asc: نعكس
-          rows.reverse();
-        }
+        sortStandingsRows(rows, matchesSubset);
+        if(dir === 1) rows.reverse();
         return;
       }
 
-      // فرز حسب الاسم
       if(col === "name"){
         rows.sort((a,b)=> dir * a.name.localeCompare(b.name,"ar"));
         return;
       }
 
-      // باقي الأعمدة الرقمية: فرز بالعمود ثم الاسم
       rows.sort((a,b)=>{
         const av = a[col] ?? 0;
         const bv = b[col] ?? 0;
         if(av < bv) return -1 * dir;
         if(av > bv) return  1 * dir;
-        // كسر التعادل بالاسم
         return a.name.localeCompare(b.name,"ar");
       });
     }
@@ -2860,23 +2973,18 @@ ${T("banExplanation")}`)) return;
 
 
   // ✅ ترتيب الشهر الرسمي (للاستخدام في سجل الأبطال + تحديد بطل الشهر/السنة)
+  // نفس قاعدة فصل التعادل الجديدة:
   // 1) Final Points = Points + Bonus
-  // 2) Win Rate (wins / totalMatches) عند تساوي النقاط
-  // 3) Wins عند تساوي النقاط ونسبة الفوز
-  // 4) Total Matches عند تساوي ما سبق
+  // 2) More wins in the selected period
+  // 3) Direct head-to-head
+  // 4) Better results against lower-ranked players starting from last place
   // 5) Name
   function compareMonthlyStanding(a,b){
     const ap = (a.finalPoints ?? 0), bp = (b.finalPoints ?? 0);
     if(bp !== ap) return bp - ap;
 
-    const ar = (a.winRate ?? 0), br = (b.winRate ?? 0);
-    if(br !== ar) return br - ar;
-
     const aw = (a.wins ?? 0), bw = (b.wins ?? 0);
     if(bw !== aw) return bw - aw;
-
-    const am = (a.totalMatches ?? 0), bm = (b.totalMatches ?? 0);
-    if(bm !== am) return bm - am;
 
     return (a.name||"").localeCompare(b.name||"", "ar");
   }
@@ -2943,7 +3051,7 @@ ${T("banExplanation")}`)) return;
     });
     if(rows.length === 0) return null;
 
-    rows.sort(compareMonthlyStanding);
+    sortStandingsRows(rows, mMatches);
 
     return rows[0]?.name || null;
   }
@@ -2976,7 +3084,7 @@ ${T("banExplanation")}`)) return;
     });
     if(rows.length === 0) return null;
 
-    rows.sort(compareMonthlyStanding);
+    sortStandingsRows(rows, yMatches);
 
     return rows[0]?.name || null;
   }
@@ -3044,7 +3152,7 @@ ${T("banExplanation")}`)) return;
     });
     if(rows.length === 0) continue;
 
-    rows.sort(compareMonthlyStanding);
+    sortStandingsRows(rows, mMatches);
 
     // حفظ الرانك الشهري لكل لاعب
     rows.forEach((r, i)=>{
@@ -3454,7 +3562,7 @@ function updateMatchesLog(){
       const cols = getLeaderboardColumns();
 
       // نطبّق إعدادات الفرز الحالية
-      applyLeaderboardSort(rows);
+      applyLeaderboardSort(rows, matchesToday);
 
       // رأس الجدول
       const thead = $("leaderboardHead");
