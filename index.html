@@ -503,6 +503,7 @@
       </div>
 
       <div id="playerRecordTables" style="margin-top:10px; display:none;">
+        <div class="small-text" id="playerRecordTeammatesSubTitle" data-i18n="playerRecordTeammatesSubTitle" style="margin:0 0 8px; font-weight:700;">مع الزملاء</div>
         <div class="row">
           <div class="field" style="min-width:280px;">
             <h3 id="playerRecordWinTitle" data-i18n="playerRecordWinTitle" style="font-size:0.95rem; margin:0 0 8px;">🏆 سجل الفوز مع الزملاء</h3>
@@ -527,6 +528,35 @@
                 </tr>
               </thead>
               <tbody id="playerRecordLossesBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="small-text" id="playerRecordOpponentsSubTitle" data-i18n="playerRecordOpponentsSubTitle" style="margin:14px 0 8px; font-weight:700;">ضد اللاعبين</div>
+        <div class="row">
+          <div class="field" style="min-width:280px;">
+            <h3 id="playerRecordVsWinTitle" data-i18n="playerRecordVsWinTitle" style="font-size:0.95rem; margin:0 0 8px;">⚔️ سجل الفوز ضد اللاعبين</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th id="playerRecordVsWinPlayerHead" data-i18n="playerLogOpponent">اللاعب</th>
+                  <th id="playerRecordVsWinCountHead" data-i18n="playerLogWinCount">مرات الفوز</th>
+                </tr>
+              </thead>
+              <tbody id="playerRecordVsWinsBody"></tbody>
+            </table>
+          </div>
+
+          <div class="field" style="min-width:280px;">
+            <h3 id="playerRecordVsLossTitle" data-i18n="playerRecordVsLossTitle" style="font-size:0.95rem; margin:0 0 8px;">🛡️ سجل الخسارة ضد اللاعبين</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th id="playerRecordVsLossPlayerHead" data-i18n="playerLogOpponent">اللاعب</th>
+                  <th id="playerRecordVsLossCountHead" data-i18n="playerLogLossCount">مرات الخسارة</th>
+                </tr>
+              </thead>
+              <tbody id="playerRecordVsLossesBody"></tbody>
             </table>
           </div>
         </div>
@@ -864,13 +894,20 @@ const I18N = {
     playerRecordSectionTitle: "📒 سجل اللاعب",
     playerRecordHelp: "اختر لاعب من القائمة لعرض سجل الفوز والخسارة.",
     playerRecordTitleTpl: "سجل اللاعب {name} ({period})",
+    playerRecordTeammatesSubTitle: "مع الزملاء",
+    playerRecordOpponentsSubTitle: "ضد اللاعبين",
     playerRecordWinTitle: "🏆 سجل الفوز مع الزملاء",
     playerRecordLossTitle: "💥 سجل الخسارة مع الزملاء",
+    playerRecordVsWinTitle: "⚔️ سجل الفوز ضد اللاعبين",
+    playerRecordVsLossTitle: "🛡️ سجل الخسارة ضد اللاعبين",
     playerLogTeammate: "اللاعب",
+    playerLogOpponent: "اللاعب",
     playerLogWinCount: "مرات الفوز",
     playerLogLossCount: "مرات الخسارة",
     playerRecordNoWins: "لا يوجد فوز مع أي لاعب في هذه الفترة.",
     playerRecordNoLosses: "لا يوجد خسارة مع أي لاعب في هذه الفترة.",
+    playerRecordNoVsWins: "لا يوجد فوز ضد أي لاعب في هذه الفترة.",
+    playerRecordNoVsLosses: "لا يوجد خسارة ضد أي لاعب في هذه الفترة.",
     h2hPlayersTitle: "⚔️ تحليل المواجهات المباشرة بين لاعبين",
     h2hTeamsTitle: "🧩 تحليل المواجهات المباشرة بين فرق (2 ضد 2)",
     adminSectionTitle: "🔐 وضع المدير والإدارة المتقدمة",
@@ -1212,13 +1249,20 @@ const I18N = {
     playerRecordSectionTitle: "📒 Player Record",
     playerRecordHelp: "Select a player to view their win/loss record.",
     playerRecordTitleTpl: "Player record for {name} ({period})",
+    playerRecordTeammatesSubTitle: "With teammates",
+    playerRecordOpponentsSubTitle: "Against players",
     playerRecordWinTitle: "🏆 Wins with teammates",
     playerRecordLossTitle: "💥 Losses with teammates",
+    playerRecordVsWinTitle: "⚔️ Wins against players",
+    playerRecordVsLossTitle: "🛡️ Losses against players",
     playerLogTeammate: "Player",
+    playerLogOpponent: "Player",
     playerLogWinCount: "Wins",
     playerLogLossCount: "Losses",
     playerRecordNoWins: "No wins with any player in this period.",
     playerRecordNoLosses: "No losses with any player in this period.",
+    playerRecordNoVsWins: "No wins against any player in this period.",
+    playerRecordNoVsLosses: "No losses against any player in this period.",
     h2hPlayersTitle: "⚔️ Head-to-Head (Player vs Player)",
     h2hTeamsTitle: "🧩 Head-to-Head (2 vs 2 Teams)",
     adminSectionTitle: "🔐 Admin Mode & Advanced Management",
@@ -1762,12 +1806,20 @@ function refreshPlayerAnalysisTexts(){
       ["lblCountTimes2","countTimesLabel"],
       ["lblCountTimes3","countTimesLabel"],
       ["lblCountTimes4","countTimesLabel"],
+      ["playerRecordTeammatesSubTitle","playerRecordTeammatesSubTitle"],
+      ["playerRecordOpponentsSubTitle","playerRecordOpponentsSubTitle"],
       ["playerRecordWinTitle","playerRecordWinTitle"],
       ["playerRecordLossTitle","playerRecordLossTitle"],
+      ["playerRecordVsWinTitle","playerRecordVsWinTitle"],
+      ["playerRecordVsLossTitle","playerRecordVsLossTitle"],
       ["playerRecordWinPlayerHead","playerLogTeammate"],
       ["playerRecordWinCountHead","playerLogWinCount"],
       ["playerRecordLossPlayerHead","playerLogTeammate"],
       ["playerRecordLossCountHead","playerLogLossCount"],
+      ["playerRecordVsWinPlayerHead","playerLogOpponent"],
+      ["playerRecordVsWinCountHead","playerLogWinCount"],
+      ["playerRecordVsLossPlayerHead","playerLogOpponent"],
+      ["playerRecordVsLossCountHead","playerLogLossCount"],
       ["lblTotalWins","totalWinsPeriod"],
       ["lblTotalLosses","totalLossesPeriod"],
       ["lblTotalMatches","totalMatchesPeriod"],
@@ -1866,6 +1918,14 @@ function applyLang(lang) {
     ["lblCountTimes2","countTimesLabel"],
     ["lblCountTimes3","countTimesLabel"],
     ["lblCountTimes4","countTimesLabel"],
+    ["playerRecordTeammatesSubTitle","playerRecordTeammatesSubTitle"],
+    ["playerRecordOpponentsSubTitle","playerRecordOpponentsSubTitle"],
+    ["playerRecordVsWinTitle","playerRecordVsWinTitle"],
+    ["playerRecordVsLossTitle","playerRecordVsLossTitle"],
+    ["playerRecordVsWinPlayerHead","playerLogOpponent"],
+    ["playerRecordVsWinCountHead","playerLogWinCount"],
+    ["playerRecordVsLossPlayerHead","playerLogOpponent"],
+    ["playerRecordVsLossCountHead","playerLogLossCount"],
     ["lblTotalWins","totalWinsPeriod"],
     ["lblTotalLosses","totalLossesPeriod"],
     ["lblTotalMatches","totalMatchesPeriod"],
@@ -1954,6 +2014,14 @@ if (lbToggleBtn) lbToggleBtn.textContent = (leaderboardViewMode === "compact") ?
   const idTextKeys = [
     ["matchesLogIntro","matchesLogIntro"],
     ["playerRecordHelp","playerRecordHelp"],
+    ["playerRecordTeammatesSubTitle","playerRecordTeammatesSubTitle"],
+    ["playerRecordOpponentsSubTitle","playerRecordOpponentsSubTitle"],
+    ["playerRecordVsWinTitle","playerRecordVsWinTitle"],
+    ["playerRecordVsLossTitle","playerRecordVsLossTitle"],
+    ["playerRecordVsWinPlayerHead","playerLogOpponent"],
+    ["playerRecordVsWinCountHead","playerLogWinCount"],
+    ["playerRecordVsLossPlayerHead","playerLogOpponent"],
+    ["playerRecordVsLossCountHead","playerLogLossCount"],
     ["playerDetailsHelp","playerDetailsHelp"],
     ["h2hHelp","h2hHelp"],
     ["h2hTeamsHelp","h2hTeamsHelp"],
@@ -3857,6 +3925,8 @@ function updateMatchesLog(){
     function computePlayerRecordLists(playerId, matches){
       const winMap = new Map();
       const lossMap = new Map();
+      const winVsMap = new Map();
+      const lossVsMap = new Map();
 
       matches.forEach(m=>{
         const winners = Array.isArray(m.winners) ? m.winners : [];
@@ -3868,12 +3938,22 @@ function updateMatchesLog(){
               winMap.set(id, (winMap.get(id) || 0) + 1);
             }
           });
+          losers.forEach(id=>{
+            if(id && id !== playerId){
+              winVsMap.set(id, (winVsMap.get(id) || 0) + 1);
+            }
+          });
         }
 
         if(losers.includes(playerId)){
           losers.forEach(id=>{
             if(id && id !== playerId){
               lossMap.set(id, (lossMap.get(id) || 0) + 1);
+            }
+          });
+          winners.forEach(id=>{
+            if(id && id !== playerId){
+              lossVsMap.set(id, (lossVsMap.get(id) || 0) + 1);
             }
           });
         }
@@ -3895,7 +3975,9 @@ function updateMatchesLog(){
 
       return {
         winsWith: toSortedList(winMap),
-        lossesWith: toSortedList(lossMap)
+        lossesWith: toSortedList(lossMap),
+        winsAgainst: toSortedList(winVsMap),
+        lossesAgainst: toSortedList(lossVsMap)
       };
     }
 
@@ -3905,7 +3987,9 @@ function updateMatchesLog(){
       const wrapper = $("playerRecordTables");
       const winsBody = $("playerRecordWinsBody");
       const lossesBody = $("playerRecordLossesBody");
-      if(!summary || !wrapper || !winsBody || !lossesBody) return;
+      const vsWinsBody = $("playerRecordVsWinsBody");
+      const vsLossesBody = $("playerRecordVsLossesBody");
+      if(!summary || !wrapper || !winsBody || !lossesBody || !vsWinsBody || !vsLossesBody) return;
 
       if(!sel || !sel.value){
         summary.textContent = T("playerRecordHelp");
@@ -3962,6 +4046,8 @@ function updateMatchesLog(){
 
       renderRows(winsBody, record.winsWith, "playerRecordNoWins");
       renderRows(lossesBody, record.lossesWith, "playerRecordNoLosses");
+      renderRows(vsWinsBody, record.winsAgainst, "playerRecordNoVsWins");
+      renderRows(vsLossesBody, record.lossesAgainst, "playerRecordNoVsLosses");
       wrapper.style.display = "block";
     }
 
