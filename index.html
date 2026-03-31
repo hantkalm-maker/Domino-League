@@ -489,6 +489,50 @@
       </div>
     </section>
 
+    <!-- سجل اللاعب -->
+    <section class="card">
+      <h2 id="playerRecordSectionTitle" data-i18n="playerRecordSectionTitle">📒 سجل اللاعب</h2>
+      <div class="row">
+        <div class="field">
+          <label for="playerRecordSelect" data-i18n="choosePlayer">اختر لاعب</label>
+          <select id="playerRecordSelect"></select>
+        </div>
+      </div>
+      <div id="playerRecordSummary" class="small-text">
+        <span id="playerRecordHelp" data-i18n="playerRecordHelp">اختر لاعب من القائمة لعرض سجل الفوز والخسارة.</span>
+      </div>
+
+      <div id="playerRecordTables" style="margin-top:10px; display:none;">
+        <div class="row">
+          <div class="field" style="min-width:280px;">
+            <h3 id="playerRecordWinTitle" data-i18n="playerRecordWinTitle" style="font-size:0.95rem; margin:0 0 8px;">🏆 سجل الفوز مع الزملاء</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th id="playerRecordWinPlayerHead" data-i18n="playerLogTeammate">اللاعب</th>
+                  <th id="playerRecordWinCountHead" data-i18n="playerLogWinCount">مرات الفوز</th>
+                </tr>
+              </thead>
+              <tbody id="playerRecordWinsBody"></tbody>
+            </table>
+          </div>
+
+          <div class="field" style="min-width:280px;">
+            <h3 id="playerRecordLossTitle" data-i18n="playerRecordLossTitle" style="font-size:0.95rem; margin:0 0 8px;">💥 سجل الخسارة مع الزملاء</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th id="playerRecordLossPlayerHead" data-i18n="playerLogTeammate">اللاعب</th>
+                  <th id="playerRecordLossCountHead" data-i18n="playerLogLossCount">مرات الخسارة</th>
+                </tr>
+              </thead>
+              <tbody id="playerRecordLossesBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- تحليل لاعب واحد -->
     <section class="card">
       <h2 id="playerAnalysisSectionTitle" data-i18n="playerAnalysisSectionTitle">📊 تحليل لاعب منفرد</h2>
@@ -817,6 +861,16 @@ const I18N = {
     championsSectionTitle: "🏅 سجل الأبطال (شهري)",
     matchesLogSectionTitle: "📜 سجل الماتشات (كل الوقت)",
     playerAnalysisSectionTitle: "📊 تحليل لاعب منفرد",
+    playerRecordSectionTitle: "📒 سجل اللاعب",
+    playerRecordHelp: "اختر لاعب من القائمة لعرض سجل الفوز والخسارة.",
+    playerRecordTitleTpl: "سجل اللاعب {name} ({period})",
+    playerRecordWinTitle: "🏆 سجل الفوز مع الزملاء",
+    playerRecordLossTitle: "💥 سجل الخسارة مع الزملاء",
+    playerLogTeammate: "اللاعب",
+    playerLogWinCount: "مرات الفوز",
+    playerLogLossCount: "مرات الخسارة",
+    playerRecordNoWins: "لا يوجد فوز مع أي لاعب في هذه الفترة.",
+    playerRecordNoLosses: "لا يوجد خسارة مع أي لاعب في هذه الفترة.",
     h2hPlayersTitle: "⚔️ تحليل المواجهات المباشرة بين لاعبين",
     h2hTeamsTitle: "🧩 تحليل المواجهات المباشرة بين فرق (2 ضد 2)",
     adminSectionTitle: "🔐 وضع المدير والإدارة المتقدمة",
@@ -983,7 +1037,7 @@ const I18N = {
     h2hSameTeamWinTpl: "• فوز معًا: {rate} ({wins} من {total} ماتشات)<br/>",
     h2hSameTeamLoseTpl: "• خسارة معًا: {rate} ({losses} من {total} ماتشات)<br/>",
     h2hBonusTitle: "<br/><b>🎁 البونص (محسوب منفصل)</b><br/>",
-    h2hBaseTitle: "<br/><b>🎯 النقاط الأساسية (بدون بونص)</b><br/>",
+    h2hBaseTitle: "<br/><b>🎯 النقاط النهائية (بالبونص)</b><br/>",
     h2hP1GotBonusFromP2Tpl: "• حصل {p1} من {p2} على بونص: {n}<br/>",
     h2hP2GotBonusFromP1Tpl: "• حصل {p2} من {p1} على بونص: {n}<br/>",
     h2hP1GotBaseFromP2Tpl: "• حصل {p1} من {p2} على نقاط: {n}<br/>",
@@ -1029,7 +1083,7 @@ const I18N = {
     h2hSameTeamWinTpl: "• Win together: {rate} ({wins} of {total} matches)<br/>",
     h2hSameTeamLoseTpl: "• Lose together: {rate} ({losses} of {total} matches)<br/>",
     h2hBonusTitle: "<br/><b>🎁 Bonus (calculated separately)</b><br/>",
-    h2hBaseTitle: "<br/><b>🎯 Base points (without bonus)</b><br/>",
+    h2hBaseTitle: "<br/><b>🎯 Final points (including bonus)</b><br/>",
     h2hP1GotBonusFromP2Tpl: "• حصل {p1} من {p2} على بونص: {n}<br/>",
     h2hP2GotBonusFromP1Tpl: "• حصل {p2} من {p1} على بونص: {n}<br/>",
     h2hP1GotBaseFromP2Tpl: "• حصل {p1} من {p2} على نقاط: {n}<br/>",
@@ -1136,7 +1190,7 @@ const I18N = {
     note3: "استخدم فلتر السنة والشهر للتحكم في فترة الإحصائيات للتـرتيب والتحليل والمواجهات.",
     // H2H (by names)
     receivedBonusByNamesTpl: "• حصل {to} من {from} على بونص: {n}<br/>",
-    receivedPointsByNamesTpl: "• حصل {to} من {from} على نقاط: {n}<br/>",
+    receivedPointsByNamesTpl: "• حصل {to} من {from} على نقاط نهائية: {n}<br/>",
 
   },
   en: {
@@ -1155,6 +1209,16 @@ const I18N = {
     championsSectionTitle: "🏅 Champions Log (Monthly)",
     matchesLogSectionTitle: "📜 Matches Log (All Time)",
     playerAnalysisSectionTitle: "📊 Single Player Analysis",
+    playerRecordSectionTitle: "📒 Player Record",
+    playerRecordHelp: "Select a player to view their win/loss record.",
+    playerRecordTitleTpl: "Player record for {name} ({period})",
+    playerRecordWinTitle: "🏆 Wins with teammates",
+    playerRecordLossTitle: "💥 Losses with teammates",
+    playerLogTeammate: "Player",
+    playerLogWinCount: "Wins",
+    playerLogLossCount: "Losses",
+    playerRecordNoWins: "No wins with any player in this period.",
+    playerRecordNoLosses: "No losses with any player in this period.",
     h2hPlayersTitle: "⚔️ Head-to-Head (Player vs Player)",
     h2hTeamsTitle: "🧩 Head-to-Head (2 vs 2 Teams)",
     adminSectionTitle: "🔐 Admin Mode & Advanced Management",
@@ -1320,7 +1384,7 @@ const I18N = {
     note3: "Use the Year/Month filters to control the stats period for leaderboard, analysis, and head-to-head.",
     // H2H (by names)
     receivedBonusByNamesTpl: "• {to} received bonus from {from}: {n}<br/>",
-    receivedPointsByNamesTpl: "• {to} received points from {from}: {n}<br/>",
+    receivedPointsByNamesTpl: "• {to} received final points from {from}: {n}<br/>",
 
   }
 };
@@ -1360,10 +1424,10 @@ window.I18N = I18N;
 
       h2hWinRateTitle: "<strong>Win rate when they face each other in this period:</strong><br/>",
       h2hBonusTitle: "<strong>🎁 Bonus (calculated separately)</strong><br/>",
-      h2hBasePointsTitle: "<strong>🎯 Base points (without bonus)</strong><br/>",
+      h2hBasePointsTitle: "<strong>🎯 Final points (including bonus)</strong><br/>",
 
       receivedBonusByNamesTpl: "• {to} received bonus from {from}: {n}<br/>",
-      receivedPointsByNamesTpl: "• {to} received points from {from}: {n}<br/>",
+      receivedPointsByNamesTpl: "• {to} received final points from {from}: {n}<br/>",
 
       h2hTeamsReportTitleTpl: "Head-to-head analysis between Team {t1} and Team {t2} ({period}):<br/><br/>",
       h2hTeamsPlayedAgainstTpl: "• Played against each other in {n} full-ten match(es).<br/>",
@@ -1377,7 +1441,7 @@ window.I18N = I18N;
       h2hSameTeamRateTitle: "<br/>Results when they play on the same team in this period:<br/>",
       h2hSameTeamWinTpl: "• Win together: {rate} ({wins} of {total} matches)<br/>",
       h2hSameTeamLoseTpl: "• Lose together: {rate} ({losses} of {total} matches)<br/>",
-      h2hBaseTitle: "<br/><b>🎯 Base points (without bonus)</b><br/>",
+      h2hBaseTitle: "<br/><b>🎯 Final points (including bonus)</b><br/>",
       // Days analysis labels used in UI
       daysAnalysisTitle: "📅 Win/Loss days analysis in the selected period",
       daysWonExactly2: "Days won exactly 2 times",
@@ -1405,7 +1469,7 @@ window.I18N = I18N;
       h2hSameTeamWinTpl: "• فوز معًا: {rate} ({wins} من {total} ماتشات)<br/>",
       h2hSameTeamLoseTpl: "• خسارة معًا: {rate} ({losses} من {total} ماتشات)<br/>",
       h2hBonusTitle: "<br/><b>🎁 البونص (محسوب منفصل)</b><br/>",
-      h2hBaseTitle: "<br/><b>🎯 النقاط الأساسية (بدون بونص)</b><br/>",
+      h2hBaseTitle: "<br/><b>🎯 النقاط النهائية (بالبونص)</b><br/>",
       h2hP1GotBonusFromP2Tpl: "• حصل اللاعب 1 من اللاعب 2 على بونص: {n}<br/>",
       h2hP2GotBonusFromP1Tpl: "• حصل اللاعب 2 من اللاعب 1 على بونص: {n}<br/>",
       h2hP1GotBaseFromP2Tpl: "• حصل اللاعب 1 من اللاعب 2 على نقاط: {n}<br/>",
@@ -1663,6 +1727,7 @@ try{ refreshToggleButtonsText(); }catch(e){}
 // Re-render dynamic sections so tables/headers/buttons update immediately
   const fns = [
     "updatePlayersUI",
+    "updatePlayerRecordUI",
     "updatePlayerDetailsUI",
     "updateLeaderboard",
     "updateChampionsLog",
@@ -1697,6 +1762,12 @@ function refreshPlayerAnalysisTexts(){
       ["lblCountTimes2","countTimesLabel"],
       ["lblCountTimes3","countTimesLabel"],
       ["lblCountTimes4","countTimesLabel"],
+      ["playerRecordWinTitle","playerRecordWinTitle"],
+      ["playerRecordLossTitle","playerRecordLossTitle"],
+      ["playerRecordWinPlayerHead","playerLogTeammate"],
+      ["playerRecordWinCountHead","playerLogWinCount"],
+      ["playerRecordLossPlayerHead","playerLogTeammate"],
+      ["playerRecordLossCountHead","playerLogLossCount"],
       ["lblTotalWins","totalWinsPeriod"],
       ["lblTotalLosses","totalLossesPeriod"],
       ["lblTotalMatches","totalMatchesPeriod"],
@@ -1774,7 +1845,7 @@ function applyLang(lang) {
   // Section headings
   const sectionIds = [
     "playersSectionTitle","matchSectionTitle","leaderboardSectionTitle","championsSectionTitle",
-    "matchesLogSectionTitle","playerAnalysisSectionTitle","h2hPlayersTitle","h2hTeamsTitle",
+    "matchesLogSectionTitle","playerRecordSectionTitle","playerAnalysisSectionTitle","h2hPlayersTitle","h2hTeamsTitle",
     "adminSectionTitle","notesSectionTitle"
   ];
   sectionIds.forEach(id=>{
@@ -1831,6 +1902,7 @@ function applyLang(lang) {
   setLabel("loserP2", "loserTeamP2");
   setLabel("filterYear", "year");
   setLabel("filterMonth", "month");
+  setLabel("playerRecordSelect", "choosePlayer");
   setLabel("playerDetailsSelect", "choosePlayer");
   setLabel("h2hP1", "firstPlayer");
   setLabel("h2hP2", "secondPlayer");
@@ -1881,6 +1953,7 @@ if (lbToggleBtn) lbToggleBtn.textContent = (leaderboardViewMode === "compact") ?
   // Static helper texts by id
   const idTextKeys = [
     ["matchesLogIntro","matchesLogIntro"],
+    ["playerRecordHelp","playerRecordHelp"],
     ["playerDetailsHelp","playerDetailsHelp"],
     ["h2hHelp","h2hHelp"],
     ["h2hTeamsHelp","h2hTeamsHelp"],
@@ -2487,6 +2560,7 @@ function toggleTheme() {
 
       const scoreSelectIds = ["winnerP1","winnerP2","loserP1","loserP2"];
       const analyticsSelectIds = [
+        "playerRecordSelect",
         "playerDetailsSelect",
         "h2hP1",
         "h2hP2",
@@ -2531,6 +2605,9 @@ function toggleTheme() {
         });
 
         if(current && playersForAnalytics.some(p=>p.id===current)) sel.value=current;
+        else if(id === "playerRecordSelect"){
+          updatePlayerRecordUI();
+        }
         else if(id === "playerDetailsSelect"){
           // لو اللاعب المختار اختفى بسبب الحظر/الفترة، نخفي التحليل
           updatePlayerDetailsUI();
@@ -3777,6 +3854,117 @@ function updateMatchesLog(){
       };
     }
 
+    function computePlayerRecordLists(playerId, matches){
+      const winMap = new Map();
+      const lossMap = new Map();
+
+      matches.forEach(m=>{
+        const winners = Array.isArray(m.winners) ? m.winners : [];
+        const losers  = Array.isArray(m.losers) ? m.losers : [];
+
+        if(winners.includes(playerId)){
+          winners.forEach(id=>{
+            if(id && id !== playerId){
+              winMap.set(id, (winMap.get(id) || 0) + 1);
+            }
+          });
+        }
+
+        if(losers.includes(playerId)){
+          losers.forEach(id=>{
+            if(id && id !== playerId){
+              lossMap.set(id, (lossMap.get(id) || 0) + 1);
+            }
+          });
+        }
+      });
+
+      const toSortedList = (map) => {
+        return Array.from(map.entries()).map(([id, count])=>{
+          const p = getPlayerById(id);
+          return {
+            id,
+            name: p ? p.name : (T("idPrefix") + " " + id),
+            count
+          };
+        }).sort((a,b)=>{
+          if(b.count !== a.count) return b.count - a.count;
+          return a.name.localeCompare(b.name, getLang() === "en" ? "en" : "ar");
+        });
+      };
+
+      return {
+        winsWith: toSortedList(winMap),
+        lossesWith: toSortedList(lossMap)
+      };
+    }
+
+    function updatePlayerRecordUI(){
+      const sel = $("playerRecordSelect");
+      const summary = $("playerRecordSummary");
+      const wrapper = $("playerRecordTables");
+      const winsBody = $("playerRecordWinsBody");
+      const lossesBody = $("playerRecordLossesBody");
+      if(!summary || !wrapper || !winsBody || !lossesBody) return;
+
+      if(!sel || !sel.value){
+        summary.textContent = T("playerRecordHelp");
+        wrapper.style.display = "none";
+        return;
+      }
+
+      const id = sel.value;
+      const player = getPlayerById(id);
+      if(!player){
+        summary.textContent = T("playerIdNotFound");
+        wrapper.style.display = "none";
+        return;
+      }
+
+      if(!shouldShowPlayerForSelectedRange(player, getSelectedRangeEndDate())){
+        summary.textContent = T("playerBannedInPeriodTpl").replace("{name}", player.name);
+        wrapper.style.display = "none";
+        return;
+      }
+
+      const matches = getFilteredMatches();
+      const record = computePlayerRecordLists(id, matches);
+      const yearVal = $("filterYear").value;
+      const monthVal = $("filterMonth").value;
+      const label = getFilterLabel(yearVal, monthVal);
+
+      summary.innerHTML = T("playerRecordTitleTpl")
+        .replace("{name}", `<strong>${player.name}</strong>`)
+        .replace("{period}", label);
+
+      const renderRows = (tbody, rows, emptyKey) => {
+        tbody.innerHTML = "";
+        if(!rows.length){
+          const tr = document.createElement("tr");
+          const td = document.createElement("td");
+          td.colSpan = 2;
+          td.textContent = T(emptyKey);
+          tr.appendChild(td);
+          tbody.appendChild(tr);
+          return;
+        }
+        rows.forEach(item=>{
+          const tr = document.createElement("tr");
+          const tdName = document.createElement("td");
+          tdName.textContent = item.name;
+          const tdCount = document.createElement("td");
+          tdCount.textContent = item.count;
+          tr.appendChild(tdName);
+          tr.appendChild(tdCount);
+          tbody.appendChild(tr);
+        });
+      };
+
+      renderRows(winsBody, record.winsWith, "playerRecordNoWins");
+      renderRows(lossesBody, record.lossesWith, "playerRecordNoLosses");
+      wrapper.style.display = "block";
+    }
+
     function updatePlayerDetailsUI(){
       const sel=$("playerDetailsSelect");
       const summary=$("playerDetailsSummary");
@@ -4000,16 +4188,16 @@ function analyzeHeadToHead(){
     .replace("{from}", `<strong>${p1Name}</strong>`)
     .replace("{n}", `<strong>${p2FromP1Bonus}</strong>`);
 
-  // Base points details (no bonus)
+  // Final points details (base + bonus)
   html += T("h2hBaseTitle");
   html += T("receivedPointsByNamesTpl")
     .replace("{to}", `<strong>${p1Name}</strong>`)
     .replace("{from}", `<strong>${p2Name}</strong>`)
-    .replace("{n}", `<strong>${p1FromP2Base}</strong>`);
+    .replace("{n}", `<strong>${p1FromP2Base + p1FromP2Bonus}</strong>`);
   html += T("receivedPointsByNamesTpl")
     .replace("{to}", `<strong>${p2Name}</strong>`)
     .replace("{from}", `<strong>${p1Name}</strong>`)
-    .replace("{n}", `<strong>${p2FromP1Base}</strong>`);
+    .replace("{n}", `<strong>${p2FromP1Base + p2FromP1Bonus}</strong>`);
 
   out.innerHTML = html;
 }
@@ -4192,6 +4380,7 @@ function autoAnalyzeTeamsHeadToHeadIfReady(){
       updateChampionsLog();
       updateMatchesLog();
       updateHeadToHeadUI(true);
+      if($("playerRecordSelect")) updatePlayerRecordUI();
       if($("playerDetailsSelect")) updatePlayerDetailsUI();
 
       // باقي اللستينرز زي ما هي
@@ -4199,6 +4388,7 @@ function autoAnalyzeTeamsHeadToHeadIfReady(){
       $("addMatchBtn").addEventListener("click",addMatch);
       $("bonusBtn").addEventListener("click",toggleBonus);
       $("resetAllBtn").addEventListener("click",resetAll);
+      $("playerRecordSelect").addEventListener("change",updatePlayerRecordUI);
       $("playerDetailsSelect").addEventListener("change",updatePlayerDetailsUI);
       const __h2hBtn = $("h2hAnalyzeBtn");
       if(__h2hBtn){ __h2hBtn.addEventListener("click", analyzeHeadToHead); }
@@ -4224,7 +4414,9 @@ function autoAnalyzeTeamsHeadToHeadIfReady(){
       $("filterYear").addEventListener("change",()=>{
         updatePlayersUI();
         updateLeaderboard();
+        updatePlayerRecordUI();
         if($("playerDetailsSelect").value) updatePlayerDetailsUI();
+        else updatePlayerDetailsUI();
         if($("h2hP1").value && $("h2hP2").value) analyzeHeadToHead(); 
         else updateHeadToHeadUI(true);
 
@@ -4238,7 +4430,9 @@ function autoAnalyzeTeamsHeadToHeadIfReady(){
       $("filterMonth").addEventListener("change",()=>{
         updatePlayersUI();
         updateLeaderboard();
+        updatePlayerRecordUI();
         if($("playerDetailsSelect").value) updatePlayerDetailsUI();
+        else updatePlayerDetailsUI();
         if($("h2hP1").value && $("h2hP2").value) analyzeHeadToHead(); 
         else updateHeadToHeadUI(true);
 
@@ -4254,7 +4448,9 @@ function autoAnalyzeTeamsHeadToHeadIfReady(){
           leaderboardViewMode = (leaderboardViewMode === "compact") ? "detailed" : "compact";
           toggleViewBtn.textContent = (leaderboardViewMode === "compact") ? T("detailedView") : T("compactView");
           updateLeaderboard();
+          updatePlayerRecordUI();
           if($("playerDetailsSelect").value) updatePlayerDetailsUI();
+          else updatePlayerDetailsUI();
           if($("h2hP1").value && $("h2hP2").value) analyzeHeadToHead(); 
           else updateHeadToHeadUI(true);
 
