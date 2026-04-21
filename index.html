@@ -753,20 +753,20 @@
           <button class="danger" id="resetAllBtn" data-i18n="resetAll">🧨 مسح كل البيانات</button>
         </div>
         <div class="field" style="flex:0 0 auto;">
-          <button class="primary" id="backupBtn" disabled data-i18n="backupSoon">💾 نسخ احتياطي (قريبًا)</button>
+          <button class="primary" id="backupBtn" disabled data-i18n="backupData">💾 نسخ احتياطي</button>
         </div>
         <div class="field" style="flex:0 0 auto;">
-          <button class="primary" id="importBtn" disabled data-i18n="importSoon">📥 استيراد البيانات (قريبًا)</button>
+          <button class="primary" id="importBtn" disabled data-i18n="importData">📥 استيراد البيانات</button>
         </div>
         <div class="field" style="flex:0 0 auto;">
-          <button class="primary" id="exportBtn" disabled data-i18n="exportSoon">📤 تصدير البيانات (قريبًا)</button>
+          <button class="primary" id="exportBtn" disabled data-i18n="exportData">📤 تصدير البيانات</button>
         </div>
       </div>
+      <input id="importFileInput" type="file" accept="application/json,.json" style="display:none;">
 
       <div class="small-text" id="adminDataNotes">
         <span id="resetWarning1" data-i18n="resetWarning1">زر <strong>مسح كل البيانات</strong> يمسح كل اللاعبين وكل الماتشات نهائيًا من قاعدة البيانات (للاستخدام بحذر شديد).</span><br>
-        <span id="resetWarning2" data-i18n="resetWarning2">أزرار النسخ الاحتياطي والاستيراد والتصدير <strong>غير مفعّلة حاليًا</strong>،
-        وهنفعّلها بعد ما نضبط منطق حفظ/استرجاع البيانات.</span>
+        <span id="resetWarning2" data-i18n="resetWarning2">الاستيراد يستبدل اللاعبين والماتشات الحالية ببيانات الملف بعد التأكيد. اعمل نسخة احتياطية قبل الاستيراد لو البيانات مهمة.</span>
       </div>
     </section>
 
@@ -1029,11 +1029,20 @@ const I18N = {
     adminEnabled: "وضع المدير مُفعّل: مسموح بإضافة لاعبين وتسجيل/حذف الماتشات ومسح البيانات.",
     dataAdminTitle: "إدارة البيانات (للمدير فقط)",
     resetAll: "🧨 مسح كل البيانات",
-    backupSoon: "💾 نسخ احتياطي (قريبًا)",
-    importSoon: "📥 استيراد البيانات (قريبًا)",
-    exportSoon: "📤 تصدير البيانات (قريبًا)",
+    backupData: "💾 نسخ احتياطي",
+    importData: "📥 استيراد البيانات",
+    exportData: "📤 تصدير البيانات",
+    backupSoon: "💾 نسخ احتياطي",
+    importSoon: "📥 استيراد البيانات",
+    exportSoon: "📤 تصدير البيانات",
     resetWarning1: "زر مسح كل البيانات يمسح كل اللاعبين وكل الماتشات نهائيًا من قاعدة البيانات (للاستخدام بحذر شديد).",
-    resetWarning2: "أزرار النسخ الاحتياطي والاستيراد والتصدير غير مفعّلة حاليًا، وهنفعّلها بعد ما نضبط منطق حفظ/استرجاع البيانات.",
+    resetWarning2: "الاستيراد يستبدل اللاعبين والماتشات الحالية ببيانات الملف بعد التأكيد. اعمل نسخة احتياطية قبل الاستيراد لو البيانات مهمة.",
+    backupDone: "تم تجهيز ملف النسخة الاحتياطية.",
+    exportDone: "تم تجهيز ملف التصدير.",
+    importConfirm: "سيتم استبدال اللاعبين والماتشات الحالية ببيانات الملف. هل أنت متأكد؟",
+    importDoneTpl: "تم الاستيراد بنجاح: {players} لاعب و {matches} ماتش.",
+    importInvalidFile: "ملف البيانات غير صالح.",
+    importNeedAdmin: "لازم تفعّل وضع المدير لاستخدام الاستيراد/التصدير.",
     
     // Player analysis
     totalWinsPeriod: "إجمالي مرات الفوز في الفترة المحددة",
@@ -1397,11 +1406,20 @@ const I18N = {
     adminEnabled: "Admin mode enabled: you can add players, add/delete matches, and reset data.",
     dataAdminTitle: "Data Management (Admin only)",
     resetAll: "🧨 Reset All Data",
-    backupSoon: "💾 Backup (Soon)",
-    importSoon: "📥 Import (Soon)",
-    exportSoon: "📤 Export (Soon)",
+    backupData: "💾 Backup",
+    importData: "📥 Import Data",
+    exportData: "📤 Export Data",
+    backupSoon: "💾 Backup",
+    importSoon: "📥 Import Data",
+    exportSoon: "📤 Export Data",
     resetWarning1: "Reset All Data deletes all players and all matches permanently from the database (use with extreme caution).",
-    resetWarning2: "Backup/Import/Export buttons are currently disabled and will be enabled after implementing reliable save/restore logic.",
+    resetWarning2: "Import replaces the current players and matches after confirmation. Back up first if the data matters.",
+    backupDone: "Backup file is ready.",
+    exportDone: "Export file is ready.",
+    importConfirm: "This will replace the current players and matches with the file data. Are you sure?",
+    importDoneTpl: "Import completed: {players} players and {matches} matches.",
+    importInvalidFile: "Invalid data file.",
+    importNeedAdmin: "Admin mode is required to import/export data.",
     // Player analysis (best mate / opponent)
     playerBestMateTitle: "🤝 Best teammate in the same period",
     bestMateWinLabel: "Most wins with",
@@ -2004,11 +2022,11 @@ if (lbToggleBtn) lbToggleBtn.textContent = (leaderboardViewMode === "compact") ?
   const resetAllBtn = document.getElementById("resetAllBtn");
   if (resetAllBtn) resetAllBtn.textContent = T("resetAll");
   const backupBtn = document.getElementById("backupBtn");
-  if (backupBtn) backupBtn.textContent = T("backupSoon");
+  if (backupBtn) backupBtn.textContent = T("backupData");
   const importBtn = document.getElementById("importBtn");
-  if (importBtn) importBtn.textContent = T("importSoon");
+  if (importBtn) importBtn.textContent = T("importData");
   const exportBtn = document.getElementById("exportBtn");
-  if (exportBtn) exportBtn.textContent = T("exportSoon");
+  if (exportBtn) exportBtn.textContent = T("exportData");
 
   // Static helper texts by id
   const idTextKeys = [
@@ -2464,11 +2482,7 @@ function toggleTheme() {
             createdAt: data.createdAt || null,
             bonusApplied: data.bonusApplied || false,
             bonusValue: Number(data.bonusValue || 0)
-                }, (err)=>{
-        console.error("matches onSnapshot error:", err);
-        const s = document.getElementById("fbStatus");
-        if(s) s.textContent = "Firebase error (matches): " + (err?.message || err);
-      });
+          });
         });
         state.matches = matches;
         updateFilterYearOptions();
@@ -2477,12 +2491,16 @@ function toggleTheme() {
         updateHeadToHeadUI(false);
         updateMatchesLog();
         updateChampionsLog();
+      }, (err)=>{
+        console.error("matches onSnapshot error:", err);
+        const s = document.getElementById("fbStatus");
+        if(s) s.textContent = "Firebase error (matches): " + (err?.message || err);
       });
     }
 
     // ===== ADMIN =====
     function updateAdminUI(){
-      const ids = ["addPlayerBtn","addMatchBtn","resetAllBtn","bonusBtn"];
+      const ids = ["addPlayerBtn","addMatchBtn","resetAllBtn","backupBtn","importBtn","exportBtn","bonusBtn"];
       ids.forEach(id=>{
         const el=$(id);
         if(el) el.disabled = !isAdmin;
@@ -3039,6 +3057,201 @@ ${T("banExplanation")}`)) return;
         alert(T("errResetData"));
       });
     }
+
+    // ===== DATA BACKUP / EXPORT / IMPORT =====
+    function canUseDataAdmin(){
+      return !!db && !!isAdmin;
+    }
+
+    function serializeDataValue(value){
+      if(value === undefined) return null;
+      if(value === null) return null;
+      if(typeof value?.toMillis === "function"){
+        return { __flType: "timestamp", millis: value.toMillis() };
+      }
+      if(value instanceof Date){
+        return { __flType: "timestamp", millis: value.getTime() };
+      }
+      if(Array.isArray(value)) return value.map(serializeDataValue);
+      if(typeof value === "object"){
+        const out = {};
+        Object.keys(value).forEach(key => {
+          out[key] = serializeDataValue(value[key]);
+        });
+        return out;
+      }
+      return value;
+    }
+
+    function restoreDataValue(value){
+      if(value === undefined) return null;
+      if(value === null) return null;
+      if(Array.isArray(value)) return value.map(restoreDataValue);
+      if(typeof value === "object"){
+        if(value.__flType === "timestamp" && typeof value.millis === "number"){
+          return firebase.firestore.Timestamp.fromMillis(value.millis);
+        }
+        if(value.__type === "timestamp" && typeof value.seconds === "number"){
+          return new firebase.firestore.Timestamp(value.seconds, value.nanoseconds || 0);
+        }
+        const out = {};
+        Object.keys(value).forEach(key => {
+          out[key] = restoreDataValue(value[key]);
+        });
+        return out;
+      }
+      return value;
+    }
+
+    async function downloadJsonFile(filename, data){
+      const json = JSON.stringify(data, null, 2);
+      const blob = new Blob([json], { type: "application/json;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      link.style.display = "none";
+      document.body.appendChild(link);
+      link.click();
+      setTimeout(()=>{
+        URL.revokeObjectURL(url);
+        link.remove();
+      }, 0);
+    }
+
+    function dataFilename(kind){
+      const stamp = new Date().toISOString().replace(/[:.]/g, "-");
+      return `friendly-league-${kind}-${stamp}.json`;
+    }
+
+    async function collectWebData(){
+      const [playersSnap, matchesSnap] = await Promise.all([
+        db.collection("players").get(),
+        db.collection("matches").get()
+      ]);
+
+      const players = [];
+      playersSnap.forEach(doc=>{
+        players.push({ id: doc.id, data: serializeDataValue(doc.data() || {}) });
+      });
+
+      const matches = [];
+      matchesSnap.forEach(doc=>{
+        matches.push({ id: doc.id, data: serializeDataValue(doc.data() || {}) });
+      });
+
+      return {
+        schemaVersion: 1,
+        source: "friendly-league-web",
+        firebaseProject: "domino-league-c2d94",
+        exportedAt: new Date().toISOString(),
+        players,
+        matches
+      };
+    }
+
+    async function exportWebData(kind){
+      if(!canUseDataAdmin()){ alert(T("importNeedAdmin")); return; }
+      try{
+        const data = await collectWebData();
+        const mode = kind === "backup" ? "backup" : "export";
+        await downloadJsonFile(dataFilename(mode), data);
+        alert(T(mode === "backup" ? "backupDone" : "exportDone"));
+      }catch(err){
+        console.error(err);
+        alert(T("importInvalidFile"));
+      }
+    }
+
+    function openImportFilePicker(){
+      if(!canUseDataAdmin()){ alert(T("importNeedAdmin")); return; }
+      const input = $("importFileInput");
+      if(!input) return;
+      input.value = "";
+      input.click();
+    }
+
+    function normalizeImportedDoc(item){
+      if(!item || typeof item !== "object") return null;
+      const id = String(item.id || "").trim();
+      const rawData = (item.data && typeof item.data === "object") ? item.data : item;
+      const data = { ...rawData };
+      delete data.id;
+      return { id, data: restoreDataValue(data) };
+    }
+
+    function validateImportData(data){
+      if(!data || typeof data !== "object") throw new Error("Invalid data root.");
+      if(!Array.isArray(data.players) || !Array.isArray(data.matches)) throw new Error("Missing collections.");
+
+      const players = data.players.map(normalizeImportedDoc);
+      const matches = data.matches.map(normalizeImportedDoc);
+
+      if(players.some(p => !p || !p.id || !p.data || !String(p.data.name || "").trim())){
+        throw new Error("Invalid players.");
+      }
+      if(matches.some(m => !m || !m.data || !Array.isArray(m.data.winners) || !Array.isArray(m.data.losers))){
+        throw new Error("Invalid matches.");
+      }
+
+      return { players, matches };
+    }
+
+    async function deleteCollectionDocs(collectionName){
+      const snap = await db.collection(collectionName).get();
+      const docs = snap.docs || [];
+      for(let i=0;i<docs.length;i+=400){
+        const batch = db.batch();
+        docs.slice(i, i+400).forEach(doc => batch.delete(doc.ref));
+        await batch.commit();
+      }
+    }
+
+    async function writeCollectionDocs(collectionName, docs){
+      for(let i=0;i<docs.length;i+=400){
+        const batch = db.batch();
+        docs.slice(i, i+400).forEach(item => {
+          const ref = item.id
+            ? db.collection(collectionName).doc(item.id)
+            : db.collection(collectionName).doc();
+          batch.set(ref, item.data || {});
+        });
+        await batch.commit();
+      }
+    }
+
+    async function importWebData(data){
+      if(!canUseDataAdmin()){ alert(T("importNeedAdmin")); return; }
+      const normalized = validateImportData(data);
+      if(!confirm(T("importConfirm"))) return;
+
+      await deleteCollectionDocs("matches");
+      await deleteCollectionDocs("players");
+      await writeCollectionDocs("players", normalized.players);
+      await writeCollectionDocs("matches", normalized.matches);
+
+      alert(T("importDoneTpl")
+        .replace("{players}", normalized.players.length)
+        .replace("{matches}", normalized.matches.length));
+    }
+
+    function handleImportFile(file){
+      if(!file) return;
+      if(!canUseDataAdmin()){ alert(T("importNeedAdmin")); return; }
+      const reader = new FileReader();
+      reader.onload = async (e)=>{
+        try{
+          const data = JSON.parse(e.target.result);
+          await importWebData(data);
+        }catch(err){
+          console.error(err);
+          alert(T("importInvalidFile"));
+        }
+      };
+      reader.onerror = () => alert(T("importInvalidFile"));
+      reader.readAsText(file, "utf-8");
+    }
+
     // ===== MATCHES LOG (عرض + حذف) =====
     function deleteMatchById(id){
       if(!isAdmin || !db) return;
@@ -4474,6 +4687,10 @@ function autoAnalyzeTeamsHeadToHeadIfReady(){
       $("addMatchBtn").addEventListener("click",addMatch);
       $("bonusBtn").addEventListener("click",toggleBonus);
       $("resetAllBtn").addEventListener("click",resetAll);
+      $("backupBtn").addEventListener("click",()=>exportWebData("backup"));
+      $("exportBtn").addEventListener("click",()=>exportWebData("export"));
+      $("importBtn").addEventListener("click",openImportFilePicker);
+      $("importFileInput").addEventListener("change",(e)=>handleImportFile(e.target.files?.[0] || null));
       $("playerRecordSelect").addEventListener("change",updatePlayerRecordUI);
       $("playerDetailsSelect").addEventListener("change",updatePlayerDetailsUI);
       const __h2hBtn = $("h2hAnalyzeBtn");
