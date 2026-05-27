@@ -1,7 +1,7 @@
 {
-  "name": "دوري الأصدقاء",
-  "short_name": "دومينو",
-  "description": "تسجيل نتائج ماتشات الدومينو بين الأصدقاء.",
+  "name": "qahwet.el-saymat",
+  "short_name": "qahwet",
+  "description": "qahwet.el-saymat - تسجيل نتائج ماتشات الدومينو.",
   "lang": "ar",
   "dir": "rtl",
   "start_url": "./index.html",
@@ -9,7 +9,7 @@
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#f5f5f5",
-  "theme_color": "#222222",
+  "theme_color": "#4a260c",
   "icons": [
     {
       "src": "icons/icon-192.png",
