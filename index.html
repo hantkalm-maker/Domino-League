@@ -11,7 +11,7 @@
   <meta name="apple-mobile-web-app-title" content="قهوة الصايمات" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>قهوة الصايمات</title>
-  <link rel="manifest" href="app.webmanifest?v=7" />
+  <link rel="manifest" href="app.webmanifest?v=8" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
   <style>
     *,
@@ -1712,12 +1712,108 @@ window.t  = window.t  || window.T;
     let editingMatchBonusApplied = false;
     let editingMatchBonusValue = 0;
     let db = null;
+    const DATA_CACHE_KEY = "dl_fast_data_cache_v1";
+    let dataHydratedFromCache = false;
+    let serverPlayersLoaded = false;
+    let serverMatchesLoaded = false;
 
     let state = {
 
       players: [], // {id, name, avatar}
       matches: []  // {id, date, winners, losers, createdAt}
     };
+
+function setDataStatus(text){
+  try{
+    const s = document.getElementById("fbStatus");
+    if(s) s.textContent = text;
+  }catch(e){}
+}
+
+function updateDataStatus(){
+  if(serverPlayersLoaded && serverMatchesLoaded){
+    setDataStatus("تم تحديث البيانات من الإنترنت الآن.");
+  }else if(dataHydratedFromCache){
+    setDataStatus("تم عرض آخر بيانات محفوظة، وجاري تحديثها من الإنترنت...");
+  }else{
+    setDataStatus("جاري تحميل البيانات من الإنترنت...");
+  }
+}
+
+function saveDataCache(){
+  try{
+    if(!state.players.length && !state.matches.length) return;
+    const cache = {
+      version: 1,
+      savedAt: new Date().toISOString(),
+      players: state.players.map(p => ({
+        id: p.id,
+        name: p.name,
+        avatar: null,
+        banPeriods: serializeDataValue(p.banPeriods || [])
+      })),
+      matches: state.matches.map(m => ({
+        id: m.id,
+        date: m.date || null,
+        winners: m.winners || [],
+        losers: m.losers || [],
+        players: m.players || [],
+        createdAt: serializeDataValue(m.createdAt || null),
+        bonusApplied: !!m.bonusApplied,
+        bonusValue: Number(m.bonusValue || 0)
+      }))
+    };
+    localStorage.setItem(DATA_CACHE_KEY, JSON.stringify(cache));
+  }catch(e){
+    console.warn("Could not save local data cache", e);
+  }
+}
+
+function hydrateDataFromCache(){
+  try{
+    const raw = localStorage.getItem(DATA_CACHE_KEY);
+    if(!raw) return false;
+    const cache = JSON.parse(raw);
+    if(!cache || !Array.isArray(cache.players) || !Array.isArray(cache.matches)) return false;
+
+    state.players = cache.players.map(p => ({
+      id: p.id,
+      name: p.name,
+      avatar: null,
+      banPeriods: restoreDataValue(p.banPeriods || [])
+    })).filter(p => p.id && p.name);
+
+    state.matches = cache.matches.map(m => ({
+      id: m.id,
+      date: m.date || null,
+      winners: Array.isArray(m.winners) ? m.winners : [],
+      losers: Array.isArray(m.losers) ? m.losers : [],
+      players: Array.isArray(m.players) ? m.players : [],
+      createdAt: restoreDataValue(m.createdAt || null),
+      bonusApplied: !!m.bonusApplied,
+      bonusValue: Number(m.bonusValue || 0)
+    })).filter(m => m.id);
+
+    dataHydratedFromCache = state.players.length > 0 || state.matches.length > 0;
+    updateDataStatus();
+    return dataHydratedFromCache;
+  }catch(e){
+    console.warn("Could not load local data cache", e);
+    return false;
+  }
+}
+
+function renderDataViews(resetHeadToHead){
+  try { updateFilterYearOptions(); } catch(e){}
+  try { updatePlayersUI(); } catch(e){}
+  try { updateLeaderboard(); } catch(e){}
+  try { updatePlayerRecordUI(); } catch(e){}
+  try { updatePlayerDetailsUI(); } catch(e){}
+  try { updateMatchesLog(); } catch(e){}
+  try { updateChampionsLog(); } catch(e){}
+  try { updateHeadToHeadUI(!!resetHeadToHead); } catch(e){}
+  try { updateBonusEligibility(); } catch(e){}
+}
 
 
 function refreshToggleButtonsText(){
@@ -3382,12 +3478,16 @@ function toggleTheme() {
       // تشغيل Firebase بنسخة compat اللي حاطينها في <script> فوق
       firebase.initializeApp(firebaseConfig);
       db = firebase.firestore();
+      try{
+        db.enablePersistence({ synchronizeTabs: true }).catch(err => {
+          console.warn("Firestore offline cache is not available:", err?.code || err);
+        });
+      }catch(e){
+        console.warn("Firestore offline cache setup failed:", e);
+      }
 
       // Firebase status indicator
-      try {
-        const s = document.getElementById("fbStatus");
-        if(s) s.textContent = "Firebase: connected (listening for data...)";
-      } catch(e) {}
+      updateDataStatus();
 
 
       // استمع لأي تغييرات في اللاعبين
@@ -3403,16 +3503,13 @@ function toggleTheme() {
           });
         });
         state.players = players;
-        updatePlayersUI();
-        updateLeaderboard();
-        updatePlayerDetailsUI();
-        updateMatchesLog();
-        updateBonusEligibility();
-        updateChampionsLog();
+        serverPlayersLoaded = true;
+        renderDataViews(false);
+        saveDataCache();
+        updateDataStatus();
             }, (err)=>{
         console.error("players onSnapshot error:", err);
-        const s = document.getElementById("fbStatus");
-        if(s) s.textContent = "Firebase error (players): " + (err?.message || err);
+        setDataStatus("خطأ في تحميل اللاعبين: " + (err?.message || err));
       });
 
       // استمع لأي تغييرات في الماتشات
@@ -3432,16 +3529,13 @@ function toggleTheme() {
           });
         });
         state.matches = matches;
-        updateFilterYearOptions();
-        updateLeaderboard();
-        updatePlayerDetailsUI();
-        updateHeadToHeadUI(false);
-        updateMatchesLog();
-        updateChampionsLog();
+        serverMatchesLoaded = true;
+        renderDataViews(false);
+        saveDataCache();
+        updateDataStatus();
       }, (err)=>{
         console.error("matches onSnapshot error:", err);
-        const s = document.getElementById("fbStatus");
-        if(s) s.textContent = "Firebase error (matches): " + (err?.message || err);
+        setDataStatus("خطأ في تحميل الماتشات: " + (err?.message || err));
       });
     }
 
@@ -5784,6 +5878,7 @@ function autoAnalyzeTeamsHeadToHeadIfReady(){
     function init(){
       setupScrollableTables();
       initFirebase();
+      hydrateDataFromCache();
       updateAdminUI();
       updateBonusEligibility();
       ["winnerP1","winnerP2","loserP1","loserP2"].forEach(id=>{
@@ -5816,12 +5911,8 @@ function autoAnalyzeTeamsHeadToHeadIfReady(){
         fm.value = currentMonth; // لأن الشهور 1..12 موجودة بالفعل في الـ HTML
       }
 
-      // نحدّث الترتيب والسجل بناءً على الفترة الافتراضية      updateLeaderboard();
-      updateChampionsLog();
-      updateMatchesLog();
-      updateHeadToHeadUI(true);
-      if($("playerRecordSelect")) updatePlayerRecordUI();
-      if($("playerDetailsSelect")) updatePlayerDetailsUI();
+      // نحدّث الترتيب والسجل بناءً على الفترة الافتراضية
+      renderDataViews(true);
 
       // باقي اللستينرز زي ما هي
       $("addPlayerBtn").addEventListener("click",addPlayer);
