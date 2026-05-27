@@ -1,7 +1,7 @@
 {
-  "name": "qahwet.el-saymat",
-  "short_name": "qahwet",
-  "description": "qahwet.el-saymat - تسجيل نتائج ماتشات الدومينو.",
+  "name": "قهوة الصايمات",
+  "short_name": "الصايمات",
+  "description": "قهوة الصايمات - تسجيل نتائج ماتشات الدومينو.",
   "lang": "ar",
   "dir": "rtl",
   "start_url": "./index.html",

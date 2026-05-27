@@ -1,4 +1,4 @@
-const CACHE_NAME = "domino-league-v2";
+const CACHE_NAME = "domino-league-v3";
 const CORE_ASSETS = [
   "./",
   "./index.html",
