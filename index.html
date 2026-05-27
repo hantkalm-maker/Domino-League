@@ -1,17 +1,35 @@
 <!DOCTYPE html>
 <!-- Cleaned & Reviewed Version v31 -->
-<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#222222" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="دوري الأصدقاء" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>دوري الأصدقاء</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
   <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      -webkit-text-size-adjust: 100%;
+    }
+
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       margin: 0;
       padding: 0;
       background: #f5f5f5;
       direction: rtl;
+      line-height: 1.5;
     }
 
     th.sortable {
@@ -35,19 +53,22 @@
     header h1 {
       margin: 0;
       font-size: 1.4rem;
+      line-height: 1.25;
     }
 
     main {
+      width: min(100% - 24px, 980px);
       max-width: 980px;
       margin: 16px auto 32px;
-      padding: 0 12px;
+      padding: 0;
     }
 
     .card {
       background: #fff;
-      border-radius: 10px;
+      border-radius: 8px;
       padding: 16px 18px;
       margin-bottom: 16px;
+      border: 1px solid rgba(15, 23, 42, 0.06);
       box-shadow: 0 2px 6px rgba(0,0,0,0.08);
     }
 
@@ -55,6 +76,7 @@
       margin-top: 0;
       font-size: 1.1rem;
       margin-bottom: 10px;
+      line-height: 1.35;
     }
 
     .row {
@@ -79,22 +101,42 @@
     input[type="text"],
     input[type="date"],
     select {
+      width: 100%;
+      min-height: 40px;
       padding: 6px 8px;
       border-radius: 6px;
       border: 1px solid #ccc;
       font-size: 0.9rem;
+      font-family: inherit;
     }
 
     input[type="file"] {
+      width: 100%;
+      min-height: 40px;
       font-size: 0.8rem;
+    }
+
+    input[type="file"]::file-selector-button {
+      border: 0;
+      border-radius: 6px;
+      padding: 8px 10px;
+      margin-inline-end: 8px;
+      background: #e2e8f0;
+      color: #111827;
+      font-family: inherit;
+      cursor: pointer;
     }
 
     button {
       border: none;
       border-radius: 6px;
+      min-height: 38px;
       padding: 8px 14px;
       font-size: 0.9rem;
+      font-family: inherit;
+      font-weight: 700;
       cursor: pointer;
+      touch-action: manipulation;
       transition: background 0.2s, transform 0.1s;
     }
 
@@ -128,10 +170,13 @@
     .small-text {
       font-size: 0.8rem;
       color: #555;
+      line-height: 1.65;
+      overflow-wrap: anywhere;
     }
 
     table {
       width: 100%;
+      max-width: 100%;
       border-collapse: collapse;
       font-size: 0.9rem;
       margin-top: 10px;
@@ -141,6 +186,7 @@
       padding: 8px 6px;
       text-align: center;
       border-bottom: 1px solid #eee;
+      line-height: 1.35;
     }
 
     th {
@@ -255,6 +301,10 @@
       color:#e5e7eb;
       border:1px solid rgba(255,255,255,0.15);
     }
+    body.dark input[type="file"]::file-selector-button {
+      background:#374151;
+      color:#e5e7eb;
+    }
     body.dark table { color:#e5e7eb; }
     body.dark th { background:#2a2a2a; border-bottom:1px solid rgba(255,255,255,0.08); }
     body.dark td { border-bottom:1px solid rgba(255,255,255,0.06); }
@@ -276,6 +326,184 @@
     .settings-bar select, .settings-bar button{
       font-size:0.85rem;
       padding:6px 10px;
+    }
+
+    #subtitleRule {
+      max-width: 720px;
+      margin: 6px auto 0;
+    }
+
+    ul.small-text {
+      padding-inline-start: 20px;
+      margin-bottom: 0;
+    }
+
+    @media (max-width: 700px) {
+      html,
+      body {
+        width: 100%;
+        overflow-x: hidden;
+      }
+
+      header {
+        padding: 18px 14px 16px;
+      }
+
+      header h1 {
+        font-size: 1.35rem;
+      }
+
+      main {
+        width: 100%;
+        margin: 10px auto 24px;
+        padding: 0 10px;
+      }
+
+      .card {
+        padding: 14px;
+        margin-bottom: 10px;
+        box-shadow: 0 1px 4px rgba(15, 23, 42, 0.08);
+      }
+
+      .card h2 {
+        font-size: 1rem;
+        margin-bottom: 12px;
+      }
+
+      .row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      .row > .field {
+        flex: 1 1 auto !important;
+        width: 100%;
+        min-width: 0 !important;
+        align-self: stretch !important;
+      }
+
+      label {
+        font-size: 0.86rem;
+      }
+
+      input[type="text"],
+      input[type="date"],
+      input[type="file"],
+      select {
+        min-height: 44px;
+        font-size: 1rem;
+      }
+
+      button {
+        width: 100%;
+        min-height: 44px;
+        padding: 10px 12px;
+      }
+
+      .btn-small {
+        width: auto;
+        min-height: 32px;
+        padding: 6px 8px;
+      }
+
+      .settings-bar {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 8px;
+        width: min(100%, 260px);
+        margin: 12px auto 0;
+      }
+
+      .settings-bar label {
+        text-align: center;
+      }
+
+      .settings-bar select,
+      .settings-bar button {
+        width: 100%;
+        min-height: 40px;
+      }
+
+      .admin-bar {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        align-items: stretch;
+        gap: 8px;
+      }
+
+      .admin-bar-text {
+        font-size: 0.82rem;
+        line-height: 1.6;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .stat-box {
+        min-width: 0;
+        padding: 10px 8px;
+      }
+
+      .stat-box strong {
+        font-size: 1.05rem;
+        overflow-wrap: anywhere;
+      }
+
+      .player-cell {
+        max-width: 100%;
+        justify-content: flex-start;
+      }
+
+      .player-avatar {
+        width: 26px;
+        height: 26px;
+        flex: 0 0 auto;
+      }
+
+      table {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        background: #fff;
+      }
+
+      table thead,
+      table tbody,
+      table tr {
+        white-space: nowrap;
+      }
+
+      th,
+      td {
+        font-size: 0.78rem;
+        padding: 7px 8px;
+      }
+
+      body.dark table {
+        background: #252525;
+        border-color: rgba(255,255,255,0.08);
+      }
+    }
+
+    @media (max-width: 380px) {
+      .stats-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      header h1 {
+        font-size: 1.22rem;
+      }
+
+      .card {
+        padding: 12px;
+      }
     }
 
   </style>
@@ -309,51 +537,6 @@
   </header>
 
   <main>
-    <!-- إدارة اللاعبين -->
-    <section class="card">
-      <h2 id="playersSectionTitle" data-i18n="playersSectionTitle">👤 إدارة اللاعبين</h2>
-      <div class="row">
-        <div class="field">
-          <label for="playerName" data-i18n="newPlayerName">اسم اللاعب الجديد</label>
-          <input type="text" id="playerName" placeholder="مثال: أحمد، علي، حسام..." / data-i18n-placeholder="newPlayerNamePh">
-        </div>
-        <div class="field">
-          <label for="playerAvatarFile" data-i18n="playerAvatar">صورة اللاعب (اختياري)</label>
-          <input type="file" id="playerAvatarFile" accept="image/*" />
-        </div>
-        <div class="field" style="align-self:flex-end;">
-          <button class="primary" id="addPlayerBtn" data-i18n="addPlayer">➕ إضافة لاعب</button>
-        </div>
-      </div>
-
-      <!-- زر عرض/إخفاء قائمة اللاعبين -->
-      <div class="row" style="margin-bottom:4px;">
-        <div class="field" style="flex:0 0 auto;">
-          <button class="primary" id="togglePlayersListBtn" data-i18n="showPlayersList">👥 عرض قائمة اللاعبين</button>
-        </div>
-      </div>
-
-      <!-- غلاف قائمة اللاعبين (مخفي افتراضيًا) -->
-      <div id="playersListWrapper" style="display:none;">
-        <div class="small-text" id="playersListInfo"></div>
-
-        <!-- جدول اللاعبين للتعديل -->
-        <table style="margin-top:8px;">
-          <thead>
-            <tr>
-              <th id="thPlayersNum" data-i18n="thPlayersNum">#</th>
-              <th id="thPlayersPlayer" data-i18n="thPlayersPlayer">اللاعب</th>
-              <th id="thPlayersActions" data-i18n="thPlayersActions">إجراءات</th>
-            </tr>
-          </thead>
-          <tbody id="playersTableBody"></tbody>
-        </table>
-        <div class="small-text">
-          تقدر تعدّل اسم اللاعب أو تضيف/تغيّر صورة اللاعب من الجدول (التعديل متاح للمدير فقط).
-        </div>
-      </div>
-    </section>
-
     <!-- تسجيل نتيجة ماتش -->
     <section class="card">
       <h2 id="matchSectionTitle" data-i18n="matchSectionTitle">🧮 تسجيل نتيجة ماتش (عشرة كاملة)</h2>
@@ -730,6 +913,51 @@
 
       <div id="h2hTeamsSummary" class="small-text">
         <span id="h2hTeamsHelp">اختر لاعبي الفريقين ثم اضغط "تحليل المواجهة".</span>
+      </div>
+    </section>
+
+    <!-- إدارة اللاعبين -->
+    <section class="card">
+      <h2 id="playersSectionTitle" data-i18n="playersSectionTitle">👤 إدارة اللاعبين</h2>
+      <div class="row">
+        <div class="field">
+          <label for="playerName" data-i18n="newPlayerName">اسم اللاعب الجديد</label>
+          <input type="text" id="playerName" placeholder="مثال: أحمد، علي، حسام..." data-i18n-placeholder="newPlayerNamePh" />
+        </div>
+        <div class="field">
+          <label for="playerAvatarFile" data-i18n="playerAvatar">صورة اللاعب (اختياري)</label>
+          <input type="file" id="playerAvatarFile" accept="image/*" />
+        </div>
+        <div class="field" style="align-self:flex-end;">
+          <button class="primary" id="addPlayerBtn" data-i18n="addPlayer">➕ إضافة لاعب</button>
+        </div>
+      </div>
+
+      <!-- زر عرض/إخفاء قائمة اللاعبين -->
+      <div class="row" style="margin-bottom:4px;">
+        <div class="field" style="flex:0 0 auto;">
+          <button class="primary" id="togglePlayersListBtn" data-i18n="showPlayersList">👥 عرض قائمة اللاعبين</button>
+        </div>
+      </div>
+
+      <!-- غلاف قائمة اللاعبين (مخفي افتراضيًا) -->
+      <div id="playersListWrapper" style="display:none;">
+        <div class="small-text" id="playersListInfo"></div>
+
+        <!-- جدول اللاعبين للتعديل -->
+        <table style="margin-top:8px;">
+          <thead>
+            <tr>
+              <th id="thPlayersNum" data-i18n="thPlayersNum">#</th>
+              <th id="thPlayersPlayer" data-i18n="thPlayersPlayer">اللاعب</th>
+              <th id="thPlayersActions" data-i18n="thPlayersActions">إجراءات</th>
+            </tr>
+          </thead>
+          <tbody id="playersTableBody"></tbody>
+        </table>
+        <div class="small-text">
+          تقدر تعدّل اسم اللاعب أو تضيف/تغيّر صورة اللاعب من الجدول (التعديل متاح للمدير فقط).
+        </div>
       </div>
     </section>
 
@@ -3694,10 +3922,12 @@ function updateMatchesLog(){
 
       // أحدث ماتش في الأعلى داخل الفترة المحددة
       const sorted = [...matches].sort((a,b)=>{
+        const da = a.date || "";
+        const db = b.date || "";
+        if(db !== da) return db.localeCompare(da);
         const ta = a.createdAt && a.createdAt.seconds ? a.createdAt.seconds : 0;
         const tb = b.createdAt && b.createdAt.seconds ? b.createdAt.seconds : 0;
-        if(tb !== ta) return tb - ta;
-        return (b.date || "").localeCompare(a.date || "");
+        return tb - ta;
       });
 
       sorted.forEach((m,idx)=>{
@@ -4781,6 +5011,14 @@ function autoAnalyzeTeamsHeadToHeadIfReady(){
     applyLang(getLang());
     applyTheme(getTheme());
   })();
+
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("./service-worker.js").catch(err => {
+        console.warn("Service worker registration failed", err);
+      });
+    });
+  }
 
 </script>
 </body>
