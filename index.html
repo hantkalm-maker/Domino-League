@@ -237,6 +237,24 @@
       font-size: 0.8rem;
     }
 
+    .table-actions {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .match-edit-notice {
+      display: none;
+      margin-top: 8px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: #eff6ff;
+      color: #1e3a8a;
+      border: 1px solid #bfdbfe;
+    }
+
     .player-cell {
       display: inline-flex;
       align-items: center;
@@ -294,6 +312,11 @@
     body.dark header { background:#202020; }
     body.dark .card { background:#252525; box-shadow:none; border:1px solid rgba(255,255,255,0.08); }
     body.dark .small-text { color:#cbd5e1; }
+    body.dark .match-edit-notice {
+      background:#172554;
+      color:#dbeafe;
+      border-color:#1d4ed8;
+    }
     body.dark input[type="text"],
     body.dark input[type="date"],
     body.dark select {
@@ -575,9 +598,13 @@
           <button class="primary" id="addMatchBtn" data-i18n="saveMatch">✅ حفظ نتيجة الماتش</button>
         </div>
         <div class="field" style="align-self:flex-end;">
+          <button id="cancelMatchEditBtn" type="button" style="display:none;" data-i18n="cancelMatchEdit">إلغاء التعديل</button>
+        </div>
+        <div class="field" style="align-self:flex-end;">
           <button class="primary" id="bonusBtn" disabled data-i18n="bonusUnavailable">🎁 بونص (غير متاح)</button>
         </div>
       </div>
+      <div class="small-text match-edit-notice" id="matchEditNotice"></div>
       <div class="small-text" id="matchNoteText" data-i18n="matchNoteText">
         ملاحظة: نفس اللاعب ما ينفعش يكون في الفريقين في نفس الماتش.
       </div>
@@ -655,7 +682,7 @@
 
       <div id="matchesLogWrapper" style="display:none;">
         <div class="small-text">
-          <span id="matchesLogIntro" data-i18n="matchesLogIntro">أحدث ماتش في الأعلى. يمكنك حذف أي ماتش غلط بدون التأثير على الباقي.</span>
+          <span id="matchesLogIntro" data-i18n="matchesLogIntro">أحدث ماتش في الأعلى. يمكنك تعديل أو حذف أي ماتش غلط بدون التأثير على الباقي.</span>
         </div>
         <table>
           <thead>
@@ -1060,6 +1087,9 @@ window.t  = window.t  || window.T;
     let isAdmin = false;
     let matchesLogVisible = false;  // قلنا نخليه مخفي افتراضيًا
     let playersListVisible = false; // جديد: قائمة اللاعبين مخفية افتراضيًا
+    let editingMatchId = null;
+    let editingMatchBonusApplied = false;
+    let editingMatchBonusValue = 0;
     let db = null;
 
     let state = {
@@ -1159,6 +1189,7 @@ const I18N = {
     banBtn: "⛔ حظر",
     unbanBtn: "✅ فك الحظر",
     deleteBtn: "🗑 حذف",
+    editMatchBtn: "✏️ تعديل",
     noneDash: "-",
     noPlayersYet: "لا يوجد لاعبين حتى الآن. أضِف بعض اللاعبين أولاً.",
     noPlayersYetShort: "لا يوجد لاعبين حتى الآن.",
@@ -1171,6 +1202,10 @@ const I18N = {
     loserTeamP1: "الفريق الخسران - لاعب 1",
     loserTeamP2: "الفريق الخسران - لاعب 2",
     saveMatch: "✅ حفظ نتيجة الماتش",
+    saveMatchEdit: "✅ حفظ تعديل الماتش",
+    cancelMatchEdit: "إلغاء التعديل",
+    editMatchNoticeTpl: "أنت تعدل ماتش بتاريخ {date}. اضغط حفظ لتطبيق التعديل أو إلغاء للرجوع.",
+    currentBonusTpl: "🎁 البونص الحالي (+{n})",
     bonusUnavailable: "🎁 بونص (غير متاح)",
     bonusAdd: "🎁 إضافة بونص",
     bonusEnabled: "🎁 بونص مُفعّل",
@@ -1221,7 +1256,7 @@ const I18N = {
     // Matches log
     showLog: "👁️ عرض السجل",
     hideLog: "👁️ إخفاء السجل",
-    matchesLogIntro: "أحدث ماتش في الأعلى. يمكنك حذف أي ماتش غلط بدون التأثير على الباقي.",
+    matchesLogIntro: "أحدث ماتش في الأعلى. يمكنك تعديل أو حذف أي ماتش غلط بدون التأثير على الباقي.",
     date: "التاريخ",
     winningTeam: "الفريق الكسبان",
     losingTeam: "الفريق الخسران",
@@ -1254,7 +1289,7 @@ const I18N = {
     enableAdmin: "🔑 تفعيل وضع المدير",
     disableAdmin: "🚪 قفل وضع المدير",
     adminViewOnly: "وضع المشاهدة فقط: لا يمكن تعديل البيانات إلا بعد إدخال كود المدير.",
-    adminEnabled: "وضع المدير مُفعّل: مسموح بإضافة لاعبين وتسجيل/حذف الماتشات ومسح البيانات.",
+    adminEnabled: "وضع المدير مُفعّل: مسموح بإضافة لاعبين وتسجيل/تعديل/حذف الماتشات ومسح البيانات.",
     dataAdminTitle: "إدارة البيانات (للمدير فقط)",
     resetAll: "🧨 مسح كل البيانات",
     backupData: "💾 نسخ احتياطي",
@@ -1381,6 +1416,7 @@ const I18N = {
     errUpdateAvatar: "حصل خطأ أثناء تحديث صورة اللاعب.",
     errEditPlayerName: "حصل خطأ أثناء تعديل اسم اللاعب.",
     errDeleteMatch: "حصل خطأ أثناء حذف الماتش.",
+    errEditMatch: "حصل خطأ أثناء تعديل الماتش.",
     errSaveMatch: "حصل خطأ أثناء حفظ الماتش.",
     errResetData: "حصل خطأ أثناء مسح البيانات.",
     confirmDeleteMatch: "هل تريد بالتأكيد حذف هذا الماتش؟",
@@ -1440,6 +1476,7 @@ const I18N = {
     errUpdateAvatar: "An error occurred while updating the player photo.",
     errEditPlayerName: "An error occurred while editing the player name.",
     errDeleteMatch: "An error occurred while deleting the match.",
+    errEditMatch: "An error occurred while editing the match.",
     errSaveMatch: "An error occurred while saving the match.",
     errResetData: "An error occurred while resetting the data.",
     confirmDeleteMatch: "Are you sure you want to delete this match?",
@@ -1523,6 +1560,7 @@ const I18N = {
     banBtn: "⛔ Ban",
     unbanBtn: "✅ Unban",
     deleteBtn: "🗑 Delete",
+    editMatchBtn: "✏️ Edit",
     noneDash: "-",
     noPlayersYet: "No players yet. Add some players first.",
     noPlayersYetShort: "No players yet.",
@@ -1535,6 +1573,10 @@ const I18N = {
     loserTeamP1: "Losing Team - Player 1",
     loserTeamP2: "Losing Team - Player 2",
     saveMatch: "✅ Save Match Result",
+    saveMatchEdit: "✅ Save Match Edit",
+    cancelMatchEdit: "Cancel edit",
+    editMatchNoticeTpl: "You are editing the match dated {date}. Save to apply changes or cancel to go back.",
+    currentBonusTpl: "🎁 Current bonus (+{n})",
     bonusUnavailable: "🎁 Bonus (Unavailable)",
     bonusAdd: "🎁 Add Bonus",
     bonusEnabled: "🎁 Bonus Enabled",
@@ -1585,7 +1627,7 @@ const I18N = {
     // Matches log
     showLog: "👁️ Show Log",
     hideLog: "👁️ Hide Log",
-    matchesLogIntro: "Latest match on top. You can delete any wrong match without affecting the others.",
+    matchesLogIntro: "Latest match on top. You can edit or delete any wrong match without affecting the others.",
     date: "Date",
     winningTeam: "Winning Team",
     losingTeam: "Losing Team",
@@ -1631,7 +1673,7 @@ const I18N = {
     enableAdmin: "🔑 Enable Admin Mode",
     disableAdmin: "🚪 Disable Admin Mode",
     adminViewOnly: "View-only mode: data cannot be edited unless admin PIN is entered.",
-    adminEnabled: "Admin mode enabled: you can add players, add/delete matches, and reset data.",
+    adminEnabled: "Admin mode enabled: you can add players, add/edit/delete matches, and reset data.",
     dataAdminTitle: "Data Management (Admin only)",
     resetAll: "🧨 Reset All Data",
     backupData: "💾 Backup",
@@ -1697,7 +1739,8 @@ window.I18N = I18N;
       h2hTeamsPlayedAgainstTpl: "• لعبوا ضد بعض في {n} ماتش(ات) عشرة.<br/>",
       h2hTeamsT1WinsTpl: "• مرات فاز فيها {t1}: {n} مرة.<br/>",
       h2hTeamsT2WinsTpl: "• مرات فاز فيها {t2}: {n} مرة.<br/>",
-      h2hTeamsWinRateTitle: "<br/>نسبة الفوز عندما يتقابلان في هذه الفترة:<br/>"
+      h2hTeamsWinRateTitle: "<br/>نسبة الفوز عندما يتقابلان في هذه الفترة:<br/>",
+      errEditMatch: "حصل خطأ أثناء تعديل الماتش."
     });
   
     // Hotfix: ensure EN has all required keys (some older edits removed them)
@@ -2228,7 +2271,10 @@ function applyLang(lang) {
   if (togglePlayersBtn) togglePlayersBtn.textContent = (playersListVisible ? T("hidePlayersList") : T("showPlayersList"));
 
   const addMatchBtn = document.getElementById("addMatchBtn");
-  if (addMatchBtn) addMatchBtn.textContent = T("saveMatch");
+  if (addMatchBtn) addMatchBtn.textContent = editingMatchId ? T("saveMatchEdit") : T("saveMatch");
+
+  const cancelMatchEditBtn = document.getElementById("cancelMatchEditBtn");
+  if (cancelMatchEditBtn) cancelMatchEditBtn.textContent = T("cancelMatchEdit");
 
   const toggleMatchesBtn = document.getElementById("toggleMatchesLogBtn");
   if (toggleMatchesBtn) toggleMatchesBtn.textContent = (matchesLogVisible ? T("hideLog") : T("showLog"));
@@ -2325,7 +2371,7 @@ const thMap = [
   ["thMatchesDate","date"],
   ["thMatchesWin","winningTeam"],
   ["thMatchesLose","losingTeam"],
-  ["thMatchesDelete","delete"],
+  ["thMatchesDelete","playersTableActions"],
   ["thPlayersPlayer","playersTablePlayer"],
   ["thPlayersActions","playersTableActions"]
 ];
@@ -2333,6 +2379,7 @@ thMap.forEach(([id,key])=>{
   const el=document.getElementById(id);
   if(el) el.textContent = T(key);
 });
+  updateMatchEditUI();
 
   // Filter dropdown static options
   const fy = document.getElementById("filterYear");
@@ -2488,6 +2535,16 @@ function toggleTheme() {
         btn.disabled = true;
         btn.classList.remove("bonus-ready");
         btn.textContent = T("bonusUnavailable");
+        return;
+      }
+
+      if(editingMatchId){
+        bonusEligible = false;
+        btn.disabled = true;
+        btn.classList.remove("bonus-ready");
+        btn.textContent = editingMatchBonusApplied
+          ? T("currentBonusTpl").replace("{n}", Number(editingMatchBonusValue || 0))
+          : T("bonusUnavailable");
         return;
       }
 
@@ -2728,7 +2785,9 @@ function toggleTheme() {
 
     // ===== ADMIN =====
     function updateAdminUI(){
-      const ids = ["addPlayerBtn","addMatchBtn","resetAllBtn","backupBtn","importBtn","exportBtn","bonusBtn"];
+      if(!isAdmin && editingMatchId) cancelMatchEdit(true);
+
+      const ids = ["addPlayerBtn","addMatchBtn","cancelMatchEditBtn","resetAllBtn","backupBtn","importBtn","exportBtn","bonusBtn"];
       ids.forEach(id=>{
         const el=$(id);
         if(el) el.disabled = !isAdmin;
@@ -2747,6 +2806,7 @@ function toggleTheme() {
       updateMatchesLog();
       updatePlayersUI();
       updateBonusEligibility();
+      updateMatchEditUI();
     }
 
     function enableAdminMode(){
@@ -2762,6 +2822,7 @@ function toggleTheme() {
     }
 
     function disableAdminMode(){
+      cancelMatchEdit(true);
       isAdmin = false;
       updateAdminUI();
     }
@@ -2793,6 +2854,145 @@ function toggleTheme() {
     function getPlayerNameById(id){
       const p = getPlayerById(id);
       return p ? p.name : (`${T("idPrefix")} $<built-in function id>`);
+    }
+
+    function getDefaultMatchDateString(){
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = String(now.getMonth()+1).padStart(2,"0");
+      const d = String(now.getDate()).padStart(2,"0");
+      return `${y}-${m}-${d}`;
+    }
+
+    function readMatchFormData(options = {}){
+      const allowCurrentlyBanned = !!options.allowCurrentlyBanned;
+      const w1=$("winnerP1").value;
+      const w2=$("winnerP2").value;
+      const l1=$("loserP1").value;
+      const l2=$("loserP2").value;
+      if(!w1||!w2||!l1||!l2){ alert(T("selectAllPlayers")); return null; }
+
+      const chosen=[w1,w2,l1,l2];
+      if(new Set(chosen).size<4){ alert(T("samePlayerNotAllowed")); return null; }
+
+      if(!allowCurrentlyBanned){
+        for(const pid of chosen){
+          const pl = getPlayerById(pid);
+          if(pl && isPlayerCurrentlyBanned(pl)){
+            alert(`لا يمكن تسجيل الماتش لأن اللاعب "${pl.name}" محظور حاليًا.`);
+            return null;
+          }
+        }
+      }
+
+      let dateStr=$("matchDate").value;
+      if(!dateStr) dateStr = getDefaultMatchDateString();
+
+      return {
+        date: dateStr,
+        winners:[w1,w2],
+        losers:[l1,l2],
+        players: chosen
+      };
+    }
+
+    function ensureMatchSelectValue(selectId, playerId){
+      const sel = $(selectId);
+      if(!sel || !playerId) return;
+      const exists = Array.from(sel.options).some(o => o.value === playerId);
+      if(!exists){
+        const p = getPlayerById(playerId);
+        const opt = document.createElement("option");
+        opt.value = playerId;
+        opt.textContent = p ? p.name : `${T("idPrefix")} ${playerId}`;
+        sel.appendChild(opt);
+      }
+      sel.value = playerId;
+    }
+
+    function getEditingMatch(){
+      return editingMatchId ? state.matches.find(m => m.id === editingMatchId) || null : null;
+    }
+
+    function updateMatchEditUI(){
+      const btn = $("addMatchBtn");
+      const cancelBtn = $("cancelMatchEditBtn");
+      const notice = $("matchEditNotice");
+      const editing = !!editingMatchId;
+
+      if(btn) btn.textContent = editing ? T("saveMatchEdit") : T("saveMatch");
+      if(cancelBtn){
+        cancelBtn.textContent = T("cancelMatchEdit");
+        cancelBtn.style.display = (editing && isAdmin) ? "" : "none";
+      }
+      if(notice){
+        if(editing){
+          const m = getEditingMatch();
+          const dateText = (m && m.date) ? m.date : ($("matchDate")?.value || "-");
+          notice.textContent = T("editMatchNoticeTpl").replace("{date}", dateText);
+          notice.style.display = "block";
+        }else{
+          notice.textContent = "";
+          notice.style.display = "none";
+        }
+      }
+    }
+
+    function cancelMatchEdit(clearForm = true){
+      editingMatchId = null;
+      editingMatchBonusApplied = false;
+      editingMatchBonusValue = 0;
+
+      if(clearForm){
+        $("matchDate").value="";
+        ["winnerP1","winnerP2","loserP1","loserP2"].forEach(id=>$(id).value="");
+        bonusApplied = false;
+        bonusValue = 0;
+      }
+
+      updateMatchEditUI();
+      updateBonusEligibility();
+    }
+
+    function startEditMatch(id){
+      if(!isAdmin) return;
+      const m = state.matches.find(match => match.id === id);
+      if(!m) return;
+
+      editingMatchId = id;
+      editingMatchBonusApplied = !!m.bonusApplied;
+      editingMatchBonusValue = Number(m.bonusValue || 0);
+
+      updatePlayersUI();
+      $("matchDate").value = m.date || "";
+      ensureMatchSelectValue("winnerP1", (m.winners || [])[0]);
+      ensureMatchSelectValue("winnerP2", (m.winners || [])[1]);
+      ensureMatchSelectValue("loserP1", (m.losers || [])[0]);
+      ensureMatchSelectValue("loserP2", (m.losers || [])[1]);
+
+      updateMatchEditUI();
+      updateBonusEligibility();
+
+      const matchCard = $("matchSectionTitle")?.closest("section");
+      if(matchCard) matchCard.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function updateMatchFromForm(){
+      if(!editingMatchId || !isAdmin || !db) return;
+      const matchData = readMatchFormData({ allowCurrentlyBanned: true });
+      if(!matchData) return;
+
+      db.collection("matches").doc(editingMatchId).update({
+        ...matchData,
+        bonusApplied: editingMatchBonusApplied,
+        bonusValue: editingMatchBonusApplied ? (Number(editingMatchBonusValue)||0) : 0,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }).then(()=>{
+        cancelMatchEdit(true);
+      }).catch(err=>{
+        console.error(err);
+        alert(T("errEditMatch"));
+      });
     }
 
 
@@ -2866,7 +3066,9 @@ function toggleTheme() {
       const playersAll = [...state.players].sort((a,b)=> a.name.localeCompare(b.name,"ar"));
 
       // ✅ تسجيل ماتشات جديدة: ممنوع اللاعب المحظور حاليًا
-      const playersForMatch = playersAll.filter(p => !isPlayerCurrentlyBanned(p));
+      const editMatch = getEditingMatch();
+      const editMatchPlayerIds = new Set([...(editMatch?.winners || []), ...(editMatch?.losers || [])]);
+      const playersForMatch = playersAll.filter(p => !isPlayerCurrentlyBanned(p) || editMatchPlayerIds.has(p.id));
 
       // ✅ التحليلات/الإحصائيات: يعتمد على نهاية الفترة المختارة
       const rangeEnd = getSelectedRangeEndDate();
@@ -3210,25 +3412,14 @@ ${T("banExplanation")}`)) return;
 
     // ===== MATCHES =====
     function addMatch(){
+      if(editingMatchId){
+        updateMatchFromForm();
+        return;
+      }
       if(!isAdmin || !db) return;
       if(state.players.length<4){ alert(T("needAtLeast4Players")); return; }
-      const w1=$("winnerP1").value;
-      const w2=$("winnerP2").value;
-      const l1=$("loserP1").value;
-      const l2=$("loserP2").value;
-      if(!w1||!w2||!l1||!l2){ alert(T("selectAllPlayers")); return; }
-      const chosen=[w1,w2,l1,l2];
-      if(new Set(chosen).size<4){ alert(T("samePlayerNotAllowed")); return; }
-
-      // ✅ ممنوع تسجيل ماتش جديد لو أي لاعب محظور حاليًا
-      const now = new Date();
-      for(const pid of chosen){
-        const pl = getPlayerById(pid);
-        if(pl && isPlayerCurrentlyBanned(pl)){
-          alert(`لا يمكن تسجيل الماتش لأن اللاعب "${pl.name}" محظور حاليًا.`);
-          return;
-        }
-      }
+      const matchData = readMatchFormData({ allowCurrentlyBanned: false });
+      if(!matchData) return;
 
       // تحديث حالة البونص قبل الحفظ
       updateBonusEligibility();
@@ -3236,20 +3427,8 @@ ${T("banExplanation")}`)) return;
         bonusApplied = false; bonusValue = 0;
       }
 
-      let dateStr=$("matchDate").value;
-      if(!dateStr){
-        const now=new Date();
-        const y=now.getFullYear();
-        const m=String(now.getMonth()+1).padStart(2,"0");
-        const d=String(now.getDate()).padStart(2,"0");
-        dateStr=`${y}-${m}-${d}`;
-      }
-
       db.collection("matches").add({
-        date: dateStr,
-        winners:[w1,w2],
-        losers:[l1,l2],
-        players:[w1,w2,l1,l2],
+        ...matchData,
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         bonusApplied: bonusApplied || false,
         bonusValue: bonusApplied ? (Number(bonusValue)||0) : 0
@@ -3480,11 +3659,13 @@ ${T("banExplanation")}`)) return;
       reader.readAsText(file, "utf-8");
     }
 
-    // ===== MATCHES LOG (عرض + حذف) =====
+    // ===== MATCHES LOG (عرض + تعديل + حذف) =====
     function deleteMatchById(id){
       if(!isAdmin || !db) return;
       if(!confirm(T("confirmDeleteMatch"))) return;
-      db.collection("matches").doc(id).delete().catch(err=>{
+      db.collection("matches").doc(id).delete().then(()=>{
+        if(editingMatchId === id) cancelMatchEdit(true);
+      }).catch(err=>{
         console.error(err);
         alert(T("errDeleteMatch"));
       });
@@ -3941,11 +4122,22 @@ function updateMatchesLog(){
 
         const actionTd = document.createElement("td");
         if(isAdmin){
-          const btn = document.createElement("button");
-          btn.textContent = T("deleteBtn");
-          btn.className = "danger btn-small";
-          btn.addEventListener("click", ()=> deleteMatchById(m.id));
-          actionTd.appendChild(btn);
+          const actions = document.createElement("div");
+          actions.className = "table-actions";
+
+          const editBtn = document.createElement("button");
+          editBtn.textContent = T("editMatchBtn");
+          editBtn.className = "btn-small";
+          editBtn.addEventListener("click", ()=> startEditMatch(m.id));
+          actions.appendChild(editBtn);
+
+          const delBtn = document.createElement("button");
+          delBtn.textContent = T("deleteBtn");
+          delBtn.className = "danger btn-small";
+          delBtn.addEventListener("click", ()=> deleteMatchById(m.id));
+          actions.appendChild(delBtn);
+
+          actionTd.appendChild(actions);
         } else {
           actionTd.textContent = "-";
         }
@@ -4915,6 +5107,7 @@ function autoAnalyzeTeamsHeadToHeadIfReady(){
       // باقي اللستينرز زي ما هي
       $("addPlayerBtn").addEventListener("click",addPlayer);
       $("addMatchBtn").addEventListener("click",addMatch);
+      $("cancelMatchEditBtn").addEventListener("click",()=>cancelMatchEdit(true));
       $("bonusBtn").addEventListener("click",toggleBonus);
       $("resetAllBtn").addEventListener("click",resetAll);
       $("backupBtn").addEventListener("click",()=>exportWebData("backup"));
