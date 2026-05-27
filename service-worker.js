@@ -1,7 +1,8 @@
-const CACHE_NAME = "domino-league-v4";
+const CACHE_NAME = "domino-league-v5";
 const CORE_ASSETS = [
   "./",
   "./index.html",
+  "./app.webmanifest",
   "./manifest.webmanifest",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
