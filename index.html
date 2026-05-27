@@ -684,6 +684,22 @@
         <div class="small-text">
           <span id="matchesLogIntro" data-i18n="matchesLogIntro">أحدث ماتش في الأعلى. يمكنك تعديل أو حذف أي ماتش غلط بدون التأثير على الباقي.</span>
         </div>
+        <div class="row" style="margin-top:10px;">
+          <div class="field">
+            <label for="matchLogPlayerFilter" data-i18n="matchLogPlayerFilter">فلتر اللاعب</label>
+            <select id="matchLogPlayerFilter">
+              <option value="all">كل اللاعبين</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="matchLogResultFilter" data-i18n="matchLogResultFilter">النتيجة</label>
+            <select id="matchLogResultFilter">
+              <option value="all">الكل</option>
+              <option value="win">فوز</option>
+              <option value="loss">خسارة</option>
+            </select>
+          </div>
+        </div>
         <table>
           <thead>
             <tr>
@@ -1257,6 +1273,13 @@ const I18N = {
     showLog: "👁️ عرض السجل",
     hideLog: "👁️ إخفاء السجل",
     matchesLogIntro: "أحدث ماتش في الأعلى. يمكنك تعديل أو حذف أي ماتش غلط بدون التأثير على الباقي.",
+    matchLogPlayerFilter: "فلتر اللاعب",
+    matchLogResultFilter: "النتيجة",
+    matchLogAllPlayers: "كل اللاعبين",
+    matchLogAllResults: "الكل",
+    matchLogWins: "فوز",
+    matchLogLosses: "خسارة",
+    noMatchesForLogFilters: "لا توجد ماتشات مطابقة للفلاتر المختارة.",
     date: "التاريخ",
     winningTeam: "الفريق الكسبان",
     losingTeam: "الفريق الخسران",
@@ -1628,6 +1651,13 @@ const I18N = {
     showLog: "👁️ Show Log",
     hideLog: "👁️ Hide Log",
     matchesLogIntro: "Latest match on top. You can edit or delete any wrong match without affecting the others.",
+    matchLogPlayerFilter: "Player filter",
+    matchLogResultFilter: "Result",
+    matchLogAllPlayers: "All players",
+    matchLogAllResults: "All",
+    matchLogWins: "Wins",
+    matchLogLosses: "Losses",
+    noMatchesForLogFilters: "No matches match the selected filters.",
     date: "Date",
     winningTeam: "Winning Team",
     losingTeam: "Losing Team",
@@ -2251,6 +2281,8 @@ function applyLang(lang) {
   setLabel("loserP2", "loserTeamP2");
   setLabel("filterYear", "year");
   setLabel("filterMonth", "month");
+  setLabel("matchLogPlayerFilter", "matchLogPlayerFilter");
+  setLabel("matchLogResultFilter", "matchLogResultFilter");
   setLabel("playerRecordSelect", "choosePlayer");
   setLabel("playerDetailsSelect", "choosePlayer");
   setLabel("h2hP1", "firstPlayer");
@@ -3060,10 +3092,51 @@ function toggleTheme() {
     }
 
 
-    
+    function updateMatchLogResultFilterOptions(){
+      const sel = $("matchLogResultFilter");
+      if(!sel) return;
+      const current = sel.value || "all";
+      const options = [
+        ["all", T("matchLogAllResults")],
+        ["win", T("matchLogWins")],
+        ["loss", T("matchLogLosses")]
+      ];
+      sel.innerHTML = "";
+      options.forEach(([value, label])=>{
+        const opt = document.createElement("option");
+        opt.value = value;
+        opt.textContent = label;
+        sel.appendChild(opt);
+      });
+      sel.value = options.some(([value]) => value === current) ? current : "all";
+    }
+
+    function updateMatchLogPlayerFilterOptions(playersAll){
+      const sel = $("matchLogPlayerFilter");
+      if(!sel) return;
+      const current = sel.value || "all";
+      sel.innerHTML = "";
+
+      const allOpt = document.createElement("option");
+      allOpt.value = "all";
+      allOpt.textContent = T("matchLogAllPlayers");
+      sel.appendChild(allOpt);
+
+      playersAll.forEach(p=>{
+        const opt = document.createElement("option");
+        opt.value = p.id;
+        opt.textContent = p.name;
+        sel.appendChild(opt);
+      });
+
+      sel.value = (current === "all" || playersAll.some(p=>p.id === current)) ? current : "all";
+    }
+
     function updatePlayersUI(){
       // ترتيب اللاعبين أبجديًا بالاسم
       const playersAll = [...state.players].sort((a,b)=> a.name.localeCompare(b.name,"ar"));
+      updateMatchLogPlayerFilterOptions(playersAll);
+      updateMatchLogResultFilterOptions();
 
       // ✅ تسجيل ماتشات جديدة: ممنوع اللاعب المحظور حاليًا
       const editMatch = getEditingMatch();
@@ -4089,13 +4162,26 @@ function updateMatchesLog(){
       tbody.innerHTML = "";
 
       // نستخدم نفس الفلتر بتاع السنة/الشهر
-      const matches = getFilteredMatches();
+      const baseMatches = getFilteredMatches();
+      const playerFilter = $("matchLogPlayerFilter")?.value || "all";
+      const resultFilter = $("matchLogResultFilter")?.value || "all";
+      const matches = baseMatches.filter(m=>{
+        if(playerFilter === "all") return true;
+        const winners = m.winners || [];
+        const losers = m.losers || [];
+        const won = winners.includes(playerFilter);
+        const lost = losers.includes(playerFilter);
 
-      if(matches.length === 0){
+        if(resultFilter === "win") return won;
+        if(resultFilter === "loss") return lost;
+        return won || lost;
+      });
+
+      if(baseMatches.length === 0 || matches.length === 0){
         const tr = document.createElement("tr");
         const td = document.createElement("td");
         td.colSpan = 5;
-        td.textContent = T("noMatchesInPeriod");
+        td.textContent = baseMatches.length === 0 ? T("noMatchesInPeriod") : T("noMatchesForLogFilters");
         tr.appendChild(td);
         tbody.appendChild(tr);
         return;
@@ -5187,6 +5273,8 @@ function autoAnalyzeTeamsHeadToHeadIfReady(){
 
       $("togglePlayersListBtn").addEventListener("click", togglePlayersList);
       $("toggleMatchesLogBtn").addEventListener("click", toggleMatchesLog);
+      $("matchLogPlayerFilter").addEventListener("change", updateMatchesLog);
+      $("matchLogResultFilter").addEventListener("change", updateMatchesLog);
     }
 
     document.addEventListener("DOMContentLoaded",init);
