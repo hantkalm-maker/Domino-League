@@ -11,7 +11,7 @@
   <meta name="apple-mobile-web-app-title" content="قهوة الصايمات" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>قهوة الصايمات</title>
-  <link rel="manifest" href="app.webmanifest?v=6" />
+  <link rel="manifest" href="app.webmanifest?v=7" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
   <style>
     *,
@@ -902,6 +902,237 @@
       }
     }
 
+    /* Fix light/dark modes, app-like controls, and horizontal table scrolling. */
+    body:not(.dark) {
+      background: linear-gradient(135deg, #f8fafc 0%, #edf3f8 52%, #f5f7fb 100%);
+      color: #0f172a;
+    }
+
+    body:not(.dark) header {
+      border-color: rgba(15, 23, 42, 0.1);
+      background: rgba(248, 250, 252, 0.9);
+      color: #0f172a;
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.12);
+    }
+
+    body:not(.dark) header h1,
+    body:not(.dark) .card h2,
+    body:not(.dark) .stat-box strong {
+      color: #0f172a;
+    }
+
+    body:not(.dark) #subtitleRule,
+    body:not(.dark) label {
+      color: #334155;
+    }
+
+    body:not(.dark) .small-text {
+      color: #64748b;
+    }
+
+    body:not(.dark) .card {
+      border-color: rgba(15, 23, 42, 0.1);
+      background: rgba(255, 255, 255, 0.86);
+      color: #0f172a;
+      box-shadow: 0 18px 42px rgba(15, 23, 42, 0.11);
+    }
+
+    body:not(.dark) input[type="text"],
+    body:not(.dark) input[type="date"],
+    body:not(.dark) input[type="file"],
+    body:not(.dark) select {
+      border-color: rgba(15, 23, 42, 0.14);
+      background-color: rgba(255, 255, 255, 0.94);
+      color: #0f172a;
+    }
+
+    body:not(.dark) select option {
+      background: #ffffff;
+      color: #0f172a;
+    }
+
+    body:not(.dark) button {
+      border-color: rgba(15, 23, 42, 0.12);
+      background: rgba(15, 23, 42, 0.045);
+      color: #0f172a;
+    }
+
+    body:not(.dark) button:hover:not(:disabled) {
+      background: rgba(15, 23, 42, 0.08);
+    }
+
+    body:not(.dark) button.primary {
+      border-color: rgba(180, 83, 9, 0.32);
+      background: rgba(245, 158, 11, 0.16);
+      color: #78350f;
+    }
+
+    body:not(.dark) button.primary:hover:not(:disabled) {
+      border-color: rgba(180, 83, 9, 0.48);
+      background: rgba(245, 158, 11, 0.24);
+    }
+
+    body:not(.dark) button.danger {
+      border-color: rgba(190, 18, 60, 0.28);
+      background: rgba(225, 29, 72, 0.1);
+      color: #9f1239;
+    }
+
+    body:not(.dark) table {
+      background: rgba(255, 255, 255, 0.82);
+      color: #0f172a;
+    }
+
+    body:not(.dark) th {
+      background: rgba(15, 23, 42, 0.055);
+      color: #475569;
+      border-bottom-color: rgba(15, 23, 42, 0.1);
+    }
+
+    body:not(.dark) td {
+      color: #0f172a;
+      border-bottom-color: rgba(15, 23, 42, 0.08);
+    }
+
+    body:not(.dark) tr:nth-child(even) td {
+      background: rgba(15, 23, 42, 0.025);
+    }
+
+    body:not(.dark) tbody tr:hover td {
+      background: rgba(245, 158, 11, 0.08);
+    }
+
+    body:not(.dark) .stat-box {
+      border-color: rgba(15, 23, 42, 0.1);
+      background: rgba(248, 250, 252, 0.92);
+      color: #334155;
+    }
+
+    body:not(.dark) .match-edit-notice {
+      border-color: rgba(180, 83, 9, 0.24);
+      background: rgba(245, 158, 11, 0.12);
+      color: #78350f;
+    }
+
+    body.dark {
+      background: linear-gradient(135deg, #07101d 0%, #0b1630 52%, #08111f 100%);
+      color: #e5eefc;
+    }
+
+    body.dark select option {
+      background: #0f172a;
+      color: #f8fafc;
+    }
+
+    body select,
+    body.dark select,
+    body:not(.dark) select {
+      appearance: none;
+      -webkit-appearance: none;
+      padding-inline: 12px 38px;
+      background-image:
+        linear-gradient(45deg, transparent 50%, currentColor 50%),
+        linear-gradient(135deg, currentColor 50%, transparent 50%);
+      background-position:
+        left 16px center,
+        left 10px center;
+      background-repeat: no-repeat;
+      background-size: 6px 6px, 6px 6px;
+    }
+
+    input[type="date"] {
+      color-scheme: light;
+    }
+
+    body.dark input[type="date"] {
+      color-scheme: dark;
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      cursor: pointer;
+      opacity: 0.85;
+    }
+
+    body.dark input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(1);
+    }
+
+    .panel-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      text-align: start;
+    }
+
+    .panel-toggle::after {
+      content: "+";
+      display: inline-grid;
+      width: 24px;
+      height: 24px;
+      flex: 0 0 auto;
+      place-items: center;
+      border-radius: 8px;
+      border: 1px solid currentColor;
+      opacity: 0.7;
+    }
+
+    .panel-toggle[aria-expanded="true"]::after {
+      content: "-";
+    }
+
+    .table-scroll {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      background: rgba(2, 6, 23, 0.24);
+    }
+
+    body:not(.dark) .table-scroll {
+      border-color: rgba(15, 23, 42, 0.1);
+      background: rgba(255, 255, 255, 0.65);
+    }
+
+    .table-scroll table {
+      display: table;
+      width: 100%;
+      min-width: 580px;
+      margin-top: 0;
+      border: 0;
+      border-radius: 0;
+      overflow: visible;
+      background: transparent;
+    }
+
+    #leaderboardTable,
+    #championsLogTable {
+      min-width: 760px;
+    }
+
+    .table-scroll th,
+    .table-scroll td {
+      white-space: nowrap;
+    }
+
+    @media (min-width: 1024px) {
+      body:not(.dark) header::before {
+        border-color: rgba(180, 83, 9, 0.22);
+        background: rgba(245, 158, 11, 0.09);
+      }
+    }
+
+    @media (max-width: 700px) {
+      .panel-toggle {
+        width: 100%;
+      }
+
+      .table-scroll {
+        margin-top: 10px;
+      }
+    }
+
   </style>
 
   <!-- Firebase (CDN compat) -->
@@ -1050,7 +1281,7 @@
 
       <div class="row" style="margin-bottom:4px;">
         <div class="field" style="flex:0 0 auto;">
-          <button class="primary" id="toggleMatchesLogBtn" data-i18n="showLog">👁️ عرض السجل</button>
+          <button class="primary panel-toggle" id="toggleMatchesLogBtn" type="button" aria-controls="matchesLogWrapper" aria-expanded="false" data-i18n="showLog">👁️ عرض السجل</button>
         </div>
       </div>
 
@@ -1353,7 +1584,7 @@
       <!-- زر عرض/إخفاء قائمة اللاعبين -->
       <div class="row" style="margin-bottom:4px;">
         <div class="field" style="flex:0 0 auto;">
-          <button class="primary" id="togglePlayersListBtn" data-i18n="showPlayersList">👥 عرض قائمة اللاعبين</button>
+          <button class="primary panel-toggle" id="togglePlayersListBtn" type="button" aria-controls="playersListWrapper" aria-expanded="false" data-i18n="showPlayersList">👥 عرض قائمة اللاعبين</button>
         </div>
       </div>
 
@@ -1492,11 +1723,17 @@ window.t  = window.t  || window.T;
 function refreshToggleButtonsText(){
   try{
     const pBtn = document.getElementById("togglePlayersListBtn");
-    if(pBtn) pBtn.textContent = playersListVisible ? T("hidePlayersList") : T("showPlayersList");
+    if(pBtn){
+      pBtn.textContent = playersListVisible ? T("hidePlayersList") : T("showPlayersList");
+      pBtn.setAttribute("aria-expanded", playersListVisible ? "true" : "false");
+    }
   }catch(e){}
   try{
     const mBtn = document.getElementById("toggleMatchesLogBtn");
-    if(mBtn) mBtn.textContent = matchesLogVisible ? T("hideLog") : T("showLog");
+    if(mBtn){
+      mBtn.textContent = matchesLogVisible ? T("hideLog") : T("showLog");
+      mBtn.setAttribute("aria-expanded", matchesLogVisible ? "true" : "false");
+    }
   }catch(e){}
   try{
     const vBtn = document.getElementById("leaderboardToggleViewBtn");
@@ -1515,6 +1752,16 @@ function refreshToggleButtonsText(){
   }catch(e){}
 }
 
+function setupScrollableTables(){
+  document.querySelectorAll("main table").forEach(table => {
+    if(table.parentElement && table.parentElement.classList.contains("table-scroll")) return;
+    const wrapper = document.createElement("div");
+    wrapper.className = "table-scroll";
+    table.parentNode.insertBefore(wrapper, table);
+    wrapper.appendChild(table);
+  });
+}
+
 
 
 
@@ -1529,8 +1776,8 @@ const I18N = {
     pagetitle: "قهوة الصايمات",
     headerTitle: "قهوة الصايمات",
     subtitleRule: "كل ماتش = الفريق الكسبان +1 لكل لاعب / الخسران -1 لكل لاعب",
-    darkMode: "🌙 Dark Mode",
-    lightMode: "☀️ Light Mode",
+    darkMode: "🌙 الوضع الليلي",
+    lightMode: "☀️ الوضع النهاري",
     languageLabel: "اللغة:",
     // Sections
     playersSectionTitle: "👤 إدارة اللاعبين",
@@ -2674,7 +2921,10 @@ function applyLang(lang) {
   if (addPlayerBtn) addPlayerBtn.textContent = T("addPlayer");
 
   const togglePlayersBtn = document.getElementById("togglePlayersListBtn");
-  if (togglePlayersBtn) togglePlayersBtn.textContent = (playersListVisible ? T("hidePlayersList") : T("showPlayersList"));
+  if (togglePlayersBtn) {
+    togglePlayersBtn.textContent = (playersListVisible ? T("hidePlayersList") : T("showPlayersList"));
+    togglePlayersBtn.setAttribute("aria-expanded", playersListVisible ? "true" : "false");
+  }
 
   const addMatchBtn = document.getElementById("addMatchBtn");
   if (addMatchBtn) addMatchBtn.textContent = editingMatchId ? T("saveMatchEdit") : T("saveMatch");
@@ -2683,7 +2933,10 @@ function applyLang(lang) {
   if (cancelMatchEditBtn) cancelMatchEditBtn.textContent = T("cancelMatchEdit");
 
   const toggleMatchesBtn = document.getElementById("toggleMatchesLogBtn");
-  if (toggleMatchesBtn) toggleMatchesBtn.textContent = (matchesLogVisible ? T("hideLog") : T("showLog"));
+  if (toggleMatchesBtn) {
+    toggleMatchesBtn.textContent = (matchesLogVisible ? T("hideLog") : T("showLog"));
+    toggleMatchesBtn.setAttribute("aria-expanded", matchesLogVisible ? "true" : "false");
+  }
 
 const lbToggleBtn = document.getElementById("leaderboardToggleViewBtn");
 if (lbToggleBtn) lbToggleBtn.textContent = (leaderboardViewMode === "compact") ? T("detailedView") : T("compactView");
@@ -2888,6 +3141,9 @@ function getTheme() {
 }
 function applyTheme(theme) {
   document.body.classList.toggle("dark", theme === "dark");
+  document.documentElement.style.colorScheme = theme === "dark" ? "dark" : "light";
+  const themeMeta = document.querySelector('meta[name="theme-color"]');
+  if (themeMeta) themeMeta.setAttribute("content", theme === "dark" ? "#08111f" : "#f8fafc");
   const btn = document.getElementById("themeToggleBtn");
   if (btn) btn.textContent = (theme === "dark") ? T("lightMode") : T("darkMode");
 }
@@ -3241,6 +3497,7 @@ function toggleTheme() {
       matchesLogVisible = !matchesLogVisible;
       wrapper.style.display = matchesLogVisible ? "" : "none";
       btn.textContent = matchesLogVisible ? T("hideLog") : T("showLog");
+      btn.setAttribute("aria-expanded", matchesLogVisible ? "true" : "false");
     }
 
     function togglePlayersList(){
@@ -3250,6 +3507,7 @@ function toggleTheme() {
       playersListVisible = !playersListVisible;
       wrapper.style.display = playersListVisible ? "" : "none";
       btn.textContent = playersListVisible ? T("hidePlayersList") : T("showPlayersList");
+      btn.setAttribute("aria-expanded", playersListVisible ? "true" : "false");
       }
 
     // ===== PLAYERS =====
@@ -5524,6 +5782,7 @@ function autoAnalyzeTeamsHeadToHeadIfReady(){
 
     // ===== INIT =====
     function init(){
+      setupScrollableTables();
       initFirebase();
       updateAdminUI();
       updateBonusEligibility();
