@@ -4,14 +4,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#4a260c" />
+  <meta name="theme-color" content="#08111f" />
   <meta name="application-name" content="قهوة الصايمات" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="قهوة الصايمات" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>قهوة الصايمات</title>
-  <link rel="manifest" href="app.webmanifest?v=5" />
+  <link rel="manifest" href="app.webmanifest?v=6" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
   <style>
     *,
@@ -530,6 +530,378 @@
       }
     }
 
+    /* Friends Arena visual preview */
+    :root {
+      color: #e5eefc;
+      background: #08111f;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    html {
+      background: #08111f;
+    }
+
+    body,
+    body.dark {
+      min-width: 320px;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #07101d 0%, #0b1630 52%, #08111f 100%);
+      color: #e5eefc;
+    }
+
+    header,
+    body.dark header {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(2, 6, 23, 0.82);
+      color: #f8fafc;
+      padding: 14px;
+      text-align: right;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.22);
+    }
+
+    .app-logo {
+      width: 56px;
+      height: 56px;
+      display: block;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid rgba(251, 191, 36, 0.38);
+      box-shadow: 0 18px 35px rgba(0, 0, 0, 0.3);
+    }
+
+    header h1 {
+      margin-top: 10px;
+      color: #ffffff;
+      font-size: clamp(1.5rem, 5vw, 2.25rem);
+      font-weight: 900;
+      line-height: 1.15;
+    }
+
+    #subtitleRule {
+      max-width: 44rem;
+      margin: 8px 0 0;
+      color: #cbd5e1;
+    }
+
+    .settings-bar {
+      justify-content: flex-start;
+      margin-top: 14px;
+    }
+
+    main {
+      width: min(100%, 80rem);
+      max-width: 80rem;
+      margin: 0 auto;
+      padding: 16px 12px 36px;
+    }
+
+    .card,
+    body.dark .card {
+      margin-bottom: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.055);
+      color: #e5eefc;
+      box-shadow: 0 24px 54px rgba(0, 0, 0, 0.22);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+
+    .card h2 {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+      color: #ffffff;
+      font-size: 1.08rem;
+      font-weight: 900;
+    }
+
+    label {
+      color: #cbd5e1;
+      font-weight: 800;
+    }
+
+    .small-text,
+    body.dark .small-text {
+      color: #94a3b8;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    input[type="file"],
+    select,
+    body.dark input[type="text"],
+    body.dark input[type="date"],
+    body.dark select {
+      min-height: 44px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      background: rgba(2, 6, 23, 0.46);
+      color: #f8fafc;
+      outline: none;
+      transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+    }
+
+    input[type="text"]:focus,
+    input[type="date"]:focus,
+    select:focus {
+      border-color: rgba(251, 191, 36, 0.66);
+      box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.12);
+      background: rgba(2, 6, 23, 0.66);
+    }
+
+    select option {
+      background: #0f172a;
+      color: #f8fafc;
+    }
+
+    input[type="file"]::file-selector-button,
+    body.dark input[type="file"]::file-selector-button {
+      border: 1px solid rgba(251, 191, 36, 0.28);
+      background: rgba(251, 191, 36, 0.12);
+      color: #fef3c7;
+      font-weight: 800;
+    }
+
+    button {
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.055);
+      color: #e5eefc;
+      box-shadow: none;
+      transition: transform 0.12s ease, background 0.18s ease, border-color 0.18s ease;
+    }
+
+    button:hover:not(:disabled) {
+      border-color: rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.09);
+    }
+
+    button.primary,
+    body.dark button.primary {
+      border-color: rgba(251, 191, 36, 0.34);
+      background: rgba(251, 191, 36, 0.16);
+      color: #fef3c7;
+    }
+
+    button.primary:hover:not(:disabled),
+    body.dark button.primary:hover:not(:disabled) {
+      border-color: rgba(251, 191, 36, 0.58);
+      background: rgba(251, 191, 36, 0.24);
+    }
+
+    button.danger,
+    body.dark button.danger {
+      border-color: rgba(251, 113, 133, 0.35);
+      background: rgba(244, 63, 94, 0.14);
+      color: #ffe4e6;
+    }
+
+    button.danger:hover:not(:disabled),
+    body.dark button.danger:hover:not(:disabled) {
+      background: rgba(244, 63, 94, 0.22);
+    }
+
+    #bonusBtn.bonus-ready {
+      border-color: rgba(251, 191, 36, 0.55);
+      background: rgba(251, 191, 36, 0.24);
+      color: #fff7ed;
+    }
+
+    table,
+    body.dark table {
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      background: rgba(2, 6, 23, 0.34);
+      color: #e5eefc;
+      overflow: hidden;
+    }
+
+    th,
+    body.dark th {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.045);
+      color: #94a3b8;
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    td,
+    body.dark td {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      color: #e5eefc;
+    }
+
+    tr:nth-child(even) td,
+    body.dark tr:nth-child(even) td {
+      background: rgba(255, 255, 255, 0.025);
+    }
+
+    tbody tr {
+      transition: background 0.16s ease;
+    }
+
+    tbody tr:hover td {
+      background: rgba(255, 255, 255, 0.045);
+    }
+
+    .stats-grid {
+      gap: 12px;
+    }
+
+    .stat-box,
+    body.dark .stat-box {
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      background: rgba(15, 23, 42, 0.62);
+      color: #cbd5e1;
+    }
+
+    .stat-box strong {
+      color: #ffffff;
+      font-weight: 900;
+    }
+
+    .player-avatar {
+      border-color: rgba(251, 191, 36, 0.38);
+      background: #0f172a;
+    }
+
+    .match-edit-notice,
+    body.dark .match-edit-notice {
+      border-color: rgba(251, 191, 36, 0.32);
+      background: rgba(251, 191, 36, 0.1);
+      color: #fef3c7;
+    }
+
+    .table-actions {
+      gap: 8px;
+    }
+
+    .btn-small {
+      min-height: 32px;
+      border-radius: 8px;
+    }
+
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.55);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.38);
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(245, 158, 11, 0.55);
+    }
+
+    @media (min-width: 1024px) {
+      body {
+        padding-inline-start: 18rem;
+      }
+
+      header,
+      body.dark header {
+        position: fixed;
+        inset-block: 0;
+        inset-inline-start: 0;
+        width: 18rem;
+        overflow-y: auto;
+        border-bottom: 0;
+        border-inline-end: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(2, 6, 23, 0.78);
+        padding: 20px;
+      }
+
+      header::before {
+        content: "";
+        display: block;
+        position: absolute;
+        inset: 20px;
+        z-index: -1;
+        border: 1px solid rgba(251, 191, 36, 0.2);
+        border-radius: 8px;
+        background: rgba(251, 191, 36, 0.08);
+        height: 12rem;
+      }
+
+      .app-logo {
+        width: 82px;
+        height: 82px;
+      }
+
+      header h1 {
+        margin-top: 16px;
+      }
+
+      .settings-bar {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        width: 100%;
+        margin-top: 22px;
+      }
+
+      .settings-bar select,
+      .settings-bar button {
+        width: 100%;
+      }
+
+      main {
+        padding: 24px;
+      }
+
+      .card {
+        padding: 20px;
+      }
+    }
+
+    @media (max-width: 700px) {
+      header,
+      body.dark header {
+        padding: 12px;
+      }
+
+      .app-logo {
+        width: 48px;
+        height: 48px;
+      }
+
+      main {
+        width: 100%;
+        padding: 10px;
+      }
+
+      .card,
+      body.dark .card {
+        padding: 14px;
+      }
+
+      .settings-bar {
+        width: 100%;
+      }
+
+      .btn-small,
+      .table-actions .btn-small {
+        width: auto;
+      }
+    }
+
   </style>
 
   <!-- Firebase (CDN compat) -->
@@ -540,6 +912,7 @@
 </head>
 <body>
   <header>
+    <img class="app-logo" src="icons/icon-192.png" alt="" />
     <h1 id="appTitle" data-i18n="headerTitle">دوري الأصدقاء </h1>
     <div class="small-text" id="subtitleRule" data-i18n="subtitleRule">
       كل ماتش = الفريق الكسبان +1 لكل لاعب / الخسران -1 لكل لاعب
