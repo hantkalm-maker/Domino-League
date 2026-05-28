@@ -11,7 +11,7 @@
   <meta name="apple-mobile-web-app-title" content="قهوة الصايمات" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>قهوة الصايمات</title>
-  <link rel="manifest" href="app.webmanifest?v=16" />
+  <link rel="manifest" href="app.webmanifest?v=17" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
   <style>
     *,
@@ -1189,6 +1189,28 @@
       padding-inline: 10px;
     }
 
+    .match-date-admin-row .admin-quick-actions {
+      align-self: flex-end;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .admin-quick-spacer {
+      visibility: hidden;
+    }
+
+    .match-date-admin-row .admin-quick-actions button {
+      width: 100%;
+      min-height: 42px;
+      height: 42px;
+      padding: 6px 8px;
+      line-height: 1.15;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
     #leaderboardTable,
     #championsLogTable {
       width: max-content;
@@ -1263,7 +1285,8 @@
       }
 
       .team-row,
-      .inline-select-row {
+      .inline-select-row,
+      .match-date-admin-row {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
@@ -1274,19 +1297,28 @@
 
       .team-row label,
       .inline-select-row label,
-      .period-row label {
+      .period-row label,
+      .match-date-admin-row label {
         font-size: 0.74rem;
         line-height: 1.25;
       }
 
       .team-row select,
       .inline-select-row select,
-      .period-row select {
+      .period-row select,
+      .match-date-admin-row input[type="date"] {
         min-height: 42px;
         font-size: 0.84rem;
         padding-inline-start: 8px;
         padding-inline-end: 30px;
         background-position: left 13px center, left 7px center;
+      }
+
+      .match-date-admin-row .admin-quick-actions button {
+        min-height: 42px;
+        height: 42px;
+        padding-inline: 8px;
+        font-size: 0.72rem;
       }
 
       .period-action {
@@ -1601,11 +1633,16 @@
       <h2 id="matchSectionTitle" data-i18n="matchSectionTitle">🧮 تسجيل نتيجة ماتش (عشرة كاملة)</h2>
       <button class="primary panel-toggle section-toggle" id="toggleMatchEntryBtn" type="button" aria-controls="matchEntryWrapper" aria-expanded="false">🧮 تسجيل نتيجة ماتش</button>
       <div id="matchEntryWrapper" style="display:none;">
-      <div class="row match-date-row">
+      <div class="row match-date-row match-date-admin-row">
         <div class="field">
           <label for="matchDate" data-i18n="matchDate">تاريخ الماتش</label>
           <input type="date" id="matchDate" />
           <span class="small-text"><span id="matchDateHintText" data-i18n="matchDateHintText">لو تركته فاضي، هيتسجل بتاريخ اليوم</span></span>
+        </div>
+        <div class="field admin-quick-actions">
+          <label class="admin-quick-spacer" aria-hidden="true">&nbsp;</label>
+          <button class="primary" id="enableAdminQuickBtn" type="button" data-i18n="enableAdmin">🔑 تفعيل وضع المدير</button>
+          <button class="danger" id="disableAdminQuickBtn" type="button" style="display:none;" data-i18n="disableAdmin">🚪 قفل وضع المدير</button>
         </div>
       </div>
 
@@ -2046,7 +2083,9 @@
     <!-- قسم المدير والإدارة المتقدمة -->
     <section class="card">
       <h2 id="adminSectionTitle" data-i18n="adminSectionTitle">🔐 وضع المدير والإدارة المتقدمة</h2>
+      <button class="primary panel-toggle section-toggle" id="toggleAdminPanelBtn" type="button" aria-controls="adminPanelWrapper" aria-expanded="false" data-i18n="showAdminPanel">🔐 عرض وضع المدير</button>
 
+      <div id="adminPanelWrapper" style="display:none;">
       <div class="admin-bar">
         <button class="primary" id="enableAdminBtn" data-i18n="enableAdmin">🔑 تفعيل وضع المدير</button>
         <button class="danger" id="disableAdminBtn" style="display:none;" data-i18n="disableAdmin">🚪 قفل وضع المدير</button>
@@ -2077,6 +2116,7 @@
       <div class="small-text" id="adminDataNotes">
         <span id="resetWarning1" data-i18n="resetWarning1">زر <strong>مسح كل البيانات</strong> يمسح كل اللاعبين وكل الماتشات نهائيًا من قاعدة البيانات (للاستخدام بحذر شديد).</span><br>
         <span id="resetWarning2" data-i18n="resetWarning2">الاستيراد يستبدل اللاعبين والماتشات الحالية ببيانات الملف بعد التأكيد. اعمل نسخة احتياطية قبل الاستيراد لو البيانات مهمة.</span>
+      </div>
       </div>
     </section>
 
@@ -2143,6 +2183,7 @@ window.t  = window.t  || window.T;
     let matchesLogVisible = false;  // قلنا نخليه مخفي افتراضيًا
     let playersListVisible = false; // جديد: قائمة اللاعبين مخفية افتراضيًا
     let matchEntryVisible = false;
+    let adminPanelVisible = false;
     let editingMatchId = null;
     let editingMatchBonusApplied = false;
     let editingMatchBonusValue = 0;
@@ -2271,6 +2312,13 @@ function refreshToggleButtonsText(){
     if(mBtn){
       mBtn.textContent = matchesLogVisible ? T("hideLog") : T("showLog");
       mBtn.setAttribute("aria-expanded", matchesLogVisible ? "true" : "false");
+    }
+  }catch(e){}
+  try{
+    const aBtn = document.getElementById("toggleAdminPanelBtn");
+    if(aBtn){
+      aBtn.textContent = adminPanelVisible ? T("hideAdminPanel") : T("showAdminPanel");
+      aBtn.setAttribute("aria-expanded", adminPanelVisible ? "true" : "false");
     }
   }catch(e){}
   try{
@@ -2417,6 +2465,8 @@ const I18N = {
     addPlayer: "➕ إضافة لاعب",
     showMatchEntry: "🧮 تسجيل نتيجة ماتش",
     hideMatchEntry: "🧮 إخفاء تسجيل الماتش",
+    showAdminPanel: "🔐 عرض وضع المدير",
+    hideAdminPanel: "🔐 إخفاء وضع المدير",
     showPlayersList: "👥 عرض قائمة اللاعبين",
     hidePlayersList: "👥 إخفاء قائمة اللاعبين",
     playersListEditHint: "تقدر تعدّل اسم اللاعب أو تضيف/تغيّر صورة اللاعب من الجدول (التعديل متاح للمدير فقط).",
@@ -2797,6 +2847,8 @@ const I18N = {
     addPlayer: "➕ Add Player",
     showMatchEntry: "🧮 Record Match",
     hideMatchEntry: "🧮 Hide Match Form",
+    showAdminPanel: "🔐 Show Admin Mode",
+    hideAdminPanel: "🔐 Hide Admin Mode",
     showPlayersList: "👥 Show Players List",
     hidePlayersList: "👥 Hide Players List",
     playersListEditHint: "You can edit the player name or add/change the player photo from the table (admin only).",
@@ -3539,6 +3591,12 @@ function applyLang(lang) {
     toggleMatchesBtn.setAttribute("aria-expanded", matchesLogVisible ? "true" : "false");
   }
 
+  const toggleAdminPanelBtn = document.getElementById("toggleAdminPanelBtn");
+  if (toggleAdminPanelBtn) {
+    toggleAdminPanelBtn.textContent = (adminPanelVisible ? T("hideAdminPanel") : T("showAdminPanel"));
+    toggleAdminPanelBtn.setAttribute("aria-expanded", adminPanelVisible ? "true" : "false");
+  }
+
 const lbToggleBtn = document.getElementById("leaderboardToggleViewBtn");
 if (lbToggleBtn) lbToggleBtn.textContent = (leaderboardViewMode === "compact") ? T("detailedView") : T("compactView");
 
@@ -3552,6 +3610,10 @@ if (lbToggleBtn) lbToggleBtn.textContent = (leaderboardViewMode === "compact") ?
   if (enableAdminBtn) enableAdminBtn.textContent = T("enableAdmin");
   const disableAdminBtn = document.getElementById("disableAdminBtn");
   if (disableAdminBtn) disableAdminBtn.textContent = T("disableAdmin");
+  const enableAdminQuickBtn = document.getElementById("enableAdminQuickBtn");
+  if (enableAdminQuickBtn) enableAdminQuickBtn.textContent = T("enableAdmin");
+  const disableAdminQuickBtn = document.getElementById("disableAdminQuickBtn");
+  if (disableAdminQuickBtn) disableAdminQuickBtn.textContent = T("disableAdmin");
 
   const resetAllBtn = document.getElementById("resetAllBtn");
   if (resetAllBtn) resetAllBtn.textContent = T("resetAll");
@@ -4059,6 +4121,8 @@ function toggleTheme() {
 
       $("enableAdminBtn").style.display = isAdmin ? "none" : "inline-block";
       $("disableAdminBtn").style.display = isAdmin ? "inline-block" : "none";
+      $("enableAdminQuickBtn").style.display = isAdmin ? "none" : "inline-block";
+      $("disableAdminQuickBtn").style.display = isAdmin ? "inline-block" : "none";
       $("adminStatusText").textContent = isAdmin ? T("adminEnabled") : T("adminViewOnly");
 
       // علشان أزرار تعديل اللاعبين تظهر/تختفي حسب وضع المدير
@@ -4105,6 +4169,16 @@ function toggleTheme() {
       wrapper.style.display = matchEntryVisible ? "" : "none";
       btn.textContent = matchEntryVisible ? T("hideMatchEntry") : T("showMatchEntry");
       btn.setAttribute("aria-expanded", matchEntryVisible ? "true" : "false");
+    }
+
+    function toggleAdminPanel(forceOpen){
+      const wrapper = $("adminPanelWrapper");
+      const btn = $("toggleAdminPanelBtn");
+      if(!wrapper || !btn) return;
+      adminPanelVisible = (forceOpen === true) ? true : !adminPanelVisible;
+      wrapper.style.display = adminPanelVisible ? "" : "none";
+      btn.textContent = adminPanelVisible ? T("hideAdminPanel") : T("showAdminPanel");
+      btn.setAttribute("aria-expanded", adminPanelVisible ? "true" : "false");
     }
 
     function togglePlayersList(){
@@ -6501,8 +6575,11 @@ function autoAnalyzeTeamsHeadToHeadIfReady(){
           autoAnalyzeHeadToHeadIfReady();
         });
       });
+      $("toggleAdminPanelBtn").addEventListener("click",()=>toggleAdminPanel());
       $("enableAdminBtn").addEventListener("click",enableAdminMode);
       $("disableAdminBtn").addEventListener("click",disableAdminMode);
+      $("enableAdminQuickBtn").addEventListener("click",enableAdminMode);
+      $("disableAdminQuickBtn").addEventListener("click",disableAdminMode);
 
       // ⭐ زرار تحليل مواجهة الفرق 2 ضد 2
       const h2hTeamsBtn = $("h2hTeamsAnalyzeBtn");
