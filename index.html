@@ -11,7 +11,7 @@
   <meta name="apple-mobile-web-app-title" content="قهوة الصايمات" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>قهوة الصايمات</title>
-  <link rel="manifest" href="app.webmanifest?v=12" />
+  <link rel="manifest" href="app.webmanifest?v=13" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
   <style>
     *,
@@ -1350,6 +1350,105 @@
       }
     }
 
+    header {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      align-items: center;
+      column-gap: 10px;
+    }
+
+    header .app-logo,
+    header h1 {
+      margin-top: 1cm;
+    }
+
+    header h1 {
+      min-width: 0;
+      margin-bottom: 0;
+      font-size: clamp(1.25rem, 4.4vw, 1.65rem);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    #subtitleRule,
+    #fbStatus,
+    #appBuildVersion {
+      display: none !important;
+    }
+
+    header .control-row {
+      grid-column: 1 / -1;
+      margin-top: 14px;
+    }
+
+    .period-row > .field,
+    .match-log-filter-row > .field {
+      min-width: 0;
+    }
+
+    .period-action button {
+      width: 100%;
+      white-space: nowrap;
+    }
+
+    .period-action::before {
+      content: "";
+      display: block;
+      height: 1.125em;
+    }
+
+    .match-log-filter-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .admin-embedded-panel {
+      margin: 14px 0 12px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      box-shadow: none;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+
+    .admin-embedded-panel h2 {
+      margin-top: 0;
+    }
+
+    #usageNotesCard {
+      display: none !important;
+    }
+
+    @media (max-width: 700px) {
+      header {
+        grid-template-columns: 48px minmax(0, 1fr);
+      }
+
+      header h1 {
+        font-size: 1.35rem;
+      }
+
+      .match-log-filter-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .match-log-filter-row label {
+        font-size: 0.74rem;
+        line-height: 1.25;
+      }
+
+      .match-log-filter-row select {
+        min-height: 42px;
+        font-size: 0.84rem;
+        padding-inline-start: 8px;
+        padding-inline-end: 30px;
+        background-position: left 13px center, left 7px center;
+      }
+    }
+
   </style>
 
   <!-- Firebase (CDN compat) -->
@@ -1504,7 +1603,7 @@
         <div class="small-text">
           <span id="matchesLogIntro" data-i18n="matchesLogIntro">أحدث ماتش في الأعلى. يمكنك تعديل أو حذف أي ماتش غلط بدون التأثير على الباقي.</span>
         </div>
-        <div class="row" style="margin-top:10px;">
+        <div class="row match-log-filter-row" style="margin-top:10px;">
           <div class="field">
             <label for="matchLogPlayerFilter" data-i18n="matchLogPlayerFilter">فلتر اللاعب</label>
             <select id="matchLogPlayerFilter">
@@ -1780,7 +1879,7 @@
     </section>
 
     <!-- إدارة اللاعبين -->
-    <section class="card">
+    <section class="card" id="playersManagementCard">
       <h2 id="playersSectionTitle" data-i18n="playersSectionTitle">👤 إدارة اللاعبين</h2>
       <div class="row">
         <div class="field">
@@ -1861,7 +1960,7 @@
       </div>
     </section>
 
-    <section class="card">
+    <section class="card" id="usageNotesCard">
       <h2 id="notesSectionTitle" data-i18n="notesSectionTitle">ℹ️ ملاحظات الاستخدام</h2>
       <ul class="small-text">
         <li><span id="note1" data-i18n="note1">من غير تفعيل وضع المدير، البرنامج في وضع المشاهدة فقط.</span></li>
@@ -2090,6 +2189,20 @@ function setupScrollableTables(){
     table.parentNode.insertBefore(wrapper, table);
     wrapper.appendChild(table);
   });
+}
+
+function movePlayerManagementIntoAdmin(){
+  const playerTitle = document.getElementById("playersSectionTitle");
+  const playerSection = playerTitle ? playerTitle.closest("section") : null;
+  const adminTitle = document.getElementById("adminSectionTitle");
+  const adminSection = adminTitle ? adminTitle.closest("section") : null;
+  const adminBar = adminSection ? adminSection.querySelector(".admin-bar") : null;
+
+  if(!playerSection || !adminSection || !adminBar || playerSection.parentElement === adminSection) return;
+
+  playerSection.classList.remove("card");
+  playerSection.classList.add("admin-embedded-panel");
+  adminBar.insertAdjacentElement("afterend", playerSection);
 }
 
 
@@ -6164,6 +6277,7 @@ function autoAnalyzeTeamsHeadToHeadIfReady(){
     // ===== INIT =====
     function init(){
       setupScrollableTables();
+      movePlayerManagementIntoAdmin();
       initFirebase();
       hydrateDataFromCache();
       updateAdminUI();
