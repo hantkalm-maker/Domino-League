@@ -11,7 +11,7 @@
   <meta name="apple-mobile-web-app-title" content="قهوة الصايمات" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>قهوة الصايمات</title>
-  <link rel="manifest" href="app.webmanifest?v=19" />
+  <link rel="manifest" href="app.webmanifest?v=20" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
   <style>
     *,
@@ -1693,6 +1693,79 @@
       }
     }
 
+    label[for="playerRecordSelect"],
+    label[for="playerDetailsSelect"] {
+      display: none !important;
+    }
+
+    body.dark {
+      background:
+        linear-gradient(155deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0) 34%),
+        linear-gradient(135deg, #15171b 0%, #2f343b 52%, #4b5563 100%);
+      color: #f3f4f6;
+    }
+
+    body.dark header,
+    body.dark .card {
+      border-color: rgba(229, 231, 235, 0.2);
+      background: rgba(38, 42, 49, 0.88);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+
+    body.dark .small-text,
+    body.dark label {
+      color: #d1d5db;
+    }
+
+    body.dark button.primary {
+      border-color: rgba(229, 231, 235, 0.32);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.06)), #3f4650;
+      color: #f9fafb;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    }
+
+    body.dark button.primary:hover:not(:disabled) {
+      border-color: rgba(255, 255, 255, 0.44);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.26), rgba(255, 255, 255, 0.08)), #4b5563;
+    }
+
+    body.dark select,
+    body.dark input[type="date"],
+    body.dark input[type="file"] {
+      border-color: rgba(229, 231, 235, 0.32);
+      background-color: rgba(75, 85, 99, 0.46);
+      color: #f9fafb;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16);
+    }
+
+    body.dark select option {
+      background: #2f343b;
+      color: #f9fafb;
+    }
+
+    body.dark input[type="text"],
+    body.dark .stat-box,
+    body.dark .table-scroll,
+    body.dark table {
+      border-color: rgba(229, 231, 235, 0.16);
+      background: rgba(55, 60, 68, 0.52);
+      color: #f3f4f6;
+    }
+
+    body.dark th {
+      background: rgba(255, 255, 255, 0.1);
+      color: #e5e7eb;
+    }
+
+    body.dark td {
+      color: #f3f4f6;
+      border-bottom-color: rgba(255, 255, 255, 0.08);
+    }
+
+    body.dark tr:nth-child(even) td {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
   </style>
 
   <!-- Firebase (CDN compat) -->
@@ -2104,7 +2177,7 @@
         
       </div>
       <div id="h2hSummary" class="small-text">
-        <span id="h2hHelp">اختر لاعبين ثم اضغط "تحليل المواجهة".</span>
+        <span id="h2hHelp">اختار اللاعبين لتحليل المواجهات بينهم.</span>
       </div>
     </section>
 
@@ -2136,7 +2209,7 @@
       </div>
 
       <div id="h2hTeamsSummary" class="small-text">
-        <span id="h2hTeamsHelp">اختر لاعبي الفريقين ثم اضغط "تحليل المواجهة".</span>
+        <span id="h2hTeamsHelp">اختار الفرق لتحليل المواجهات بينهم.</span>
       </div>
     </section>
 
@@ -2681,12 +2754,12 @@ const I18N = {
     firstPlayer: "اللاعب الأول",
     secondPlayer: "اللاعب الثاني",
     analyze: "🔍 تحليل المواجهة",
-    h2hHelp: "اختر لاعبين ثم اضغط \"تحليل المواجهة\".",
+    h2hHelp: "اختار اللاعبين لتحليل المواجهات بينهم.",
     team1p1: "الفريق الأول - لاعب 1",
     team1p2: "الفريق الأول - لاعب 2",
     team2p1: "الفريق الثاني - لاعب 1",
     team2p2: "الفريق الثاني - لاعب 2",
-    h2hTeamsHelp: "اختر لاعبي الفريقين ثم اضغط \"تحليل المواجهة\".",
+    h2hTeamsHelp: "اختار الفرق لتحليل المواجهات بينهم.",
 
     // Admin
     enableAdmin: "🔑 تفعيل وضع المدير",
@@ -3076,12 +3149,12 @@ const I18N = {
     firstPlayer: "Player 1",
     secondPlayer: "Player 2",
     analyze: "🔍 Analyze",
-    h2hHelp: "Choose two players then click \"Analyze\".",
+    h2hHelp: "Choose the players to analyze the matchups between them.",
     team1p1: "Team 1 - Player 1",
     team1p2: "Team 1 - Player 2",
     team2p1: "Team 2 - Player 1",
     team2p2: "Team 2 - Player 2",
-    h2hTeamsHelp: "Choose both teams then click \"Analyze\".",
+    h2hTeamsHelp: "Choose the teams to analyze the matchups between them.",
 
     // Admin
     enableAdmin: "🔑 Enable Admin Mode",
@@ -3911,7 +3984,7 @@ function applyTheme(theme) {
   document.body.classList.toggle("dark", theme === "dark");
   document.documentElement.style.colorScheme = theme === "dark" ? "dark" : "light";
   const themeMeta = document.querySelector('meta[name="theme-color"]');
-  if (themeMeta) themeMeta.setAttribute("content", theme === "dark" ? "#08111f" : "#f8fafc");
+  if (themeMeta) themeMeta.setAttribute("content", theme === "dark" ? "#2f343b" : "#f8fafc");
   const btn = document.getElementById("themeToggleBtn");
   if (btn) btn.textContent = (theme === "dark") ? T("lightMode") : T("darkMode");
 }
@@ -5696,14 +5769,15 @@ function updateMatchesLog(){
     function updateFilterYearOptions(){
       const sel = $("filterYear");
       if(!sel) return;
-      const yearsSet = new Set();
+      const currentYear = String(new Date().getFullYear());
+      const yearsSet = new Set([currentYear]);
       state.matches.forEach(m=>{
         if(m.date) yearsSet.add(m.date.slice(0,4));
       });
-      const current = sel.value || "all";
+      const current = sel.value || currentYear;
       sel.innerHTML = "";
       const optAll = document.createElement("option");
-      optAll.value="all"; optAll.textContent="كل السنوات";
+      optAll.value="all"; optAll.textContent=T("allYears");
       sel.appendChild(optAll);
       Array.from(yearsSet).sort().forEach(y=>{
         const o=document.createElement("option");
@@ -5711,7 +5785,7 @@ function updateMatchesLog(){
         sel.appendChild(o);
       });
       if(current && (current==="all" || yearsSet.has(current))) sel.value=current;
-      else sel.value="all";
+      else sel.value=currentYear;
     }
 
     function getFilterLabel(yearVal, monthVal){
