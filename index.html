@@ -11,7 +11,7 @@
   <meta name="apple-mobile-web-app-title" content="قهوة الصايمات" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>قهوة الصايمات</title>
-  <link rel="manifest" href="app.webmanifest?v=22" />
+  <link rel="manifest" href="app.webmanifest?v=23" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
   <style>
     *,
@@ -1848,6 +1848,42 @@
       background: rgba(63, 70, 80, 0.98);
     }
 
+    header {
+      grid-template-columns: minmax(0, 1fr) !important;
+      justify-items: center;
+      text-align: center;
+    }
+
+    header .app-logo {
+      grid-column: 1 / -1;
+      justify-self: center;
+      width: 112px !important;
+      height: 112px !important;
+      margin: 1cm auto 0 !important;
+    }
+
+    #appTitle {
+      display: none !important;
+    }
+
+    @media (max-width: 700px) {
+      header {
+        grid-template-columns: minmax(0, 1fr) !important;
+      }
+
+      header .app-logo {
+        width: 96px !important;
+        height: 96px !important;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      header .app-logo {
+        width: 164px !important;
+        height: 164px !important;
+      }
+    }
+
     @media (max-width: 700px) {
       body.dark .period-row select,
       body.dark .period-action button,
@@ -1869,12 +1905,12 @@
   <section class="install-gate" id="installGate" hidden aria-hidden="true">
     <div class="install-gate-card" role="dialog" aria-labelledby="installGateTitle" aria-describedby="installGateText">
       <img class="install-gate-logo" src="icons/icon-192.png" alt="" />
-      <h2 id="installGateTitle">افتح قهوة الصايمات من الأيقونة</h2>
+      <h2 id="installGateTitle">افتح التطبيق من الأيقونة</h2>
       <p id="installGateText">الموقع معمول يشتغل كتطبيق على الموبايل. ضيفه على الشاشة الرئيسية، وبعدها افتحه من الأيقونة وهيدخل على الدوري مباشرة من غير الشاشة دي.</p>
       <ol class="install-gate-steps">
         <li>من iPhone: اضغط زر المشاركة في Safari، ثم اختار Add to Home Screen.</li>
         <li>من Android: اضغط قائمة Chrome، ثم اختار Add to Home screen أو Install app.</li>
-        <li>بعد ما الأيقونة تظهر على الشاشة الرئيسية، افتح منها قهوة الصايمات.</li>
+        <li>بعد ما الأيقونة تظهر على الشاشة الرئيسية، افتح منها التطبيق.</li>
       </ol>
       <div class="install-gate-note">لو الخيار مش ظاهر، افتح الرابط في Safari على iPhone أو Chrome على Android.</div>
     </div>
@@ -1882,7 +1918,6 @@
 
   <header>
     <img class="app-logo" src="icons/icon-192.png" alt="" />
-    <h1 id="appTitle" data-i18n="headerTitle">دوري الأصدقاء </h1>
     <div class="small-text" id="subtitleRule" data-i18n="subtitleRule">
       كل ماتش = الفريق الكسبان +1 لكل لاعب / الخسران -1 لكل لاعب
     </div>
