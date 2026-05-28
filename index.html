@@ -11,7 +11,7 @@
   <meta name="apple-mobile-web-app-title" content="قهوة الصايمات" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>قهوة الصايمات</title>
-  <link rel="manifest" href="app.webmanifest?v=26" />
+  <link rel="manifest" href="app.webmanifest?v=27" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
   <style>
     *,
@@ -5826,12 +5826,6 @@ ${T("banExplanation")}`)) return;
       th.classList.add("sortable");
       th.dataset.col = c.key;
 
-      const arrow = document.createElement("span");
-      arrow.className = "sort-arrow";
-      const isActive = (window.championsSort.column === c.key);
-      arrow.textContent = isActive ? (window.championsSort.direction === "asc" ? "▲" : "▼") : "↕";
-      th.appendChild(arrow);
-
       th.addEventListener("click", ()=>{
         if(window.championsSort.column === c.key){
           window.championsSort.direction = (window.championsSort.direction === "asc") ? "desc" : "asc";
@@ -6205,17 +6199,6 @@ function updateMatchesLog(){
         th.textContent = col.label;
         th.classList.add("sortable");
         th.dataset.col = col.key;
-
-        const arrow = document.createElement("span");
-        arrow.className = "sort-arrow";
-        if (leaderboardSort.column === col.key) {
-          arrow.textContent = leaderboardSort.direction === "asc" ? "▲" : "▼";
-        } else {
-          arrow.textContent = "↕";
-        }
-
-        th.appendChild(document.createTextNode(" "));
-        th.appendChild(arrow);
 
         th.addEventListener("click", () => {
           if (leaderboardSort.column === col.key) {
