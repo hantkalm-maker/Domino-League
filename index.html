@@ -11,7 +11,7 @@
   <meta name="apple-mobile-web-app-title" content="قهوة الصايمات" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>قهوة الصايمات</title>
-  <link rel="manifest" href="app.webmanifest?v=25" />
+  <link rel="manifest" href="app.webmanifest?v=26" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
   <style>
     *,
@@ -1879,6 +1879,10 @@
       background: rgba(255, 255, 255, 0.045);
     }
 
+    .sort-arrow {
+      display: none !important;
+    }
+
     header {
       grid-template-columns: minmax(0, 1fr) !important;
       justify-items: center;
@@ -1888,8 +1892,8 @@
     header .app-logo {
       grid-column: 1 / -1;
       justify-self: center;
-      width: 112px !important;
-      height: 112px !important;
+      width: 168px !important;
+      height: 168px !important;
       margin: 1cm auto 0 !important;
     }
 
@@ -1903,15 +1907,15 @@
       }
 
       header .app-logo {
-        width: 96px !important;
-        height: 96px !important;
+        width: 144px !important;
+        height: 144px !important;
       }
     }
 
     @media (min-width: 1024px) {
       header .app-logo {
-        width: 164px !important;
-        height: 164px !important;
+        width: 246px !important;
+        height: 246px !important;
       }
     }
 
@@ -2737,6 +2741,14 @@ function movePlayerManagementIntoAdmin(){
   adminBar.insertAdjacentElement("afterend", playerSection);
 }
 
+function moveMatchEntryAfterChampions(){
+  const matchSection = document.getElementById("matchEntryCard");
+  const championsSection = document.getElementById("championsLogCard");
+  if(!matchSection || !championsSection) return;
+  if(matchSection.previousElementSibling === championsSection) return;
+  championsSection.insertAdjacentElement("afterend", matchSection);
+}
+
 function isStandaloneAppMode(){
   const nav = window.navigator || {};
   return window.matchMedia("(display-mode: standalone)").matches ||
@@ -2881,7 +2893,7 @@ const I18N = {
     movedSame: "مفيش تغيير",
     movedNew: "لاعب جديد في الترتيب",
     player: "اللاعب",
-    points: "النقاط",
+    points: "نقاط",
     bonus: "بونص",
     wins: "فوز",
     losses: "خسارة",
@@ -4332,9 +4344,9 @@ function toggleTheme() {
           {key:"rank",   label:T("rank")},
           {key:"name",   label:T("player")},
           {key:"points", label:T("points")},
-          {key:"bonusNet", label:T("bonus")},
           {key:"wins",   label:T("wins")},
           {key:"losses", label:T("losses")},
+          {key:"bonusNet", label:T("bonus")},
           {key:"matches",label:T("matches")},
           {key:"rate",   label:T("winRate")}
         ];
@@ -4343,9 +4355,9 @@ function toggleTheme() {
           {key:"rank",   label:T("rank")},
           {key:"name",   label:T("player")},
           {key:"points", label:T("points")},
-          {key:"bonusNet", label:T("bonus")},
           {key:"wins",   label:T("wins")},
           {key:"losses", label:T("losses")},
+          {key:"bonusNet", label:T("bonus")},
           {key:"matches",label:T("matches")},
           {key:"rate",   label:T("winRate")},
           {key:"w2",     label:T("w2")},
@@ -6883,6 +6895,7 @@ function autoAnalyzeTeamsHeadToHeadIfReady(){
       if(updateInstallGate()) return;
       setupScrollableTables();
       movePlayerManagementIntoAdmin();
+      moveMatchEntryAfterChampions();
       initFirebase();
       hydrateDataFromCache();
       setMatchDateToToday(true);
