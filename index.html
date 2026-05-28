@@ -11,7 +11,7 @@
   <meta name="apple-mobile-web-app-title" content="قهوة الصايمات" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>قهوة الصايمات</title>
-  <link rel="manifest" href="app.webmanifest?v=10" />
+  <link rel="manifest" href="app.webmanifest?v=11" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
   <style>
     *,
@@ -4052,6 +4052,77 @@ function toggleTheme() {
       sel.value = (current === "all" || playersAll.some(p=>p.id === current)) ? current : "all";
     }
 
+    function getPlayersWithResults(matchesSubset){
+      const ids = new Set();
+      (matchesSubset || []).forEach(match => {
+        (match.winners || []).forEach(id => ids.add(id));
+        (match.losers || []).forEach(id => ids.add(id));
+        (match.players || []).forEach(id => ids.add(id));
+      });
+      return ids;
+    }
+
+    function appendPlayerOptions(select, players, placeholderText){
+      select.innerHTML = "";
+      const opt = document.createElement("option");
+      opt.value = "";
+      opt.textContent = placeholderText;
+      select.appendChild(opt);
+
+      players.forEach(player => {
+        const o = document.createElement("option");
+        o.value = player.id;
+        o.textContent = player.name;
+        select.appendChild(o);
+      });
+    }
+
+    function populateSinglePlayerSelect(selectId, players, placeholderText){
+      const sel = $(selectId);
+      if(!sel) return;
+      const current = sel.value;
+      appendPlayerOptions(sel, players, placeholderText);
+      if(current && players.some(player => player.id === current)){
+        sel.value = current;
+      }else{
+        sel.value = "";
+      }
+    }
+
+    function populateExclusivePlayerSelects(selectIds, players, placeholderText){
+      const values = {};
+      selectIds.forEach(id => {
+        const sel = $(id);
+        values[id] = sel ? sel.value : "";
+      });
+
+      selectIds.forEach(id => {
+        const sel = $(id);
+        if(!sel) return;
+
+        const current = values[id] || "";
+        const selectedElsewhere = new Set(
+          selectIds
+            .filter(otherId => otherId !== id)
+            .map(otherId => values[otherId])
+            .filter(Boolean)
+        );
+
+        const availablePlayers = players.filter(player => {
+          if(player.id === current) return true;
+          return !selectedElsewhere.has(player.id);
+        });
+
+        appendPlayerOptions(sel, availablePlayers, placeholderText);
+
+        if(current && availablePlayers.some(player => player.id === current) && !selectedElsewhere.has(current)){
+          sel.value = current;
+        }else{
+          sel.value = "";
+        }
+      });
+    }
+
     function updatePlayersUI(){
       // ترتيب اللاعبين أبجديًا بالاسم
       const playersAll = [...state.players].sort((a,b)=> a.name.localeCompare(b.name,"ar"));
@@ -4065,63 +4136,26 @@ function toggleTheme() {
 
       // ✅ التحليلات/الإحصائيات: يعتمد على نهاية الفترة المختارة
       const rangeEnd = getSelectedRangeEndDate();
-      const playersForAnalytics = playersAll.filter(p => shouldShowPlayerForSelectedRange(p, rangeEnd));
+      const activeAnalyticsPlayerIds = getPlayersWithResults(getFilteredMatches());
+      const playersForAnalytics = playersAll.filter(p =>
+        activeAnalyticsPlayerIds.has(p.id) && shouldShowPlayerForSelectedRange(p, rangeEnd)
+      );
 
       const scoreSelectIds = ["winnerP1","winnerP2","loserP1","loserP2"];
-      const analyticsSelectIds = [
-        "playerRecordSelect",
-        "playerDetailsSelect",
-        "h2hP1",
-        "h2hP2",
-        "h2hT1P1",
-        "h2hT1P2",
-        "h2hT2P1",
-        "h2hT2P2"
-      ];
 
       // تحديث الـ select بتاعة تسجيل الماتشات
-      scoreSelectIds.forEach(id=>{
-        const sel=$(id); if(!sel) return;
-        const current = sel.value;
-        sel.innerHTML="";
-        const opt=document.createElement("option");
-        opt.value=""; opt.textContent=T("selectPlayer");
-        sel.appendChild(opt);
-
-        playersForMatch.forEach(p=>{
-          const o=document.createElement("option");
-          o.value=p.id; o.textContent=p.name;
-          sel.appendChild(o);
-        });
-
-        // حاول تحافظ على الاختيار لو مازال متاح
-        if(current && playersForMatch.some(p=>p.id===current)) sel.value=current;
-      });
+      populateExclusivePlayerSelects(scoreSelectIds, playersForMatch, T("selectPlayer"));
 
       // تحديث الـ select بتاعة التحليل والمواجهات
-      analyticsSelectIds.forEach(id=>{
-        const sel=$(id); if(!sel) return;
-        const current = sel.value;
-        sel.innerHTML="";
-        const opt=document.createElement("option");
-        opt.value=""; opt.textContent=T("selectPlayer");
-        sel.appendChild(opt);
+      const prevRecord = $("playerRecordSelect")?.value || "";
+      const prevDetails = $("playerDetailsSelect")?.value || "";
+      populateSinglePlayerSelect("playerRecordSelect", playersForAnalytics, T("selectPlayer"));
+      populateSinglePlayerSelect("playerDetailsSelect", playersForAnalytics, T("selectPlayer"));
+      populateExclusivePlayerSelects(["h2hP1","h2hP2"], playersForAnalytics, T("selectPlayer"));
+      populateExclusivePlayerSelects(["h2hT1P1","h2hT1P2","h2hT2P1","h2hT2P2"], playersForAnalytics, T("selectPlayer"));
 
-        playersForAnalytics.forEach(p=>{
-          const o=document.createElement("option");
-          o.value=p.id; o.textContent=p.name;
-          sel.appendChild(o);
-        });
-
-        if(current && playersForAnalytics.some(p=>p.id===current)) sel.value=current;
-        else if(id === "playerRecordSelect"){
-          updatePlayerRecordUI();
-        }
-        else if(id === "playerDetailsSelect"){
-          // لو اللاعب المختار اختفى بسبب الحظر/الفترة، نخفي التحليل
-          updatePlayerDetailsUI();
-        }
-      });
+      if(prevRecord && !$("playerRecordSelect")?.value) updatePlayerRecordUI();
+      if(prevDetails && !$("playerDetailsSelect")?.value) updatePlayerDetailsUI();
 
       // السطر النصي تحت قسم إدارة اللاعبين
       const info = $("playersListInfo");
@@ -6088,7 +6122,10 @@ function autoAnalyzeTeamsHeadToHeadIfReady(){
       updateBonusEligibility();
       ["winnerP1","winnerP2","loserP1","loserP2"].forEach(id=>{
         const el=$(id);
-        if(el) el.addEventListener("change", updateBonusEligibility);
+        if(el) el.addEventListener("change", ()=>{
+          updatePlayersUI();
+          updateBonusEligibility();
+        });
       });
 
 
@@ -6137,7 +6174,10 @@ function autoAnalyzeTeamsHeadToHeadIfReady(){
       // Auto-run when selecting players
       ["h2hP1","h2hP2"].forEach(id=>{
         const el = $(id);
-        if(el) el.addEventListener("change", autoAnalyzeHeadToHeadIfReady);
+        if(el) el.addEventListener("change", ()=>{
+          updatePlayersUI();
+          autoAnalyzeHeadToHeadIfReady();
+        });
       });
       $("enableAdminBtn").addEventListener("click",enableAdminMode);
       $("disableAdminBtn").addEventListener("click",disableAdminMode);
@@ -6150,7 +6190,10 @@ function autoAnalyzeTeamsHeadToHeadIfReady(){
       // Auto-run when selecting team players
       ["h2hT1P1","h2hT1P2","h2hT2P1","h2hT2P2"].forEach(id=>{
         const el = $(id);
-        if(el) el.addEventListener("change", autoAnalyzeTeamsHeadToHeadIfReady);
+        if(el) el.addEventListener("change", ()=>{
+          updatePlayersUI();
+          autoAnalyzeTeamsHeadToHeadIfReady();
+        });
       });
 
       $("filterYear").addEventListener("change",()=>{
