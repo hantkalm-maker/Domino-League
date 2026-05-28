@@ -1319,20 +1319,24 @@
       }
 
       .match-date-admin-row .admin-quick-actions button {
-        min-height: 42px;
-        height: 42px;
+        min-height: 44px;
+        height: 44px;
         padding-inline: 8px;
-        font-size: 0.72rem;
+        font-size: 0.78rem;
       }
 
       .period-action {
         min-width: 48px;
       }
 
+      .period-action::before {
+        height: calc(0.74rem * 1.25);
+      }
+
       .period-action button {
         min-width: 48px;
-        min-height: 42px;
-        height: 42px;
+        min-height: 44px;
+        height: 44px;
         padding-inline: 8px;
         font-size: 0.78rem;
       }
@@ -1670,6 +1674,23 @@
       border-color: rgba(251, 191, 36, 0.66);
       box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.12);
       background-color: rgba(251, 191, 36, 0.24);
+    }
+
+    .team-row select,
+    .inline-select-row select,
+    .period-row select,
+    .match-log-filter-row select,
+    .match-date-admin-row input[type="date"],
+    .match-date-admin-row .admin-quick-actions button,
+    .period-action button {
+      min-height: 44px;
+      height: 44px;
+    }
+
+    @media (max-width: 700px) {
+      .period-action::before {
+        height: calc(0.74rem * 1.25);
+      }
     }
 
   </style>
