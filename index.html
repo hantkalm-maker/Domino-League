@@ -11,7 +11,7 @@
   <meta name="apple-mobile-web-app-title" content="قهوة الصايمات" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>قهوة الصايمات</title>
-  <link rel="manifest" href="app.webmanifest?v=20" />
+  <link rel="manifest" href="app.webmanifest?v=21" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
   <style>
     *,
@@ -1176,12 +1176,12 @@
     }
 
     .period-row {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       align-items: end;
     }
 
     .period-action {
-      min-width: 92px;
+      min-width: 0;
     }
 
     .period-action button {
@@ -1294,7 +1294,7 @@
       }
 
       .period-row {
-        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 8px;
       }
 
@@ -1326,7 +1326,7 @@
       }
 
       .period-action {
-        min-width: 48px;
+        min-width: 0;
       }
 
       .period-action::before {
@@ -1698,6 +1698,77 @@
       display: none !important;
     }
 
+    #matchSectionTitle,
+    label[for="filterYear"],
+    label[for="filterMonth"] {
+      display: none !important;
+    }
+
+    .period-action::before {
+      content: none !important;
+      display: none !important;
+      height: 0 !important;
+    }
+
+    #leaderboardToggleViewBtn {
+      width: 100%;
+      min-width: 0;
+      min-height: 44px;
+      height: 44px;
+      border-color: rgba(180, 83, 9, 0.32);
+      background-color: rgba(245, 158, 11, 0.16);
+      color: #78350f;
+      font-weight: 900;
+    }
+
+    #leaderboardToggleViewBtn:hover:not(:disabled) {
+      border-color: rgba(180, 83, 9, 0.48);
+      background-color: rgba(245, 158, 11, 0.24);
+    }
+
+    body.dark #leaderboardToggleViewBtn {
+      border-color: rgba(251, 191, 36, 0.46);
+      background: rgba(251, 191, 36, 0.18);
+      color: #fef3c7;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    }
+
+    body.dark #leaderboardToggleViewBtn:hover:not(:disabled) {
+      border-color: rgba(251, 191, 36, 0.62);
+      background: rgba(251, 191, 36, 0.26);
+    }
+
+    #leaderboardTable thead th,
+    #leaderboardTable tbody td:nth-child(2),
+    #leaderboardTable .player-cell,
+    #leaderboardTable .player-cell span {
+      font-weight: 900;
+    }
+
+    #leaderboardTable tbody td:not(:nth-child(2)) {
+      font-size: 0.98rem;
+      font-weight: 850;
+    }
+
+    @media (max-width: 700px) {
+      .period-row select,
+      .period-action button {
+        min-height: 42px;
+        height: 42px;
+      }
+
+      #leaderboardToggleViewBtn {
+        min-height: 42px;
+        height: 42px;
+        font-size: 0.84rem;
+        padding-inline: 8px;
+      }
+
+      #leaderboardTable tbody td:not(:nth-child(2)) {
+        font-size: 0.86rem;
+      }
+    }
+
     body.dark {
       background:
         linear-gradient(155deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0) 34%),
@@ -1810,7 +1881,7 @@
     <!-- تسجيل نتيجة ماتش -->
     <section class="card" id="matchEntryCard">
       <h2 id="matchSectionTitle" data-i18n="matchSectionTitle">🧮 تسجيل نتيجة ماتش (عشرة كاملة)</h2>
-      <button class="primary panel-toggle section-toggle" id="toggleMatchEntryBtn" type="button" aria-controls="matchEntryWrapper" aria-expanded="false">🧮 تسجيل نتيجة ماتش</button>
+      <button class="primary panel-toggle section-toggle" id="toggleMatchEntryBtn" type="button" aria-controls="matchEntryWrapper" aria-expanded="false">🧮 تسجيل نتيجة ماتش (عشرة كاملة)</button>
       <div id="matchEntryWrapper" style="display:none;">
       <div class="row match-date-row match-date-admin-row">
         <div class="field">
@@ -2641,8 +2712,8 @@ const I18N = {
     newPlayerNamePh: "مثال: أحمد، علي، حسام...",
     playerAvatar: "صورة اللاعب (اختياري)",
     addPlayer: "➕ إضافة لاعب",
-    showMatchEntry: "🧮 تسجيل نتيجة ماتش",
-    hideMatchEntry: "🧮 إخفاء تسجيل الماتش",
+    showMatchEntry: "🧮 تسجيل نتيجة ماتش (عشرة كاملة)",
+    hideMatchEntry: "🧮 تسجيل نتيجة ماتش (عشرة كاملة)",
     showAdminPanel: "🔐 عرض وضع المدير",
     hideAdminPanel: "🔐 إخفاء وضع المدير",
     showPlayersList: "👥 عرض قائمة اللاعبين",
@@ -3023,8 +3094,8 @@ const I18N = {
     newPlayerNamePh: "Example: Ahmed, Ali, Hossam...",
     playerAvatar: "Player Photo (optional)",
     addPlayer: "➕ Add Player",
-    showMatchEntry: "🧮 Record Match",
-    hideMatchEntry: "🧮 Hide Match Form",
+    showMatchEntry: "🧮 Record a Match Result (Full Ten)",
+    hideMatchEntry: "🧮 Record a Match Result (Full Ten)",
     showAdminPanel: "🔐 Show Admin Mode",
     hideAdminPanel: "🔐 Hide Admin Mode",
     showPlayersList: "👥 Show Players List",
