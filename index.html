@@ -11,7 +11,7 @@
   <meta name="apple-mobile-web-app-title" content="قهوة الصايمات" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>قهوة الصايمات</title>
-  <link rel="manifest" href="app.webmanifest?v=24" />
+  <link rel="manifest" href="app.webmanifest?v=25" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
   <style>
     *,
@@ -1846,6 +1846,37 @@
 
     body.dark #leaderboardTable th:nth-child(2) {
       background: rgba(63, 70, 80, 0.98);
+    }
+
+    body:not(.dark) #leaderboardTable tbody tr td,
+    body:not(.dark) #leaderboardTable tbody tr td:nth-child(2) {
+      background: rgba(255, 255, 255, 0.82);
+    }
+
+    body:not(.dark) #leaderboardTable tbody tr:nth-child(even) td,
+    body:not(.dark) #leaderboardTable tbody tr:nth-child(even) td:nth-child(2) {
+      background: rgba(15, 23, 42, 0.025);
+    }
+
+    body:not(.dark) #leaderboardTable tbody tr:hover td,
+    body:not(.dark) #leaderboardTable tbody tr:hover td:nth-child(2) {
+      background: rgba(245, 158, 11, 0.08);
+    }
+
+    body.dark #leaderboardTable tbody tr td,
+    body.dark #leaderboardTable tbody tr td:nth-child(2) {
+      background: rgba(55, 60, 68, 0.52);
+      color: #f3f4f6;
+    }
+
+    body.dark #leaderboardTable tbody tr:nth-child(even) td,
+    body.dark #leaderboardTable tbody tr:nth-child(even) td:nth-child(2) {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    body.dark #leaderboardTable tbody tr:hover td,
+    body.dark #leaderboardTable tbody tr:hover td:nth-child(2) {
+      background: rgba(255, 255, 255, 0.045);
     }
 
     header {
