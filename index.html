@@ -11,7 +11,7 @@
   <meta name="apple-mobile-web-app-title" content="قهوة الصايمات" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>قهوة الصايمات</title>
-  <link rel="manifest" href="app.webmanifest?v=8" />
+  <link rel="manifest" href="app.webmanifest?v=9" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
   <style>
     *,
@@ -1133,6 +1133,154 @@
       }
     }
 
+    .control-row,
+    .settings-bar.control-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      width: 100%;
+    }
+
+    .control-row button {
+      width: 100%;
+      min-width: 0;
+      padding-inline: 8px;
+      white-space: normal;
+    }
+
+    .section-toggle {
+      margin-bottom: 12px;
+    }
+
+    #matchEntryWrapper {
+      padding-top: 2px;
+    }
+
+    .team-row,
+    .inline-select-row,
+    .period-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .period-row {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+      align-items: end;
+    }
+
+    .period-action {
+      min-width: 92px;
+    }
+
+    .period-action button {
+      min-width: 92px;
+      padding-inline: 10px;
+    }
+
+    #leaderboardTable,
+    #championsLogTable {
+      width: max-content;
+      min-width: 100%;
+      table-layout: auto;
+    }
+
+    #leaderboardTable th,
+    #leaderboardTable td,
+    #championsLogTable th,
+    #championsLogTable td {
+      width: 1%;
+      padding: 6px 7px;
+      text-align: center;
+    }
+
+    #leaderboardTable .player-cell,
+    #championsLogTable .player-cell {
+      justify-content: flex-start;
+    }
+
+    #leaderboardTable .player-cell span,
+    #championsLogTable .player-cell span {
+      max-width: 128px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 700px) {
+      .control-row,
+      .settings-bar.control-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        max-width: none;
+        margin-inline: 0;
+      }
+
+      .team-row,
+      .inline-select-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .period-row {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+        gap: 8px;
+      }
+
+      .team-row label,
+      .inline-select-row label,
+      .period-row label {
+        font-size: 0.74rem;
+        line-height: 1.25;
+      }
+
+      .team-row select,
+      .inline-select-row select,
+      .period-row select {
+        min-height: 42px;
+        font-size: 0.84rem;
+        padding-inline-start: 8px;
+        padding-inline-end: 30px;
+        background-position: left 13px center, left 7px center;
+      }
+
+      .period-action {
+        min-width: 48px;
+      }
+
+      .period-action button {
+        min-width: 48px;
+        min-height: 42px;
+        padding-inline: 8px;
+        font-size: 0.78rem;
+      }
+
+      #leaderboardTable th,
+      #leaderboardTable td,
+      #championsLogTable th,
+      #championsLogTable td {
+        padding: 5px 6px;
+        font-size: 0.72rem;
+      }
+
+      #leaderboardTable .player-cell span,
+      #championsLogTable .player-cell span {
+        max-width: 96px;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .team-row label,
+      .inline-select-row label,
+      .period-row label {
+        font-size: 0.68rem;
+      }
+
+      .team-row select,
+      .inline-select-row select,
+      .period-row select {
+        font-size: 0.78rem;
+      }
+    }
+
   </style>
 
   <!-- Firebase (CDN compat) -->
@@ -1149,14 +1297,9 @@
       كل ماتش = الفريق الكسبان +1 لكل لاعب / الخسران -1 لكل لاعب
     </div>
   
-    <div class="settings-bar">
+    <div class="settings-bar control-row">
       <button class="primary" id="themeToggleBtn" type="button" data-i18n="darkMode">🌙 Dark Mode</button>
-
-      <label class="small-text" for="langSelect" id="languageLabel" style="margin:0;" data-i18n="languageLabel">Language:</label>
-      <select id="langSelect">
-        <option value="ar">العربية</option>
-        <option value="en">English</option>
-      </select>
+      <button class="primary" id="langToggleBtn" type="button">🌐 English</button>
     </div>
 
     <div id="fbStatus" class="small-text" style="margin-top:6px;"></div>
@@ -1166,9 +1309,11 @@
 
   <main>
     <!-- تسجيل نتيجة ماتش -->
-    <section class="card">
+    <section class="card" id="matchEntryCard">
       <h2 id="matchSectionTitle" data-i18n="matchSectionTitle">🧮 تسجيل نتيجة ماتش (عشرة كاملة)</h2>
-      <div class="row">
+      <button class="primary panel-toggle section-toggle" id="toggleMatchEntryBtn" type="button" aria-controls="matchEntryWrapper" aria-expanded="false">🧮 تسجيل نتيجة ماتش</button>
+      <div id="matchEntryWrapper" style="display:none;">
+      <div class="row match-date-row">
         <div class="field">
           <label for="matchDate" data-i18n="matchDate">تاريخ الماتش</label>
           <input type="date" id="matchDate" />
@@ -1176,7 +1321,7 @@
         </div>
       </div>
 
-      <div class="row">
+      <div class="row team-row">
         <div class="field">
           <label for="winnerP1" id="lblWinnerP1" data-i18n="winnerTeamP1">الفريق الكسبان - لاعب 1</label>
           <select id="winnerP1"></select>
@@ -1187,7 +1332,7 @@
         </div>
       </div>
 
-      <div class="row">
+      <div class="row team-row">
         <div class="field">
           <label for="loserP1" id="lblLoserP1" data-i18n="loserTeamP1">الفريق الخسران - لاعب 1</label>
           <select id="loserP1"></select>
@@ -1213,12 +1358,13 @@
       <div class="small-text" id="matchNoteText" data-i18n="matchNoteText">
         ملاحظة: نفس اللاعب ما ينفعش يكون في الفريقين في نفس الماتش.
       </div>
+      </div>
     </section>
 
     <!-- الترتيب والإحصائيات العامة -->
     <section class="card">
       <h2 id="leaderboardSectionTitle" data-i18n="leaderboardSectionTitle">🏆 الترتيب والإحصائيات العامة</h2>
-      <div class="row">
+      <div class="row period-row">
         <div class="field">
           <label for="filterYear" data-i18n="year">السنة</label>
           <select id="filterYear">
@@ -1243,7 +1389,7 @@
             <option value="12">ديسمبر</option>
           </select>
         </div>
-        <div class="field" style="align-self:flex-end;">
+        <div class="field period-action" style="align-self:flex-end;">
           <button id="leaderboardToggleViewBtn" data-i18n="detailedView">📊 عرض تفصيلي</button>
         </div>
       </div>
@@ -1516,7 +1662,7 @@
     <!-- تحليل المواجهات المباشرة -->
     <section class="card">
       <h2 id="h2hPlayersTitle" data-i18n="h2hPlayersTitle">⚔️ تحليل المواجهات المباشرة بين لاعبين</h2>
-      <div class="row">
+      <div class="row inline-select-row">
         <div class="field">
           <label for="h2hP1" data-i18n="firstPlayer">اللاعب الأول</label>
           <select id="h2hP1"></select>
@@ -1536,7 +1682,7 @@
     <section class="card">
       <h2 id="h2hTeamsTitle" data-i18n="h2hTeamsTitle">🧩 تحليل المواجهات المباشرة بين فرق (2 ضد 2)</h2>
 
-      <div class="row">
+      <div class="row inline-select-row">
         <div class="field">
           <label for="h2hT1P1" data-i18n="team1p1">الفريق الأول - لاعب 1</label>
           <select id="h2hT1P1"></select>
@@ -1547,7 +1693,7 @@
         </div>
       </div>
 
-      <div class="row">
+      <div class="row inline-select-row">
         <div class="field">
           <label for="h2hT2P1" data-i18n="team2p1">الفريق الثاني - لاعب 1</label>
           <select id="h2hT2P1"></select>
@@ -1708,6 +1854,7 @@ window.t  = window.t  || window.T;
     let isAdmin = false;
     let matchesLogVisible = false;  // قلنا نخليه مخفي افتراضيًا
     let playersListVisible = false; // جديد: قائمة اللاعبين مخفية افتراضيًا
+    let matchEntryVisible = false;
     let editingMatchId = null;
     let editingMatchBonusApplied = false;
     let editingMatchBonusValue = 0;
@@ -1818,6 +1965,13 @@ function renderDataViews(resetHeadToHead){
 
 function refreshToggleButtonsText(){
   try{
+    const matchBtn = document.getElementById("toggleMatchEntryBtn");
+    if(matchBtn){
+      matchBtn.textContent = matchEntryVisible ? T("hideMatchEntry") : T("showMatchEntry");
+      matchBtn.setAttribute("aria-expanded", matchEntryVisible ? "true" : "false");
+    }
+  }catch(e){}
+  try{
     const pBtn = document.getElementById("togglePlayersListBtn");
     if(pBtn){
       pBtn.textContent = playersListVisible ? T("hidePlayersList") : T("showPlayersList");
@@ -1846,6 +2000,17 @@ function refreshToggleButtonsText(){
       tbtn.textContent = isDark ? T("lightMode") : T("darkMode");
     }
   }catch(e){}
+  try{ updateLanguageToggleText(); }catch(e){}
+}
+
+function updateLanguageToggleText(){
+  const btn = document.getElementById("langToggleBtn");
+  if(!btn) return;
+  btn.textContent = getLang() === "ar" ? "🌐 English" : "🌐 العربية";
+}
+
+function toggleLanguage(){
+  setLang(getLang() === "ar" ? "en" : "ar");
 }
 
 function setupScrollableTables(){
@@ -1909,6 +2074,8 @@ const I18N = {
     newPlayerNamePh: "مثال: أحمد، علي، حسام...",
     playerAvatar: "صورة اللاعب (اختياري)",
     addPlayer: "➕ إضافة لاعب",
+    showMatchEntry: "🧮 تسجيل نتيجة ماتش",
+    hideMatchEntry: "🧮 إخفاء تسجيل الماتش",
     showPlayersList: "👥 عرض قائمة اللاعبين",
     hidePlayersList: "👥 إخفاء قائمة اللاعبين",
     playersListEditHint: "تقدر تعدّل اسم اللاعب أو تضيف/تغيّر صورة اللاعب من الجدول (التعديل متاح للمدير فقط).",
@@ -2287,6 +2454,8 @@ const I18N = {
     newPlayerNamePh: "Example: Ahmed, Ali, Hossam...",
     playerAvatar: "Player Photo (optional)",
     addPlayer: "➕ Add Player",
+    showMatchEntry: "🧮 Record Match",
+    hideMatchEntry: "🧮 Hide Match Form",
     showPlayersList: "👥 Show Players List",
     hidePlayersList: "👥 Hide Players List",
     playersListEditHint: "You can edit the player name or add/change the player photo from the table (admin only).",
@@ -2781,17 +2950,12 @@ function monthName(m){
 }
 
 function getLang() {
-  try{
-    const sel = document.getElementById("langSelect");
-    const v = sel && sel.value;
-    if(v === "ar" || v === "en") return v;
-  }catch(e){}
   const ls = localStorage.getItem("dl_lang");
   return (ls === "ar" || ls === "en") ? ls : "ar";
 }
 function setLang(lang) {
   localStorage.setItem("dl_lang", lang);
-  try{ const sel=document.getElementById("langSelect"); if(sel) sel.value=lang; }catch(e){}
+  try{ updateLanguageToggleText(); }catch(e){}
   applyLang(lang);
 
   
@@ -3594,6 +3758,16 @@ function toggleTheme() {
       btn.setAttribute("aria-expanded", matchesLogVisible ? "true" : "false");
     }
 
+    function toggleMatchEntry(forceOpen){
+      const wrapper = $("matchEntryWrapper");
+      const btn = $("toggleMatchEntryBtn");
+      if(!wrapper || !btn) return;
+      matchEntryVisible = (forceOpen === true) ? true : !matchEntryVisible;
+      wrapper.style.display = matchEntryVisible ? "" : "none";
+      btn.textContent = matchEntryVisible ? T("hideMatchEntry") : T("showMatchEntry");
+      btn.setAttribute("aria-expanded", matchEntryVisible ? "true" : "false");
+    }
+
     function togglePlayersList(){
       const wrapper = $("playersListWrapper");
       const btn = $("togglePlayersListBtn");
@@ -3730,6 +3904,7 @@ function toggleTheme() {
 
       updateMatchEditUI();
       updateBonusEligibility();
+      toggleMatchEntry(true);
 
       const matchCard = $("matchSectionTitle")?.closest("section");
       if(matchCard) matchCard.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -5915,6 +6090,7 @@ function autoAnalyzeTeamsHeadToHeadIfReady(){
       renderDataViews(true);
 
       // باقي اللستينرز زي ما هي
+      $("toggleMatchEntryBtn").addEventListener("click",()=>toggleMatchEntry());
       $("addPlayerBtn").addEventListener("click",addPlayer);
       $("addMatchBtn").addEventListener("click",addMatch);
       $("cancelMatchEditBtn").addEventListener("click",()=>cancelMatchEdit(true));
@@ -6005,16 +6181,14 @@ function autoAnalyzeTeamsHeadToHeadIfReady(){
   
   // ===== Init Theme + Language =====
   (function(){
-    const langSelect = document.getElementById("langSelect");
-    if (langSelect) {
-      langSelect.value = getLang();
-      langSelect.addEventListener("change", (e) => setLang(e.target.value));
-    }
+    const langBtn = document.getElementById("langToggleBtn");
+    if (langBtn) langBtn.addEventListener("click", toggleLanguage);
     const themeBtn = document.getElementById("themeToggleBtn");
     if (themeBtn) themeBtn.addEventListener("click", toggleTheme);
 
     applyLang(getLang());
     applyTheme(getTheme());
+    refreshToggleButtonsText();
   })();
 
   if ("serviceWorker" in navigator) {
