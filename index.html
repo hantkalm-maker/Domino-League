@@ -11,7 +11,7 @@
   <meta name="apple-mobile-web-app-title" content="قهوة الصايمات" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>قهوة الصايمات</title>
-  <link rel="manifest" href="app.webmanifest?v=27" />
+  <link rel="manifest" href="app.webmanifest?v=28" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
   <style>
     *,
@@ -1883,6 +1883,25 @@
       display: none !important;
     }
 
+    #leaderboardTable th:nth-child(2),
+    #leaderboardTable td:nth-child(2) {
+      position: static !important;
+      right: auto !important;
+      z-index: auto !important;
+      box-shadow: none !important;
+      background-clip: border-box !important;
+    }
+
+    body:not(.dark) #leaderboardTable thead th:nth-child(2) {
+      background: rgba(15, 23, 42, 0.055) !important;
+      color: #475569;
+    }
+
+    body.dark #leaderboardTable thead th:nth-child(2) {
+      background: rgba(255, 255, 255, 0.1) !important;
+      color: #e5e7eb;
+    }
+
     header {
       grid-template-columns: minmax(0, 1fr) !important;
       justify-items: center;
@@ -1999,8 +2018,8 @@
   <main>
     <!-- تسجيل نتيجة ماتش -->
     <section class="card" id="matchEntryCard">
-      <h2 id="matchSectionTitle" data-i18n="matchSectionTitle">🧮 تسجيل نتيجة ماتش (عشرة كاملة)</h2>
-      <button class="primary panel-toggle section-toggle" id="toggleMatchEntryBtn" type="button" aria-controls="matchEntryWrapper" aria-expanded="false">🧮 تسجيل نتيجة ماتش (عشرة كاملة)</button>
+      <h2 id="matchSectionTitle" data-i18n="matchSectionTitle">🧮 تسجيل نتيجة ماتش (صايمة)</h2>
+      <button class="primary panel-toggle section-toggle" id="toggleMatchEntryBtn" type="button" aria-controls="matchEntryWrapper" aria-expanded="false">🧮 تسجيل نتيجة ماتش (صايمة)</button>
       <div id="matchEntryWrapper" style="display:none;">
       <div class="row match-date-row match-date-admin-row">
         <div class="field">
@@ -2807,7 +2826,7 @@ const I18N = {
     languageLabel: "اللغة:",
     // Sections
     playersSectionTitle: "👤 إدارة اللاعبين",
-    matchSectionTitle: "🧮 تسجيل نتيجة ماتش (عشرة كاملة)",
+    matchSectionTitle: "🧮 تسجيل نتيجة ماتش (صايمة)",
     leaderboardSectionTitle: "🏆 الترتيب والإحصائيات العامة",
     championsSectionTitle: "🏅 سجل الأبطال (شهري)",
     matchesLogSectionTitle: "📜 سجل الماتشات (كل الوقت)",
@@ -2839,8 +2858,8 @@ const I18N = {
     newPlayerNamePh: "مثال: أحمد، علي، حسام...",
     playerAvatar: "صورة اللاعب (اختياري)",
     addPlayer: "➕ إضافة لاعب",
-    showMatchEntry: "🧮 تسجيل نتيجة ماتش (عشرة كاملة)",
-    hideMatchEntry: "🧮 تسجيل نتيجة ماتش (عشرة كاملة)",
+    showMatchEntry: "🧮 تسجيل نتيجة ماتش (صايمة)",
+    hideMatchEntry: "🧮 تسجيل نتيجة ماتش (صايمة)",
     showAdminPanel: "🔐 عرض وضع المدير",
     hideAdminPanel: "🔐 إخفاء وضع المدير",
     showPlayersList: "👥 عرض قائمة اللاعبين",
@@ -3189,7 +3208,7 @@ const I18N = {
     languageLabel: "Language:",
     // Sections
     playersSectionTitle: "👤 Player Management",
-    matchSectionTitle: "🧮 Record a Match Result (Full Ten)",
+    matchSectionTitle: "🧮 Record a Match Result (Saima)",
     leaderboardSectionTitle: "🏆 Leaderboard & Overall Stats",
     championsSectionTitle: "🏅 Champions Log (Monthly)",
     matchesLogSectionTitle: "📜 Matches Log (All Time)",
@@ -3221,8 +3240,8 @@ const I18N = {
     newPlayerNamePh: "Example: Ahmed, Ali, Hossam...",
     playerAvatar: "Player Photo (optional)",
     addPlayer: "➕ Add Player",
-    showMatchEntry: "🧮 Record a Match Result (Full Ten)",
-    hideMatchEntry: "🧮 Record a Match Result (Full Ten)",
+    showMatchEntry: "🧮 Record a Match Result (Saima)",
+    hideMatchEntry: "🧮 Record a Match Result (Saima)",
     showAdminPanel: "🔐 Show Admin Mode",
     hideAdminPanel: "🔐 Hide Admin Mode",
     showPlayersList: "👥 Show Players List",
