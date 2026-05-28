@@ -11,7 +11,7 @@
   <meta name="apple-mobile-web-app-title" content="قهوة الصايمات" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>قهوة الصايمات</title>
-  <link rel="manifest" href="app.webmanifest?v=30" />
+  <link rel="manifest" href="app.webmanifest?v=31" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
   <style>
     *,
@@ -1907,6 +1907,54 @@
       display: none !important;
     }
 
+    .match-date-proxy {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      min-width: 0;
+      min-height: 44px;
+      height: 44px;
+      padding: 8px;
+      border: 1px solid rgba(180, 83, 9, 0.32);
+      border-radius: 8px;
+      background-color: rgba(245, 158, 11, 0.16);
+      color: #78350f;
+      font-size: 0.84rem;
+      line-height: 1.15;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .match-date-proxy .match-date-display {
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    .match-date-proxy input[type="date"] {
+      position: absolute !important;
+      inset: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      min-height: 44px !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: 0 !important;
+      opacity: 0 !important;
+      cursor: pointer;
+    }
+
+    .match-date-proxy:has(input:disabled) {
+      opacity: 0.55;
+    }
+
+    body.dark .match-date-proxy {
+      border-color: rgba(251, 191, 36, 0.34);
+      background-color: rgba(251, 191, 36, 0.16);
+      color: #fef3c7;
+    }
+
     header {
       grid-template-columns: minmax(0, 1fr) !important;
       justify-items: center;
@@ -1970,6 +2018,12 @@
         min-height: 44px;
         height: 44px;
       }
+
+      .match-date-proxy,
+      .match-date-proxy input[type="date"] {
+        min-height: 44px !important;
+        height: 44px !important;
+      }
     }
 
     @media (max-width: 700px) {
@@ -2029,7 +2083,10 @@
       <div class="row match-date-row match-date-admin-row">
         <div class="field">
           <label for="matchDate" data-i18n="matchDate">تاريخ الماتش</label>
-          <input type="date" id="matchDate" />
+          <div class="match-date-proxy" id="matchDateProxy">
+            <span class="match-date-display" id="matchDateDisplay"></span>
+            <input type="date" id="matchDate" />
+          </div>
         </div>
         <div class="field admin-quick-actions">
           <label class="admin-quick-spacer" aria-hidden="true">&nbsp;</label>
@@ -4200,7 +4257,16 @@ try{
 }
 
 function getTheme() {
-  return localStorage.getItem("dl_theme") || "light";
+  const savedTheme = localStorage.getItem("dl_theme");
+  if(savedTheme) return savedTheme;
+  return getSystemTheme();
+}
+function getSystemTheme() {
+  try{
+    return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  }catch(e){
+    return "light";
+  }
 }
 function applyTheme(theme) {
   document.body.classList.toggle("dark", theme === "dark");
@@ -4209,6 +4275,15 @@ function applyTheme(theme) {
   if (themeMeta) themeMeta.setAttribute("content", theme === "dark" ? "#2f343b" : "#f8fafc");
   const btn = document.getElementById("themeToggleBtn");
   if (btn) btn.textContent = (theme === "dark") ? T("lightMode") : T("darkMode");
+}
+function bindSystemThemePreference(){
+  if(!window.matchMedia) return;
+  const query = window.matchMedia("(prefers-color-scheme: dark)");
+  const handler = () => {
+    if(!localStorage.getItem("dl_theme")) applyTheme(getSystemTheme());
+  };
+  if(query.addEventListener) query.addEventListener("change", handler);
+  else if(query.addListener) query.addListener(handler);
 }
 function toggleTheme() {
   const next = (getTheme() === "dark") ? "light" : "dark";
@@ -4530,6 +4605,7 @@ function toggleTheme() {
       updatePlayersUI();
       updateBonusEligibility();
       updateMatchEditUI();
+      syncMatchDateDisplay();
     }
 
     function enableAdminMode(){
@@ -4609,10 +4685,27 @@ function toggleTheme() {
       return `${y}-${m}-${d}`;
     }
 
+    function formatMatchDateDisplay(value){
+      const dateValue = value || getDefaultMatchDateString();
+      const parts = String(dateValue).split("-");
+      if(parts.length === 3){
+        return `${parts[2]} / ${parts[1]} / ${parts[0]}`;
+      }
+      return dateValue;
+    }
+
+    function syncMatchDateDisplay(){
+      const input = $("matchDate");
+      const display = $("matchDateDisplay");
+      if(!input || !display) return;
+      display.textContent = formatMatchDateDisplay(input.value);
+    }
+
     function setMatchDateToToday(force = false){
       const el = $("matchDate");
       if(!el) return;
       if(force || !el.value) el.value = getDefaultMatchDateString();
+      syncMatchDateDisplay();
     }
 
     function readMatchFormData(options = {}){
@@ -4716,6 +4809,7 @@ function toggleTheme() {
 
       updatePlayersUI();
       $("matchDate").value = m.date || getDefaultMatchDateString();
+      syncMatchDateDisplay();
       ensureMatchSelectValue("winnerP1", (m.winners || [])[0]);
       ensureMatchSelectValue("winnerP2", (m.winners || [])[1]);
       ensureMatchSelectValue("loserP1", (m.losers || [])[0]);
@@ -6906,6 +7000,11 @@ function autoAnalyzeTeamsHeadToHeadIfReady(){
       initFirebase();
       hydrateDataFromCache();
       setMatchDateToToday(true);
+      const matchDateInput = $("matchDate");
+      if(matchDateInput){
+        matchDateInput.addEventListener("input", syncMatchDateDisplay);
+        matchDateInput.addEventListener("change", syncMatchDateDisplay);
+      }
       updateAdminUI();
       updateBonusEligibility();
       ["winnerP1","winnerP2","loserP1","loserP2"].forEach(id=>{
@@ -7053,6 +7152,7 @@ function autoAnalyzeTeamsHeadToHeadIfReady(){
 
     applyLang(getLang());
     applyTheme(getTheme());
+    bindSystemThemePreference();
     refreshToggleButtonsText();
   })();
 
