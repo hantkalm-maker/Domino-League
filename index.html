@@ -11,7 +11,7 @@
   <meta name="apple-mobile-web-app-title" content="قهوة الصايمات" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>قهوة الصايمات</title>
-  <link rel="manifest" href="app.webmanifest?v=15" />
+  <link rel="manifest" href="app.webmanifest?v=16" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
   <style>
     *,
@@ -1196,6 +1196,11 @@
       table-layout: auto;
     }
 
+    #leaderboardTable {
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+
     #leaderboardTable th,
     #leaderboardTable td,
     #championsLogTable th,
@@ -1225,11 +1230,13 @@
 
     #leaderboardTable th:nth-child(2),
     #leaderboardTable td:nth-child(2) {
+      position: -webkit-sticky;
       position: sticky;
       right: 0;
       z-index: 5;
       min-width: 136px;
       background: rgba(15, 23, 42, 0.96);
+      background-clip: padding-box;
       box-shadow: -10px 0 18px rgba(0, 0, 0, 0.18);
     }
 
