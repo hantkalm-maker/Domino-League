@@ -11,7 +11,7 @@
   <meta name="apple-mobile-web-app-title" content="قهوة الصايمات" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>قهوة الصايمات</title>
-  <link rel="manifest" href="app.webmanifest?v=23" />
+  <link rel="manifest" href="app.webmanifest?v=24" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
   <style>
     *,
@@ -1881,6 +1881,35 @@
       header .app-logo {
         width: 164px !important;
         height: 164px !important;
+      }
+    }
+
+    .match-date-admin-row {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: end;
+    }
+
+    .match-date-admin-row > .field {
+      min-width: 0;
+      width: 100%;
+    }
+
+    .match-date-admin-row input[type="date"],
+    .match-date-admin-row .admin-quick-actions button {
+      width: 100%;
+      min-width: 0;
+      min-height: 44px;
+      height: 44px;
+      padding: 8px;
+      font-size: 0.84rem;
+      line-height: 1.15;
+    }
+
+    @media (max-width: 700px) {
+      .match-date-admin-row input[type="date"],
+      .match-date-admin-row .admin-quick-actions button {
+        min-height: 44px;
+        height: 44px;
       }
     }
 
