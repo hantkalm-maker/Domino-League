@@ -11,7 +11,7 @@
   <meta name="apple-mobile-web-app-title" content="قهوة الصايمات" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>قهوة الصايمات</title>
-  <link rel="manifest" href="app.webmanifest?v=17" />
+  <link rel="manifest" href="app.webmanifest?v=18" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
   <style>
     *,
@@ -1585,6 +1585,60 @@
         padding-inline-end: 30px;
         background-position: left 13px center, left 7px center;
       }
+    }
+
+    body,
+    header,
+    main,
+    .card,
+    .field,
+    label,
+    .small-text,
+    .admin-bar-text,
+    .match-edit-notice,
+    .stat-box,
+    .install-gate-card,
+    .install-gate-steps,
+    th,
+    td,
+    button,
+    input,
+    select {
+      text-align: center;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    input[type="file"],
+    select {
+      text-align: center;
+      text-align-last: center;
+    }
+
+    select option {
+      text-align: center;
+    }
+
+    .card h2,
+    .panel-toggle,
+    .player-cell,
+    #leaderboardTable .player-cell,
+    #championsLogTable .player-cell {
+      justify-content: center;
+      text-align: center;
+    }
+
+    .panel-toggle {
+      position: relative;
+    }
+
+    .panel-toggle::after {
+      position: absolute;
+      inset-inline-end: 10px;
+    }
+
+    .install-gate-steps li {
+      text-align: center;
     }
 
   </style>
